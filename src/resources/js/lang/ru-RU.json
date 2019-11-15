@@ -1,0 +1,75 @@
+{
+    "errors": {
+        "invalid_credentials": "Неверный E-Mail или пароль!",
+        "sign_in_error": "Ошибка входа!",
+        "sign_up_error": "Ошибка регистрации!",
+        "sign_out_error": "Ошибка выхода!",
+        "edit_profile_error": "Ошибка редактирования профиля!",
+        "delete_account_error": "Ошибка удаления аккаунта!"
+    },
+    "messages": {
+        "signed_in": "Вы вошли в аккаунт.",
+        "signed_up": "Вы зарегистрировали аккаунт.",
+        "profile_edited": "Профиль успешно отредактирован.",
+        "account_deleted": "Аккаунт успешно удален."
+    },
+    "components": {
+        "alert": {
+            "close": "Закрыть"
+        },
+        "nav_item": {
+            "current": "текущая"
+        },
+        "header": {
+            "toggle_navigation": "Переключить навигацию",
+            "profile": "Профиль",
+            "sign_in": "Войти",
+            "sign_out": "Выйти"
+        }
+    },
+    "buttons": {
+        "sign_in": "Войти",
+        "sign_up": "Зарегистрироваться",
+        "edit_profile": "Редактировать профиль",
+        "delete_account": "Удалить аккаунт"
+    },
+    "pages": {
+       "home": {
+           "welcome": "Добро пожаловать!"
+       },
+        "login": {
+            "not_registered_yet": "Еще не зарегистрированы?",
+            "register_account": "Зарегистрировать аккаунт.",
+            "sign_in": "Вход",
+            "email": "E-Mail",
+            "password": "Пароль"
+        },
+        "register": {
+            "already_registered": "Уже зарегистрированы?",
+            "sign_in_account": "Войти в аккаунт.",
+            "sign_up": "Регистрация",
+            "name": "Имя",
+            "email": "E-Mail",
+            "password": "Пароль",
+            "confirm_password": "Подтвердите пароль"
+        },
+        "profile": {
+            "profile": "Профиль",
+            "id": "ID",
+            "name": "Имя",
+            "email": "E-Mail"
+        },
+        "edit_profile": {
+            "edit_profile": "Редактирование профиля",
+            "name": "Имя",
+            "email": "E-Mail",
+            "password": "Пароль",
+            "new_password": "Новый пароль",
+            "confirm_password": "Подтвердите пароль"
+        },
+        "delete_account": {
+            "delete_account": "Удаление аккаунта",
+            "type": "Введите"
+        }
+    }
+}

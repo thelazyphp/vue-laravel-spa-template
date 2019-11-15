@@ -1,0 +1,75 @@
+{
+    "errors": {
+        "invalid_credentials": "Invalid E-Mail or password!",
+        "sign_in_error": "Sign in error!",
+        "sign_up_error": "Sign up error!",
+        "sign_out_error": "Sign out error!",
+        "edit_profile_error": "Edit profile error!",
+        "delete_account_error": "Delete account error!"
+    },
+    "messages": {
+        "signed_in": "You are signed in account.",
+        "signed_up": "You are signed up account.",
+        "profile_edited": "Profile is successfully edited.",
+        "account_deleted": "Account is successfully deleted."
+    },
+    "components": {
+        "alert": {
+            "close": "Close"
+        },
+        "nav_item": {
+            "current": "current"
+        },
+        "header": {
+            "toggle_navigation": "Toggle navigation",
+            "profile": "Profile",
+            "sign_in": "Sign in",
+            "sign_out": "Sign out"
+        }
+    },
+    "buttons": {
+        "sign_in": "Sign in",
+        "sign_up": "Sign up",
+        "edit_profile": "Edit profile",
+        "delete_account": "Delete account"
+    },
+    "pages": {
+       "home": {
+           "welcome": "Welcome!"
+       },
+        "login": {
+            "not_registered_yet": "Not registered yet?",
+            "register_account": "Register account.",
+            "sign_in": "Sign in",
+            "email": "E-Mail",
+            "password": "Password"
+        },
+        "register": {
+            "already_registered": "Already registered?",
+            "sign_in_account": "Sign in account.",
+            "sign_up": "Sign up",
+            "name": "Name",
+            "email": "E-Mail",
+            "password": "Password",
+            "confirm_password": "Confirm password"
+        },
+        "profile": {
+            "profile": "Profile",
+            "id": "ID",
+            "name": "Name",
+            "email": "E-Mail"
+        },
+        "edit_profile": {
+            "edit_profile": "Edit profile",
+            "name": "Name",
+            "email": "E-Mail",
+            "password": "Password",
+            "new_password": "New password",
+            "confirm_password": "Confirm password"
+        },
+        "delete_account": {
+            "delete_account": "Delete account",
+            "type": "Type"
+        }
+    }
+}
