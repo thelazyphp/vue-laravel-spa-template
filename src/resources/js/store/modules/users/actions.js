@@ -9,7 +9,6 @@ export default {
                     return resolve()
                 })
                 .catch(error => {
-                    console.log(error)
                     return reject(error)
                 })
         })
