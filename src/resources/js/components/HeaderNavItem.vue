@@ -28,7 +28,7 @@
 
         computed: {
             isActive () {
-                return this.$route.name.startsWith(this.routeName)
+                return this.$route.name && this.$route.name.startsWith(this.routeName)
             }
         }
     }

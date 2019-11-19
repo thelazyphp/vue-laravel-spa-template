@@ -127,10 +127,20 @@
 
                 UsersService.editProfile(this)
                     .then(() => {
-                        this.$store.commit('alert/SHOW', {
-                            type: 'primary',
-                            message: this.$t('messages.profile_edited')
-                        })
+                        this.$store.dispatch('users/getCurrent')
+                            .then(() => {
+                                this.$store.commit('alert/SHOW', {
+                                    type: 'primary',
+                                    message: this.$t('messages.profile_edited')
+                                })
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                this.$store.commit('alert/SHOW', {
+                                    type: 'danger',
+                                    message: this.$t('get_current_user_error')
+                                })
+                            })
                     })
                     .catch(error => {
                         console.log(error)

@@ -35,11 +35,7 @@ export function editProfile (data = {}) {
         }
 
         new Http({ auth: true }).patch('/users/current', requestData)
-            .then(response => {
-                store.dispatch('users/getCurrent')
-                    .then(() => resolve(response))
-                    .catch(error => reject(error))
-            })
+            .then(response => resolve(response))
             .catch(error => reject(error))
     })
 }

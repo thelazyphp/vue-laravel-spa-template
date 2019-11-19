@@ -1,6 +1,7 @@
 {
     "errors": {
         "invalid_credentials": "Invalid E-Mail or password!",
+        "get_current_user_error": "Error getting the current user data!",
         "sign_in_error": "Sign in error!",
         "sign_up_error": "Sign up error!",
         "sign_out_error": "Sign out error!",
@@ -34,9 +35,9 @@
         "delete_account": "Delete account"
     },
     "pages": {
-       "home": {
-           "welcome": "Welcome!"
-       },
+        "home": {
+            "welcome": "Welcome!"
+        },
         "login": {
             "not_registered_yet": "Not registered yet?",
             "register_account": "Register account.",
