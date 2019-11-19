@@ -1,25 +1,23 @@
 <template>
     <div id="app">
-        <app-header></app-header>
+        <TheHeader/>
 
         <main class="container py-5">
-            <router-view></router-view>
+            <RouterView/>
         </main>
 
-        <app-footer></app-footer>
+        <TheFooter/>
     </div>
 </template>
 
 <script>
-    import AppHeader from '../components/AppHeader'
-    import AppFooter from '../components/AppFooter'
+    import TheHeader from '../components/TheHeader'
+    import TheFooter from '../components/TheFooter'
 
     export default {
-        name: 'layout',
-
         components: {
-            AppHeader,
-            AppFooter
+            TheHeader,
+            TheFooter
         }
     }
 </script>

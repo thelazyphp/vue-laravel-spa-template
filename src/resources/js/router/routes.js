@@ -1,44 +1,44 @@
 // import pages
-import Home from '../pages/Home'
-import Login from '../pages/Login'
-import Register from '../pages/Register'
-import Profile from '../pages/Profile'
-import EditProfile from '../pages/EditProfile'
-import DeleteAccount from '../pages/DeleteAccount'
+import HomePage from '../pages/HomePage'
+import LoginPage from '../pages/LoginPage'
+import RegisterPage from '../pages/RegisterPage'
+import ProfilePage from '../pages/ProfilePage'
+import ProfileEditPage from '../pages/ProfileEditPage'
+import AccountDeletePage from '../pages/AccountDeletePage'
 
 export default [
     {
         name: 'home',
         path: '/',
-        component: Home,
+        component: HomePage,
         meta: { requiresAuth: true }
     },
     {
         name: 'login',
         path: '/login',
-        component: Login
+        component: LoginPage
     },
     {
         name: 'register',
         path: '/register',
-        component: Register
+        component: RegisterPage
     },
     {
         name: 'profile',
         path: '/profile',
-        component: Profile,
+        component: ProfilePage,
         meta: { requiresAuth: true }
     },
     {
         name: 'profile.edit',
         path: '/profile/edit',
-        component: EditProfile,
+        component: ProfileEditPage,
         meta: { requiresAuth: true }
     },
     {
         name: 'account.delete',
         path: '/account/delete',
-        component: DeleteAccount,
+        component: AccountDeletePage,
         meta: { requiresAuth: true }
     }
 ]

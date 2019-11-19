@@ -1,6 +1,6 @@
 export default class Base {
     constructor (data = {}) {
-        this.create(data, this.schema)
+        return this.create(data, this.schema)
     }
 
     get schema () {
@@ -8,6 +8,8 @@ export default class Base {
     }
 
     create (data = {}, schema = {}) {
+        schema = this.normalizeChema(schema)
+
         Object.keys(schema).forEach(key => {
             const types = [
                 'number',
@@ -22,5 +24,21 @@ export default class Base {
                 ? this[key] = data[key]
                 : this[key] = schema[key]
         })
+
+        return this
+    }
+
+    normalizeChema (schema = {}) {
+        let normalizedChema = {}
+
+        Object.keys(schema).forEach(key => {
+            if (typeof schema[key] == 'object' && (schema[key].key || schema[key].default)) {
+                normalizedChema[schema[key].key || key] = schema[key].default || undefined
+            } else {
+                normalizedChema[key] = schema[key]
+            }
+        })
+
+        return normalizedChema
     }
 }

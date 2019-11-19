@@ -59,7 +59,7 @@
             "name": "Имя",
             "email": "E-Mail"
         },
-        "edit_profile": {
+        "profile_edit": {
             "edit_profile": "Редактирование профиля",
             "name": "Имя",
             "email": "E-Mail",
@@ -67,7 +67,7 @@
             "new_password": "Новый пароль",
             "confirm_password": "Подтвердите пароль"
         },
-        "delete_account": {
+        "account_delete": {
             "delete_account": "Удаление аккаунта",
             "type": "Введите"
         }

@@ -59,7 +59,7 @@
             "name": "Name",
             "email": "E-Mail"
         },
-        "edit_profile": {
+        "profile_edit": {
             "edit_profile": "Edit profile",
             "name": "Name",
             "email": "E-Mail",
@@ -67,7 +67,7 @@
             "new_password": "New password",
             "confirm_password": "Confirm password"
         },
-        "delete_account": {
+        "account_delete": {
             "delete_account": "Delete account",
             "type": "Type"
         }
