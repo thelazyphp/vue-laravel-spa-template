@@ -8,9 +8,7 @@ export default {
                     commit('SET_CURRENT', user)
                     return resolve()
                 })
-                .catch(error => {
-                    return reject(error)
-                })
+                .catch(error => reject(error))
         })
     }
 }
