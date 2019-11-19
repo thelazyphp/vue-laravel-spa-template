@@ -4,7 +4,7 @@ import * as AuthService from './auth.service'
 export default class Http {
     constructor (config = { auth: false }) {
         this.instance = axios.create({
-            baseURL: process.env.MIX_API_URL || 'http://localhost',
+            baseURL: process.env.MIX_API_URL || 'http://localhost/api',
 
             headers: {
                 'accept': 'application/json',
