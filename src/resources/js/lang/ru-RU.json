@@ -1,4 +1,5 @@
 {
+    "language": "Русский (Россия)",
     "errors": {
         "invalid_credentials": "Неверный E-Mail или пароль!",
         "get_current_user_error": "Ошибка получения данных о текущем пользователе!",

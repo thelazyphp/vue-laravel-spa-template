@@ -1,4 +1,5 @@
 {
+    "language": "English (US)",
     "errors": {
         "invalid_credentials": "Invalid E-Mail or password!",
         "get_current_user_error": "Error getting the current user data!",
