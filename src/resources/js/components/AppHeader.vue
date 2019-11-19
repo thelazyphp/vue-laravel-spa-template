@@ -30,16 +30,24 @@
                 </ul>
             </div>
         </nav>
+
+        <alert class="mb-0 rounded-0" v-if="alert.show" @close="$store.commit('alert/CLOSE')" :type="alert.type" :message="alert.message"></alert>
     </header>
 </template>
 
 <script>
     import NavItem from './NavItem'
+    import Alert from './Alert'
+
     import * as AuthService from '../services/auth.service'
 
     export default {
         name: 'app-header',
-        components: { NavItem },
+
+        components: {
+            NavItem,
+            Alert
+        },
 
         methods: {
             logout () {
@@ -58,6 +66,10 @@
         computed: {
             appName () {
                 return process.env.MIX_APP_NAME || 'Laravel'
+            },
+
+            alert () {
+                return this.$store.state.alert
             }
         }
     }

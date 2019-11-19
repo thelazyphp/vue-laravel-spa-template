@@ -8,12 +8,8 @@ import DeleteAccount from '../pages/DeleteAccount'
 
 export default [
     {
-        path: '/',
-        redirect: { name: 'home' }
-    },
-    {
         name: 'home',
-        path: '/home',
+        path: '/',
         component: Home,
         meta: { requiresAuth: true }
     },
