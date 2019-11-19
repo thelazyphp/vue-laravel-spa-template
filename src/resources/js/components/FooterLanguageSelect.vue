@@ -1,25 +1,23 @@
 <template>
     <div class="dropup">
         <a
-            id="dropdownMenuButton"
             href="#"
             class="dropdown-toggle"
-            role="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
         >
-            {{ $t('language', $i18n.locale) }}
+            {{ $t('language', currentLocale) }}
         </a>
 
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+        <div class="dropdown-menu dropdown-menu-right">
             <a
                 v-for="locale in locales"
                 :key="locale"
                 href="#"
                 class="dropdown-item"
-                :class="{ 'active': locale == $i18n.locale }"
-                @click="$i18n.locale = locale"
+                :class="{ 'active': locale == currentLocale }"
+                @click="setLocale(locale)"
             >
                 {{ $t('language', locale) }}
             </a>
@@ -30,8 +28,18 @@
 <script>
     export default {
         computed: {
+            currentLocale () {
+                return this.$i18n.locale
+            },
+
             locales () {
                 return Object.keys(this.$i18n.messages)
+            }
+        },
+
+        methods: {
+            setLocale (locale) {
+                this.$i18n.locale = locale
             }
         }
     }
