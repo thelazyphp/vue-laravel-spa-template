@@ -5,8 +5,8 @@ import routes from './routes'
 import { ROUTER_BASE } from '../.env'
 
 // import middleware
-import auth from './middleware/auth'
 import initCurrentUser from './middleware/init.current.user'
+import auth from './middleware/auth'
 
 Vue.use(Router)
 
