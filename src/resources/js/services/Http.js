@@ -1,4 +1,3 @@
-import router from '../router'
 import * as AuthService from './auth.service'
 
 export default class Http {
@@ -19,7 +18,7 @@ export default class Http {
             ? config.auth
             : false
 
-        const onFulfilled = function (request) {
+        const onFulfilled = function () {
             if (auth) {
                 request.headers['authorization'] = `Bearer ${AuthService.getAccessToken()}`
             }
@@ -28,10 +27,6 @@ export default class Http {
         }
 
         const onRejected = function (error) {
-            if (error.status == 401) {
-                router.push({ name: 'login' })
-            }
-
             return Promise.reject(error)
         }
 
