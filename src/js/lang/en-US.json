@@ -1,0 +1,68 @@
+{
+    "locale": "en-US",
+    "language": "English (US)",
+    "messages": {
+        "signed_in": "You are signed in account.",
+        "signed_up": "You are signed up account."
+    },
+    "errors": {
+        "sign_in_error": "Sign in error!",
+        "sign_up_error": "Sign up error!",
+        "sign_out_error": "Sign out error!",
+        "invalid_credentials": "Invalid E-Mail or password!",
+        "get_current_user_error": "Error getting the current user data!"
+    },
+    "alert": {
+        "buttons": {
+            "close": "Close"
+        }
+    },
+    "header_navbar": {
+        "buttons": {
+            "toggle_navigation": "Toggle navigation",
+            "sign_in": "Sign in",
+            "profile": "Profile",
+            "sign_out": "Sign out"
+        }
+    },
+    "home": {
+        "title": "Welcome!"
+    },
+    "profile": {
+        "roles": {
+            "user": "user",
+            "admin": "admin"
+        },
+        "title": "Profile",
+        "id": "ID",
+        "role": "Role",
+        "name": "Name",
+        "email": "E-Mail"
+    },
+    "login": {
+        "title": "Sign in",
+        "not_registered_yet": "Not registered yet?",
+        "register_account": "Register account.",
+        "labels": {
+            "email": "E-Mail",
+            "password": "Password"
+        },
+        "buttons": {
+            "sign_in": "Sign in"
+        }
+    },
+    "register": {
+        "title": "Sign up",
+        "already_registered": "Already registered?",
+        "sign_in_account": "Sign in account.",
+        "labels": {
+            "name": "Name",
+            "email": "E-Mail",
+            "password": "Password",
+            "confirm_password": "Confirm password"
+        },
+        "buttons": {
+            "sign_up": "Sign up"
+        }
+    }
+}
