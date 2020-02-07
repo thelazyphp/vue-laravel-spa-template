@@ -12,10 +12,12 @@
         <!-- Styles -->
         <link href="{{ asset('agency-parser/css/app.css') }}" rel="stylesheet">
     </head>
+
     <body>
         <div id="app"></div>
 
         <!-- Scripts -->
-        <script src="{{ asset('agency-parser/js/app.js') }}"></script>
+        <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey={{ env('JANDEX_API_KEY') }}"></script>
+        <script src="{{ asset('agency-parser/js/main.js') }}"></script>
     </body>
 </html>

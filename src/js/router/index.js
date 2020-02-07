@@ -1,24 +1,23 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-import routes from './routes'
-import { ROUTER_BASE } from '../.env'
-
-// import middleware
-import checkAuth from './middleware/checkAuth'
-import checkGuest from './middleware/checkGuest'
-import getCurrentUser from './middleware/getCurrentUser'
+import SignInPage from '../components/pages/SignInPage'
+import SignUpPage from '../components/pages/SignUpPage'
+import HomePage from '../components/pages/HomePage'
+import AboutPage from '../components/pages/AboutPage'
+import ContactPage from '../components/pages/ContactPage'
 
 Vue.use(Router)
 
-const router = new Router({
-    base: ROUTER_BASE,
+export default new Router({
     mode: 'history',
-    routes
+    base: '/agency-parser/',
+
+    routes: [
+        { path: '/', component: HomePage },
+        { path: '/login', component: SignInPage },
+        { path: '/register', component: SignUpPage },
+        { path: '/about', component: AboutPage },
+        { path: '/contact', component: ContactPage },
+        { path: '*', redirect: '/' }
+    ]
 })
-
-router.beforeEach(checkAuth)
-router.beforeEach(checkGuest)
-router.beforeEach(getCurrentUser)
-
-export default router

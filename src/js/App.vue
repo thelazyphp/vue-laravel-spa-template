@@ -2,8 +2,8 @@
     <div id="app">
         <TheHeader/>
 
-        <main class="container py-5">
-            <RouterView/>
+        <main>
+            <router-view></router-view>
         </main>
 
         <TheFooter/>
@@ -11,8 +11,8 @@
 </template>
 
 <script>
-    import TheHeader from './TheHeader'
-    import TheFooter from './TheFooter'
+    import TheHeader from './components/TheHeader'
+    import TheFooter from './components/TheFooter'
 
     export default {
         components: {
@@ -21,7 +21,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

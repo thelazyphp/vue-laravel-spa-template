@@ -1,16 +1,16 @@
 <template>
     <div
         class="alert alert-dismissible fade show"
-        :class="'alert-' + type"
+        :class="`alert-${type}`"
         role="alert"
     >
-        {{ message }}
+        <span v-html="message"></span>
 
         <button
-            type="button"
             class="close"
+            type="button"
             data-dismiss="alert"
-            :aria-label="$t('alert.buttons.close')"
+            aria-label="Закрыть"
             @click="$emit('close')"
         >
             <span aria-hidden="true">&times;</span>
@@ -20,11 +20,19 @@
 
 <script>
     export default {
+        name: 'AppAlert',
+
         props: {
+            message: {
+                type: String,
+                required: true
+            },
+
             type: {
                 type: String,
                 default: 'primary',
-                validator: function (value) {
+
+                validator (value) {
                     return [
                         'primary',
                         'secondary',
@@ -36,14 +44,7 @@
                         'dark'
                     ].includes(value)
                 }
-            },
-            message: String
+            }
         }
     }
 </script>
-
-<style scoped>
-    .close {
-        outline: none !important;
-    }
-</style>
