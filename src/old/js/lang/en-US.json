@@ -1,0 +1,1012 @@
+{
+    "language": "English (US)",
+    "errors": {
+        "sign_in_error": "Sign in error!",
+        "sign_up_error": "Sign up error!",
+        "sign_out_error": "Sign out error!",
+        "create_source_error": "Error adding source!",
+        "edit_source_error": "Error editing source!",
+        "remove_source_error": "Error removing source!",
+        "create_parser_error": "Error creating parser!",
+        "edit_parser_error": "Error editing parser!",
+        "remove_parser_error": "Error removing parser!",
+        "save_parser_settings_error": "Error saving parser settings!",
+        "debug_links_parser_error": "Error debugging links parser!",
+        "debug_parser_error": "Error debugging parser!",
+        "upload_file_error": "Error uploading file!",
+        "invalid_credentials": "Invalid E-Mail or password!",
+        "get_current_user_error": "Error getting the current user data!"
+    },
+    "messages": {
+        "signed_in": "You are signed in account.",
+        "signed_up": "You are signed up account.",
+        "source_created": "The source \"{id}\" is successfully added.",
+        "source_edited": "The source \"{id}\" is successfully edited.",
+        "source_removed": "The source \"{id}\" is successfully removed.",
+        "parser_created": "The parser \"{name}\" is successfully created.",
+        "parser_edited": "The parser \"{name}\" is successfully edited.",
+        "parser_removed": "The parser \"{name}\" is successfully removed.",
+        "parser_settings_saved": "The settings of parser \"{name}\" is successfully saved."
+    },
+
+
+
+    "table_header": {
+        "sort": "Sort"
+    },
+    "nca": {
+        "categories": {
+            "lands": "Lands",
+            "capitals": "Capitals",
+            "isolateds": "Isolateds",
+            "commercials": "Commercials"
+        },
+        "flags": {
+            "P": {
+                "name": "P",
+                "title": "Part"
+            },
+            "S": {
+                "name": "S",
+                "title": "Share"
+            },
+            "NB": {
+                "name": "NB",
+                "title": "New building"
+            },
+            "LP": {
+                "name": "LP",
+                "title": "Low price"
+            },
+            "DEL": {
+                "name": "DEL",
+                "title": "Deleted"
+            }
+        },
+        "buttons": {
+            "filter": "Filter",
+            "open_map": "Open map",
+            "statistics": "Statistics",
+            "upload_items": "upload items",
+            "reset_filter": "Reset filter"
+        },
+        "pagination": {
+            "prev": "Previous",
+            "next": "Next"
+        },
+        "messages": {
+            "loading": "Loading",
+            "per_page": "{count} per page",
+            "found_items": "Found items: {count}",
+            "start_typing_the_keywords": "Start typing the keywords"
+        },
+        "table": {
+            "buttons": {
+                "open": "Open",
+                "show_on_map": "Show on map"
+            },
+            "headers": {
+                "units": {
+                    "ha": "ha",
+                    "m": "m"
+                },
+                "lands": {
+                    "id": "ID",
+                    "contract_date": "Date",
+                    "role": "Role",
+                    "locality": "Locality",
+                    "address": "Address",
+                    "size": "Size",
+                    "price": "Price",
+                    "price_currency": "Currency"
+                },
+                "capitals": {
+                    "id": "ID",
+                    "contract_date": "Date",
+                    "type": "Type, role",
+                    "locality": "Locality",
+                    "address": "Address",
+                    "construction_year": "Construction year",
+                    "size": "Size",
+                    "floors_total": "Floors",
+                    "undeground_floors_total": "Undeground floors",
+                    "walls_type": "Walls",
+                    "price": "Price",
+                    "price_currency": "Currency",
+                    "land_size": "Land size"
+                },
+                "isolateds": {
+                    "id": "ID",
+                    "contract_date": "Date",
+                    "type": "Type, role",
+                    "locality": "Locality",
+                    "address": "Address",
+                    "size": "Size",
+                    "rooms_count": "Rooms",
+                    "floor": "Floor / total",
+                    "price": "Price",
+                    "price_currency": "Currency",
+                    "capital_type": "Capital type, role",
+                    "walls_type": "Walls",
+                    "construction_year": "Construction year"
+                },
+                "commercials": {
+                    "id": "ID",
+                    "contract_date": "Date",
+                    "isolated_type": "Isolated type, role",
+                    "locality": "Locality",
+                    "address": "Address",
+                    "size": "Size",
+                    "rooms_count": "Rooms",
+                    "floor": "Floor / total",
+                    "price": "Price",
+                    "price_currency": "Currency",
+                    "type": "Type, role",
+                    "walls_type": "Walls",
+                    "construction_year": "Construction year"
+                }
+            }
+        },
+        "filter": {
+            "close": "Close",
+            "title": "Filter",
+            "buttons": {
+                "reset": "Reset",
+                "filter": "Filter"
+            },
+            "common": {
+                "country": {
+                    "label": "Country",
+                    "any": "Any"
+                },
+                "province": {
+                    "label": "Province",
+                    "any": "Any"
+                },
+                "area": {
+                    "label": "Area",
+                    "any": "Any"
+                },
+                "locality": {
+                    "label": "Locality",
+                    "any": "Any"
+                },
+                "district": {
+                    "label": "District",
+                    "any": "Any"
+                },
+                "street": {
+                    "label": "Street",
+                    "any": "Any"
+                },
+                "house": {
+                    "label": "House",
+                    "any": "Any"
+                },
+                "type": {
+                    "label": "Type",
+                    "any": "Any"
+                },
+                "role": {
+                    "label": "Role",
+                    "any": "Any"
+                },
+                "price": {
+                    "label": "Price, currency",
+                    "min": "Min",
+                    "max": "Max",
+                    "any": "Any"
+                }
+            },
+            "lands": {
+                "size": {
+                    "label": "Size",
+                    "min": "Min",
+                    "max": "Max",
+                    "addon": "ha",
+                    "aria-label": "Size (ha)"
+                }
+            },
+            "capitals": {
+                "construction_year": {
+                    "label": "Construction year",
+                    "min": "Min",
+                    "max": "Max"
+                },
+                "size": {
+                    "label": "Size",
+                    "min": "Min",
+                    "max": "Max",
+                    "addon": "m",
+                    "aria-label": "Size (sq. m)"
+                },
+                "floors_total": {
+                    "label": "Floors",
+                    "min": "Min",
+                    "max": "Max"
+                },
+                "undeground_floors_total": {
+                    "label": "Undeground floors",
+                    "min": "Min",
+                    "max": "Max"
+                },
+                "walls_type": {
+                    "label": "Walls",
+                    "any": "Any"
+                },
+                "land_size": {
+                    "label": "Land size",
+                    "min": "Min",
+                    "max": "Max",
+                    "addon": "ha",
+                    "aria-label": "Land size (ha)"
+                }
+            },
+            "isolateds": {
+                "size": {
+                    "label": "Size",
+                    "min": "Min",
+                    "max": "Max",
+                    "addon": "m",
+                    "aria-label": "Size (sq. m)"
+                },
+                "rooms_count": {
+                    "label": "Rooms",
+                    "min": "Min",
+                    "max": "Max"
+                },
+                "floor": {
+                    "label": "Floor",
+                    "min": "Min",
+                    "max": "Max"
+                },
+                "floors_total": {
+                    "label": "Floors",
+                    "min": "Min",
+                    "max": "Max"
+                },
+                "walls_type": {
+                    "label": "Walls",
+                    "any": "Any"
+                },
+                "capital_type": {
+                    "label": "Capital type",
+                    "any": "Any"
+                },
+                "capital_role": {
+                    "label": "Capital role",
+                    "any": "Any"
+                },
+                "construction_year": {
+                    "label": "Construction year",
+                    "min": "Min",
+                    "max": "Max"
+                }
+            },
+            "commercials": {
+                "isolated_type": {
+                    "label": "Isolated type",
+                    "any": "Any"
+                },
+                "isolated_role": {
+                    "label": "Isolated role",
+                    "any": "Any"
+                },
+                "size": {
+                    "label": "Size",
+                    "min": "Min",
+                    "max": "Max",
+                    "addon": "m",
+                    "aria-label": "Size (sq. m)"
+                },
+                "rooms_count": {
+                    "label": "Rooms",
+                    "min": "Min",
+                    "max": "Max"
+                },
+                "floor": {
+                    "label": "Floor",
+                    "min": "Min",
+                    "max": "Max"
+                },
+                "floors_total": {
+                    "label": "Floors",
+                    "min": "Min",
+                    "max": "Max"
+                },
+                "walls_type": {
+                    "label": "Walls",
+                    "any": "Any"
+                },
+                "construction_year": {
+                    "label": "Construction year",
+                    "min": "Min",
+                    "max": "Max"
+                }
+            }
+        },
+        "map": {
+            "close": "Close",
+            "title": "Map",
+            "buttons": {
+                "close": "Close"
+            }
+        },
+        "statistics": {
+            "close": "Close",
+            "title": "Statistics",
+            "buttons": {
+                "close": "Close"
+            },
+            "chart_axes": {
+                "count": "Count",
+                "price": "Price",
+                "month": "Month"
+            },
+            "chart_titles": {
+                "sold_total": "Sold total",
+                "sold_total_by_rooms_count": "Sold total by rooms count",
+                "avg_price_per_sqm": "Average price per square meter",
+                "avg_price_per_sqm_by_rooms_count": "Average price per square meter by rooms count"
+            },
+            "chart_labels": {
+                "isolateds": "Isolateds",
+                "parts": "Parts",
+                "shares": "Shares",
+                "new_buildings": "New buildings",
+                "isolateds_1_room": "1-room",
+                "isolateds_2_room": "2-room",
+                "isolateds_3_room": "3-room",
+                "isolateds_4_room": "4-room"
+            }
+        },
+        "upload": {
+            "close": "Close",
+            "title": "Upload items",
+            "buttons": {
+                "browse": "Browse",
+                "remove": "Remove",
+                "close": "Close",
+                "upload": "Upload"
+            },
+            "messages": {
+                "no_files_chosen": "No files chosen",
+                "bytes": "bytes",
+                "error": "Error!",
+                "success": "Success!",
+                "uploading": "Uploading ({percent}%)"
+            }
+        }
+    },
+
+
+
+    "common": {
+        "close": "Close",
+        "loading": "Loading",
+        "pagination": {
+            "prev": "Previous",
+            "next": "Next"
+        },
+        "nca_types": {
+            "lands": "Lands",
+            "capitals": "Capitals",
+            "commercials": "Commercials"
+        }
+    },
+    "alert": {
+        "buttons": {
+            "close": "Close"
+        }
+    },
+    "navbar_item": {
+        "current": "current"
+    },
+    "flats_list_item": {
+        "price_risen": "Price risen",
+        "price_fallen": "Price fallen",
+        "old_price": "Old price",
+        "titles": {
+            "show_images": "Show images",
+            "images_not_found": "Images not found",
+            "show_at_site": "Show at site",
+            "find_similar": "Find similar",
+            "open": "Open",
+            "add_to_bookmarks": "Add to bookmarks",
+            "remove_from_bookmarks": "Remove from bookmarks",
+            "bind": "Bind"
+        },
+        "props": {
+            "id": "ID",
+            "published_at": "Published",
+            "updated_at": "Updated",
+            "rooms_count": "Rooms",
+            "floor": "Floor / total",
+            "construction_year": "Construction year",
+            "size": "Size / living / kitchen",
+            "price": "Price",
+            "walls_type": "Walls",
+            "balcony_type": "Balcony",
+            "bathroom_type": "Bathroom",
+            "locality": "Locality",
+            "address": "Address"
+        }
+    },
+    "nca_lands_table": {
+        "filters": {
+            "role": {
+                "label": "Role",
+                "any": "Any"
+            },
+            "size": {
+                "min": {
+                    "label": "Size",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max size",
+                    "placeholder": "to"
+                }
+            },
+            "price": {
+                "min": {
+                    "label": "Price",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max price",
+                    "placeholder": "to"
+                }
+            },
+            "jandex": {
+                "province": {
+                    "label": "Province",
+                    "any": "Any"
+                },
+                "area": {
+                    "label": "Area",
+                    "any": "Any"
+                },
+                "locality": {
+                    "label": "Locality",
+                    "any": "Any"
+                },
+                "street": {
+                    "label": "Street",
+                    "any": "Any"
+                }
+            }
+        },
+        "headers": {
+            "id": "ID",
+            "contract_date": "Date",
+            "role": "Role",
+            "location": "Location",
+            "size": "Size",
+            "price": "Price",
+            "price_currency": "Currency",
+            "price_description": "Price description"
+        },
+        "buttons": {
+            "reset_filters": "Reset filters"
+        }
+    },
+    "nca_capitals_table": {
+        "filters": {
+            "type": {
+                "label": "Type",
+                "any": "Any"
+            },
+            "role": {
+                "label": "Role",
+                "any": "Any"
+            },
+            "rights": {
+                "label": "Rights",
+                "any": "Any"
+            },
+            "walls_type": {
+                "label": "Walls",
+                "any": "Any"
+            },
+            "size": {
+                "min": {
+                    "label": "Size",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max size",
+                    "placeholder": "to"
+                }
+            },
+            "price": {
+                "min": {
+                    "label": "Price",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max price",
+                    "placeholder": "to"
+                }
+            },
+            "land_size": {
+                "min": {
+                    "label": "Land size",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max land size",
+                    "placeholder": "to"
+                }
+            },
+            "floors_total": {
+                "min": {
+                    "label": "Floors",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max floors",
+                    "placeholder": "to"
+                }
+            },
+            "jandex": {
+                "province": {
+                    "label": "Province",
+                    "any": "Any"
+                },
+                "area": {
+                    "label": "Area",
+                    "any": "Any"
+                },
+                "locality": {
+                    "label": "Locality",
+                    "any": "Any"
+                },
+                "street": {
+                    "label": "Street",
+                    "any": "Any"
+                }
+            }
+        },
+        "headers": {
+            "id": "ID",
+            "contract_date": "Date",
+            "type": "Type",
+            "location": "Location",
+            "role": "Role",
+            "size": "Size",
+            "floors_total": "Floors",
+            "walls_type": "Walls",
+            "price": "Price",
+            "price_currency": "Currency",
+            "land_size": "Land size",
+            "rights": "Rights",
+            "price_description": "Price description"
+        },
+        "buttons": {
+            "reset_filters": "Reset filters"
+        }
+    },
+    "nca_commercials_table": {
+        "filters": {
+            "type": {
+                "label": "Type",
+                "any": "Any"
+            },
+            "role": {
+                "label": "Role",
+                "any": "Any"
+            },
+            "walls_type": {
+                "label": "Walls",
+                "any": "Any"
+            },
+            "isolated_type": {
+                "label": "Isolated type",
+                "any": "Any"
+            },
+            "isolated_role": {
+                "label": "Isolated role",
+                "any": "Any"
+            },
+            "size": {
+                "min": {
+                    "label": "Size",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max size",
+                    "placeholder": "to"
+                }
+            },
+            "price": {
+                "min": {
+                    "label": "Price",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max price",
+                    "placeholder": "to"
+                }
+            },
+            "floor": {
+                "min": {
+                    "label": "Floor",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max floor",
+                    "placeholder": "to"
+                }
+            },
+            "floors_total": {
+                "min": {
+                    "label": "Floors",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max floors",
+                    "placeholder": "to"
+                }
+            },
+            "rooms_count": {
+                "min": {
+                    "label": "Rooms",
+                    "placeholder": "from"
+                },
+                "max": {
+                    "label": "Max rooms",
+                    "placeholder": "to"
+                }
+            },
+            "jandex": {
+                "province": {
+                    "label": "Province",
+                    "any": "Any"
+                },
+                "area": {
+                    "label": "Area",
+                    "any": "Any"
+                },
+                "locality": {
+                    "label": "Locality",
+                    "any": "Any"
+                },
+                "street": {
+                    "label": "Street",
+                    "any": "Any"
+                }
+            }
+        },
+        "headers": {
+            "id": "ID",
+            "contract_date": "Date",
+            "isolated_type": "Isolated type",
+            "location": "Location",
+            "isolated_role": "Isolated role",
+            "size": "Size",
+            "rooms_count": "Rooms",
+            "floor": "Floor",
+            "price": "Price",
+            "price_currency": "Currency",
+            "type": "Type",
+            "role": "Role",
+            "walls_type": "Walls",
+            "price_description": "Price description"
+        },
+        "buttons": {
+            "reset_filters": "Reset filters"
+        }
+    },
+    "nca_file_item": {
+        "uploading": "Uploading",
+        "buttons": {
+            "upload": "Upload",
+            "remove": "Remove"
+        }
+    },
+    "source_item": {
+        "buttons": {
+            "edit": "Edit",
+            "remove": "Remove"
+        }
+    },
+    "parser_item": {
+        "buttons": {
+            "run": "Run",
+            "edit": "Edit",
+            "configure": "Configure",
+            "remove": "Remove"
+        }
+    },
+    "footer": {
+        "links": {
+            "back_to_top": "Back to top"
+        }
+    },
+    "header_navbar": {
+        "links": {
+            "objects": "Objects",
+            "nca": "NCA",
+            "sources": "Sources",
+            "parsers": "Parsers",
+            "profile": "Profile",
+            "sign_out": "Sign out"
+        },
+        "buttons": {
+            "toggle_navigation": "Toggle navigation",
+            "sign_in": "Sign in"
+        }
+    },
+    "home": {
+        "title": "Welcome!"
+    },
+    "objects": {
+        "types": {
+            "flats": "Flats",
+            "lands": "Lands",
+            "houses": "Houses",
+            "commercials": "Commercials"
+        },
+        "links": {
+            "reset_filter": "Reset filter"
+        },
+        "labels": {
+            "search": "Search",
+            "type": "Type"
+        },
+        "placeholders": {
+            "search": "Start typing keywords"
+        },
+        "filter": {
+            "common": {
+                "source_id": {
+                    "label": "Source",
+                    "any": "Any"
+                },
+                "country": {
+                    "label": "Country",
+                    "any": "Any"
+                },
+                "province": {
+                    "label": "Province",
+                    "any": "Any"
+                },
+                "area": {
+                    "label": "Area",
+                    "any": "Any"
+                },
+                "locality": {
+                    "label": "Locality",
+                    "any": "Any"
+                },
+                "district": {
+                    "label": "District",
+                    "any": "Any"
+                },
+                "street": {
+                    "label": "Street",
+                    "any": "Any"
+                },
+                "house": {
+                    "label": "House",
+                    "any": "Any"
+                }
+            },
+            "flats": {
+                "rooms_count": {
+                    "label": "Rooms",
+                    "placeholders": {
+                        "min": "min",
+                        "max": "max"
+                    }
+                },
+                "floor": {
+                    "label": "Floor",
+                    "placeholders": {
+                        "min": "min",
+                        "max": "max"
+                    }
+                },
+                "floors_total": {
+                    "label": "Floors total",
+                    "placeholders": {
+                        "min": "min",
+                        "max": "max"
+                    }
+                },
+                "size": {
+                    "label": "Size",
+                    "placeholders": {
+                        "min": "min",
+                        "max": "max"
+                    }
+                },
+                "price": {
+                    "label": "Price",
+                    "placeholders": {
+                        "min": "min",
+                        "max": "max"
+                    }
+                },
+                "walls_type": {
+                    "label": "Walls",
+                    "any": "Any"
+                },
+                "balcony_type": {
+                    "label": "Balcony",
+                    "any": "Any"
+                },
+                "bathroom_type": {
+                    "label": "Bathroom",
+                    "any": "Any"
+                }
+            }
+        }
+    },
+    "nca_update": {
+        "choose_files": "Choose files",
+        "buttons": {
+            "browse": "Browse",
+            "upload_all": "Upload all",
+            "remove_all": "Remove all"
+        }
+    },
+    "sources": {
+        "title": "Sources",
+        "buttons": {
+            "create": "Add source"
+        }
+    },
+    "sources_create": {
+        "title": "Add source",
+        "labels": {
+            "id": "ID",
+            "agency": "Agency",
+            "url": "Home page URL",
+            "name": "Name",
+            "description": "Description (optional)"
+        },
+        "buttons": {
+            "create": "Add"
+        }
+    },
+    "sources_edit": {
+        "title": "Edit source",
+        "labels": {
+            "id": "ID",
+            "agency": "Agency",
+            "url": "Home page URL",
+            "name": "Name",
+            "description": "Description (optional)"
+        },
+        "buttons": {
+            "edit": "Edit"
+        }
+    },
+    "parsers": {
+        "title": "Parsers",
+        "buttons": {
+            "create": "Create parser"
+        }
+    },
+    "parsers_create": {
+        "title": "Create parser",
+        "no_source_added": "No source added!",
+        "labels": {
+            "source": "Source",
+            "name": "Name",
+            "model": "Model",
+            "links_parser": "Links parser",
+            "description": "Description (optional)"
+        },
+        "buttons": {
+            "add_source": "Add source",
+            "create": "Create"
+        }
+    },
+    "parsers_edit": {
+        "title": "Edit parser",
+        "no_source_added": "No source added!",
+        "labels": {
+            "source": "Source",
+            "name": "Name",
+            "model": "Model",
+            "links_parser": "Links parser",
+            "description": "Description (optional)"
+        },
+        "buttons": {
+            "add_source": "Add source",
+            "edit": "Edit"
+        }
+    },
+    "parsers_settings": {
+        "title": "Configure the parser \"{name}\"",
+        "reset": "Reset",
+        "spaces_trims": {
+            "no": "No",
+            "yes": "Yes",
+            "left": "Left",
+            "right": "Right"
+        },
+        "labels": {
+            "skip": "Skip",
+            "use_const": "Use const",
+            "const": "Const",
+            "default_value": "Default value",
+            "nullable": "Nullable",
+            "selector": "Selector",
+            "as_array": "As array",
+            "sort": "Sort",
+            "offset": "Offset",
+            "length": "Length",
+            "element_index": "Element index",
+            "element_property": "Element property",
+            "use_pattern": "Use pattern",
+            "pattern": "Pattern",
+            "capturing_group": "Сapturing group",
+            "trim_spaces": "Trim spaces",
+            "prepend_string": "Prepend string",
+            "append_string": "Append string",
+            "cast": "Cast",
+            "use_script": "Use script",
+            "script": "Script"
+        },
+        "buttons": {
+            "import": "Import",
+            "export": "Export",
+            "debug": "Debug",
+            "save": "Save"
+        }
+    },
+    "parsers_debug": {
+        "title": "Debugging the parser \"{name}\"",
+        "labels": {
+            "url": "Page URL"
+        },
+        "buttons": {
+            "run_links_parser": "Run links parser",
+            "run": "Run"
+        }
+    },
+    "profile": {
+        "roles": {
+            "user": "user",
+            "admin": "admin",
+            "developer": "developer"
+        },
+        "title": "Profile",
+        "id": "ID",
+        "role": "Role",
+        "first_name": "First name",
+        "last_name": "Last name",
+        "email": "E-Mail"
+    },
+    "login": {
+        "title": "Sign in",
+        "not_registered_yet": "Not registered yet?",
+        "register_account": "Register account.",
+        "labels": {
+            "email": "E-Mail",
+            "password": "Password"
+        },
+        "buttons": {
+            "sign_in": "Sign in"
+        }
+    },
+    "register": {
+        "title": "Sign up",
+        "already_registered": "Already registered?",
+        "sign_in_account": "Sign in account.",
+        "labels": {
+            "first_name": "First name",
+            "last_name": "Last name",
+            "email": "E-Mail",
+            "password": "Password",
+            "confirm_password": "Confirm password"
+        },
+        "buttons": {
+            "sign_up": "Sign up"
+        }
+    }
+}
