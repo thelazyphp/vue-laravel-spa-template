@@ -10,14 +10,14 @@
                 {{ parser.name }}
             </p>
 
-            <ul class="list-inline">
-                <input
-                    ref="file"
-                    class="d-none"
-                    type="file"
-                    accept="application/json"
-                >
+            <input
+                ref="file"
+                class="d-none"
+                type="file"
+                accept="application/json"
+            >
 
+            <ul class="list-inline">
                 <li class="list-inline-item">
                     <a
                         class="btn btn-primary"
