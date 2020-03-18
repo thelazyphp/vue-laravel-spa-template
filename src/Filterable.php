@@ -18,8 +18,7 @@ trait Filterable
         $request->validate(['search' => 'string']);
 
         if ($request->has('search')) {
-            $searchValue = $request->search;
-            $keywords = preg_split('/[\s,;]+/', $searchValue);
+            $keywords = preg_split('/[\s,;]+/', $request->search);
 
             foreach ($keywords as $keyword) {
                 $query = $query->where(function ($query) use ($searchProps, $keyword) {
