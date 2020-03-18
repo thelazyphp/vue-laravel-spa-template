@@ -18,14 +18,14 @@ trait Sortable
 
         if ($request->has('sort')) {
             $sortOrder = 'asc';
-            $sortProp = $request->sort;
+            $sortProp = str_replace('.', '_', $request->sort);
 
             if (strpos($sortProp, '-') === 0) {
                 $sortOrder = 'desc';
                 $sortProp = substr($sortProp, 1);
             }
 
-            $query = $query->orderBy($sortProp, $sortOrder);
+            $query = $query->whereNotNull($sortProp)->orderBy($sortProp, $sortOrder);
         }
 
         return $query;
