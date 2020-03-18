@@ -14,6 +14,8 @@ trait Filterable
      */
     protected function filter(Request $request, Builder $query)
     {
+        $request->validate(['filter' => 'array']);
+
         foreach ($request->get('filter', []) as $filterProp => $filterValue) {
             $filterProp = str_replace('.', '_', $filterProp);
 
@@ -39,6 +41,8 @@ trait Filterable
      */
     protected function search(Request $request, Builder $query, $searchProps)
     {
+        $request->validate(['search' => 'string']);
+
         if ($request->has('search')) {
             $searchValue = $request->search;
             $keywords = preg_split('/[\s,;]+/', $searchValue);

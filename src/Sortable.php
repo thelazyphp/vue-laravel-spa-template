@@ -14,6 +14,8 @@ trait Sortable
      */
     protected function sort(Request $request, Builder $query)
     {
+        $request->validate(['sort' => 'string']);
+
         if ($request->has('sort')) {
             $sortOrder = 'asc';
             $sortProp = $request->sort;
