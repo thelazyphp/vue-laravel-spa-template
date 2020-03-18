@@ -39,7 +39,7 @@ trait Filterable
      * @param  array  $searchProps
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function search(Request $request, Builder $query, $searchProps)
+    protected function search(Request $request, Builder $query, $searchProps = [])
     {
         $request->validate(['search' => 'string']);
 
