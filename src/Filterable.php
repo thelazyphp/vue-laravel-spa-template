@@ -44,8 +44,10 @@ trait Filterable
         foreach ($request->get('filter', []) as $filterProp => $filterValue) {
             $filterProp = str_replace('.', '_', $filterProp);
 
-            if (strpos($filterProp, '_min') === false && strpos($filterProp, '_max') === false) {
-                $query = $query->whereNotNull($filterProp)->where($filterProp, $filterValue);
+            if (is_array($filterValue)) {
+                $query = $query->whereIn($filterProp, $filterValue);
+            } else if (strpos($filterProp, '_min') === false && strpos($filterProp, '_max') === false) {
+                $query = $query->where($filterProp, $filterValue);
             } else if (strpos($filterProp, '_min') !== false) {
                 $filterProp = str_replace('_min', '', $filterProp);
                 $query = $query->whereNotNull($filterProp)->where($filterProp, '>=', $filterValue);
