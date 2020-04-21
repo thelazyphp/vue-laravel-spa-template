@@ -1,10 +1,20 @@
-import 'bootstrap'
+import './bootstrap'
 import Vue from 'vue'
 import App from './App'
 import store from './store'
 import router from './router'
+import Http from './plugins/Http'
 
 Vue.config.productionTip = false
+
+Vue.use(Http, {
+    baseURL: process.env.MIX_API_URL,
+
+    auth: {
+        type: 'Bearer',
+        token: store.state.auth.token
+    }
+})
 
 new Vue({
     store,

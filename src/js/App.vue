@@ -1,23 +1,23 @@
 <template>
-    <div id="app">
-        <TheHeader/>
-
-        <main>
-            <router-view></router-view>
-        </main>
-
-        <TheFooter/>
+    <div
+        id="app"
+        class="app-wrapper"
+    >
+        <the-header></the-header>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
     import TheHeader from './components/TheHeader'
-    import TheFooter from './components/TheFooter'
 
     export default {
-        components: {
-            TheHeader,
-            TheFooter
-        }
+        components: { TheHeader }
     }
 </script>
+
+<style scoped>
+    .app-wrapper {
+        position: relative;
+    }
+</style>

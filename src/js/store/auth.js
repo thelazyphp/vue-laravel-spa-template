@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import Vue from 'vue'
 
 export default {
     namespaced: true,
@@ -9,14 +9,14 @@ export default {
 
     getters: {
         isAuth (state) {
-            return !! state.token
+            return !!state.token
         }
     },
 
     mutations: {
-        setToken (state, token) {
-            state.token = token
-            localStorage.setItem('token', token)
+        setToken (state, payload) {
+            state.token = payload
+            localStorage.setItem('token', payload)
         },
 
         removeToken (state) {
@@ -28,7 +28,7 @@ export default {
     actions: {
         signIn ({ commit }, formData) {
             return new Promise((resolve, reject) => {
-                request.post('/auth/login', formData)
+                Vue.Http.post('/auth/login', formData)
                     .then(response => {
                         commit('setToken', response.data.access_token)
                         return resolve(response)
@@ -42,10 +42,13 @@ export default {
 
         signOut ({ commit }) {
             return new Promise((resolve, reject) => {
-                request.post('/auth/logout')
+                Vue.Http.post('/auth/logout')
                     .then(response => resolve(response))
                     .catch(error => reject(error))
-                    .finally(() => commit('removeToken'))
+                    .finally(() => {
+                        commit('removeToken')
+                        commit('users/setCurrent', null, { root: true })
+                    })
             })
         }
     }

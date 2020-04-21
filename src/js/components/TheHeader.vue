@@ -1,132 +1,44 @@
 <template>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <router-link
-                class="navbar-brand"
-                to="/"
-            >
-                {{ appName }}
-            </router-link>
+    <nav class="navbar sticky-top navbar-light bg-white border-bottom">
+        <router-link
+            to="/"
+            class="navbar-brand">{{ appName }} <sup class="badge badge-primary">beta</sup></router-link>
 
+        <form
+            v-if="$store.getters['auth/isAuth']"
+            class="form-inline"
+            @submit.prevent="signOut"
+        >
             <button
-                class="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-                <span class="navbar-toggler-icon"></span>
-            </button>
+                type="submit"
+                class="btn btn-outline-primary">Выйти</button>
+        </form>
 
-            <div
-                id="navbarSupportedContent"
-                class="collapse navbar-collapse"
-            >
-                <ul
-                    v-if="isAuth"
-                    class="navbar-nav mr-auto"
-                >
-                </ul>
-
-                <ul
-                    v-if="isAuth"
-                    key="is-auth"
-                    class="navbar-nav ml-auto"
-                >
-                    <li class="nav-item">
-                        <a
-                            class="nav-link"
-                            href="javascript:void(0)"
-                            @click="onSignOut"
-                        >
-                            Выйти
-                        </a>
-                    </li>
-                </ul>
-
-                <ul
-                    v-else
-                    key="is-not-auth"
-                    class="navbar-nav ml-auto"
-                >
-                    <li class="nav-item">
-                        <router-link
-                            class="nav-link"
-                            to="/login"
-                        >
-                            Войти
-                        </router-link>
-                    </li>
-
-                    <li class="nav-item">
-                        <router-link
-                            class="nav-link"
-                            to="/register"
-                        >
-                            Регистрация
-                        </router-link>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <AppAlert
-            v-if="alert.show"
-            class="rounded-0 mb-0"
-            :type="alert.type"
-            :message="alert.message"
-            @close="onAlertClose"
-        />
-    </header>
+        <form
+            v-else
+            class="form-inline"
+        >
+            <router-link
+                to="/sign-in"
+                class="btn btn-outline-primary">Войти</router-link>
+        </form>
+    </nav>
 </template>
 
 <script>
-    import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-    import AppAlert from './AppAlert'
-
     export default {
         name: 'TheHeader',
 
-        components: {
-            AppAlert
-        },
-
         computed: {
-            ...mapState({
-                alert: state => state.alert
-            }),
-
-            ...mapGetters([
-                'auth/isAuth'
-            ]),
-
-            isAuth () {
-                return this['auth/isAuth']
-            },
-
             appName () {
                 return process.env.MIX_APP_NAME
             }
         },
 
         methods: {
-            ...mapMutations([
-                'alert/close'
-            ]),
-
-            ...mapActions([
-                'auth/signOut'
-            ]),
-
-            onAlertClose () {
-                this['alert/close']()
-            },
-
-            onSignOut () {
-                this['auth/signOut']()
-                    .then(() => this.$router.push('/login'))
+            signOut () {
+                this.$store.dispatch('auth/signOut')
+                    .then(() => this.$router.push('/sign-in')).catch(error => console.log(error))
             }
         }
     }

@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import Vue from 'vue'
 
 export default {
     namespaced: true,
@@ -8,20 +8,20 @@ export default {
     },
 
     mutations: {
-        setCurrent (state, user) {
-            state.current = user
+        setCurrent (state, payload) {
+            state.current = payload
         }
     },
 
     actions: {
         fetchCurrent ({ commit }) {
             return new Promise((resolve, reject) => {
-                request.get('/users/current')
+                Vue.Http.get('/users/current')
                     .then(response => {
                         commit('setCurrent', response.data)
                         return resolve(response)
                     })
-                    .catch(error => reject(error))
+                    .catch((error) => reject(error))
             })
         }
     }
