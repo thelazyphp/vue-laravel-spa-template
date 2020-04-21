@@ -15,8 +15,10 @@ export default {
 
     actions: {
         fetchCurrent ({ commit }) {
+            const endpoint = '/users/current'
+
             return new Promise((resolve, reject) => {
-                Vue.Http.get('/users/current')
+                Vue.Http.get(endpoint)
                     .then(response => {
                         commit('setCurrent', response.data)
                         return resolve(response)

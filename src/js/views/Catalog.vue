@@ -11,7 +11,22 @@
             >
                 <apartments-table
                     v-if="$store.state.catalog.data"
-                    :items="$store.state.catalog.data.data"></apartments-table>
+                    :sort-value="$store.state.catalog.sort"
+                    :items="$store.state.catalog.data.data"
+                    @update-sort-value="setSort"></apartments-table>
+
+                <div
+                    v-if="$store.state.catalog.data"
+                    class="container-fluid"
+                >
+                    <v-pagination
+                        class="mt-3"
+                        align="right"
+                        :limit="1"
+                        :show-disabled="true"
+                        :data="$store.state.catalog.data"
+                        @pagination-change-page="setPage"></v-pagination>
+                </div>
             </main>
         </div>
     </div>
@@ -26,9 +41,7 @@
         components: { ApartmentsTable },
 
         created () {
-            this.$store.dispatch(
-                'catalog/fetchData', this.$route.params.category
-            )
+            this.fetchData()
         },
 
         beforeRouteEnter (to, from, next) {
@@ -52,6 +65,25 @@
                 }
 
                 next()
+            }
+        },
+
+        methods: {
+            fetchData () {
+                this.$store.dispatch(
+                    'catalog/fetchData',
+                    this.$route.params.category
+                )
+            },
+
+            setSort (sort) {
+                this.$store.commit('catalog/setSort', sort)
+                this.fetchData()
+            },
+
+            setPage (page) {
+                this.$store.commit('catalog/setPage', page)
+                this.fetchData()
             }
         }
     }

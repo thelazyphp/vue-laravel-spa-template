@@ -22,7 +22,10 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    if (store.getters['auth/isAuth'] && !store.state.users.current) {
+    if (
+        store.getters['auth/isAuth']
+        && !store.state.users.current
+    ) {
         store.dispatch('users/fetchCurrent')
             .catch(error => console.log(error)).finally(() => next())
     } else {

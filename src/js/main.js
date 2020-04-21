@@ -16,6 +16,8 @@ Vue.use(Http, {
     }
 })
 
+Vue.component('VPagination', require('laravel-vue-pagination'))
+
 new Vue({
     store,
     router,

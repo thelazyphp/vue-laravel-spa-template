@@ -27,8 +27,10 @@ export default {
 
     actions: {
         signIn ({ commit }, formData) {
+            const endpoint = '/auth/login'
+
             return new Promise((resolve, reject) => {
-                Vue.Http.post('/auth/login', formData)
+                Vue.Http.post(endpoint, formData)
                     .then(response => {
                         commit('setToken', response.data.access_token)
                         return resolve(response)
@@ -41,8 +43,10 @@ export default {
         },
 
         signOut ({ commit }) {
+            const endpoint = '/auth/logout'
+
             return new Promise((resolve, reject) => {
-                Vue.Http.post('/auth/logout')
+                Vue.Http.post(endpoint)
                     .then(response => resolve(response))
                     .catch(error => reject(error))
                     .finally(() => {

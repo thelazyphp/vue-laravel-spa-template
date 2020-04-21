@@ -43,6 +43,8 @@ export default {
 
     actions: {
         fetchData ({ state, commit }, category) {
+            const endpoint = `/catalog/${category}`
+
             const params = {
                 sort: state.sort,
                 page: state.page,
@@ -52,7 +54,7 @@ export default {
             return new Promise((resolve, reject) => {
                 commit('setLoading', true)
 
-                Vue.Http.get(`/catalog/${category}`, { params })
+                Vue.Http.get(endpoint, { params })
                     .then(response => {
                         commit('setData', response.data)
                         return resolve(response)
@@ -64,9 +66,10 @@ export default {
 
         toggleFavorited ({ getters }, { category, id }) {
             const item = getters.getItemById(id)
+            const endpoint = `/catalog/${category}/${id}/toggle-favorited`
 
             return new Promise((resolve, reject) => {
-                Vue.Http.post(`/catalog/${category}/${id}/toggle-favorited`)
+                Vue.Http.post(endpoint)
                     .then(response => {
                         item.is_favorited = !item.is_favorited
                         return resolve(response)
