@@ -4,6 +4,21 @@ namespace App\Models;
 
 trait Filterable
 {
+    public function scopeSearchBy($query, $value, $props)
+    {
+        $keywords = preg_split('/[\s,]+/', $value);
+
+        foreach ($props as $prop) {
+            $query = $query->where(function ($query) use ($prop, $keywords) {
+                foreach ($keywords as $keyword) {
+                    $query = $query->orWhereLike($prop, "%{$keyword}%");
+                }
+            });
+        }
+
+        return $query;
+    }
+
     public function scopeFilterBy($query, $props)
     {
         foreach ($props as $key => $value) {
