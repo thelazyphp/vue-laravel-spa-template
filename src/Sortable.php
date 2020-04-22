@@ -1,33 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
-
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Builder;
+namespace App\Models;
 
 trait Sortable
 {
-    /**
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    protected function sort(Request $request, Builder $query)
+    public function scopeSortBy($query, $prop)
     {
-        $request->validate(['sort' => 'string']);
+        $order = 'asc';
 
-        if ($request->has('sort')) {
-            $sortOrder = 'asc';
-            $sortProp = str_replace('.', '_', $request->sort);
-
-            if (strpos($sortProp, '-') === 0) {
-                $sortOrder = 'desc';
-                $sortProp = substr($sortProp, 1);
-            }
-
-            $query = $query->whereNotNull($sortProp)->orderBy($sortProp, $sortOrder);
+        if (strpos($prop, '-') === 0) {
+            $order = 'desc';
+            $prop = substr($prop, 1);
         }
 
-        return $query;
+        return $query->orderBy($prop, $order);
     }
 }

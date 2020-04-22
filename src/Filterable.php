@@ -1,59 +1,64 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
-
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Builder;
+namespace App\Models;
 
 trait Filterable
 {
-    /**
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  array  $searchProps
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    protected function search(Request $request, Builder $query, $searchProps = [])
+    public function scopeFilter($query, $props)
     {
-        $request->validate(['search' => 'string']);
-
-        if ($request->has('search')) {
-            $keywords = preg_split('/[\s,;]+/', $request->search);
-
-            foreach ($keywords as $keyword) {
-                $query = $query->where(function ($query) use ($searchProps, $keyword) {
-                    foreach ($searchProps as $searchProp) {
-                        $query = $query->orWhere($searchProp, 'like', "%{$keyword}%");
+        foreach ($props as $key => $value) {
+            if (is_array($value)) {
+                if (
+                    isset($value['min'])
+                    || isset($value['max'])
+                    || isset($value['not'])
+                ) {
+                    if (isset($value['min'])) {
+                        $query = $query->where($key, '>=', $value['min']);
                     }
-                });
-            }
-        }
 
-        return $query;
-    }
+                    if (isset($value['max'])) {
+                        $query = $query->where($key, '<=', $value['max']);
+                    }
 
-    /**
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    protected function filter(Request $request, Builder $query)
-    {
-        $request->validate(['filter' => 'array']);
+                    if (isset($value['not'])) {
+                        $query = ($value['not'] === null)
+                            ? $query->whereNotNull($key)
+                            : $query->where($key, '<>', $value['not']);
+                    }
+                } else {
+                    $query = $query->where(function ($query) use ($key, $value) {
+                        foreach ($value as $v) {
+                            if (! is_string($v)) {
+                                $query = $query->orWhere($key, $v);
+                            } else {
+                                $len = strlen($v);
 
-        foreach ($request->get('filter', []) as $filterProp => $filterValue) {
-            $filterProp = str_replace('.', '_', $filterProp);
+                                if (strpos($v, '-') === $len) {
+                                    $v = substr($v, 0, $len - 1);
+                                    $query = $query->orWhere($key, '<=', $v);
+                                } else if (strpos($v, '+') === $len) {
+                                    $v = substr($v, 0, $len - 1);
+                                    $query = $query->orWhere($key, '>=', $v);
+                                }
+                            }
+                        }
+                    });
+                }
+            } else {
+                if (! is_string($value)) {
+                    $query = $query->where($key, $value);
+                } else {
+                    $len = strlen($value);
 
-            if (is_array($filterValue)) {
-                $query = $query->whereIn($filterProp, $filterValue);
-            } else if (strpos($filterProp, '_min') === false && strpos($filterProp, '_max') === false) {
-                $query = $query->where($filterProp, $filterValue);
-            } else if (strpos($filterProp, '_min') !== false) {
-                $filterProp = str_replace('_min', '', $filterProp);
-                $query = $query->whereNotNull($filterProp)->where($filterProp, '>=', $filterValue);
-            } else if (strpos($filterProp, '_max') !== false) {
-                $filterProp = str_replace('_max', '', $filterProp);
-                $query = $query->whereNotNull($filterProp)->where($filterProp, '<=', $filterValue);
+                    if (strpos($value, '-') === $len) {
+                        $value = substr($value, 0, $len - 1);
+                        $query = $query->where($key, '<=', $value);
+                    } else if (strpos($value, '+') === $len) {
+                        $value = substr($value, 0, $len - 1);
+                        $query = $query->where($key, '>=', $value);
+                    }
+                }
             }
         }
 
