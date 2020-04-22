@@ -9,7 +9,7 @@ trait Filterable
         $keywords = preg_split('/[\s,]+/', $value);
 
         foreach ($props as $prop) {
-            $query = $query->where(function ($query) use ($prop, $keywords) {
+            $query = $query->orWhere(function ($query) use ($prop, $keywords) {
                 foreach ($keywords as $keyword) {
                     $query = $query->orWhereLike($prop, "%{$keyword}%");
                 }
