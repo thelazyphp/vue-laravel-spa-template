@@ -100,7 +100,7 @@ class Apartment extends JsonResource
                     'district' => $this->address_components_district,
                     'street'   => $this->address_components_street,
                     'house'    => $this->address_components_house,
-                ]
+                ],
             ],
 
             'is_published' => $this->is_published,
