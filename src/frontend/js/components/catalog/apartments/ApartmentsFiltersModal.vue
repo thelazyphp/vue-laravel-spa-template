@@ -406,7 +406,6 @@
 
                 <div class="modal-footer border-top-0">
                     <button
-                        v-show="!filterClear"
                         type="button"
                         class="btn btn-danger"
                         data-dismiss="modal"
@@ -453,12 +452,6 @@
             return {
                 filter: null,
             }
-        },
-
-        computed: {
-            filterClear () {
-                return JSON.stringify(this.filter) == JSON.stringify(this.filterProps)
-            },
         },
 
         created () {

@@ -250,7 +250,23 @@
             },
         },
 
+        created () {
+            this.initItems()
+        },
+
+        updated () {
+            this.initItems()
+        },
+
         methods: {
+            initItems () {
+                this.items.forEach(item => {
+                    if (item.checked) {
+                        this.checkedItems.push(item)
+                    }
+                })
+            },
+
             updateSortValue (prop) {
                 this.$emit(
                     'update-sort-value',
