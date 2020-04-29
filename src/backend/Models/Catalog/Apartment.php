@@ -84,8 +84,9 @@ class Apartment extends Model
         'seller_is_private' => 'boolean',
         'seller_company_phones' => 'array',
         'seller_contact_person_phones' => 'array',
-        'price_amount' => 'integer',
         'price_history' => 'array',
+        'price_per_sqm' => 'float',
+        'price_amount' => 'integer',
         'address_coordinates' => 'array',
         'is_published' => 'boolean',
     ];
