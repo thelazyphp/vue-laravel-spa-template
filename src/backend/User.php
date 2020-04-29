@@ -12,6 +12,11 @@ class User extends Authenticatable
     const ROLE_ADMIN = 'admin';
     const ROLE_EMPLOYEE = 'employee';
 
+    const VALID_ROLES = [
+        self::ROLE_ADMIN,
+        self::ROLE_EMPLOYEE,
+    ];
+
     use HasApiTokens, Notifiable;
 
     /**
