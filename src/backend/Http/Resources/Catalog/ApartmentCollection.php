@@ -27,6 +27,9 @@ class ApartmentCollection extends ResourceCollection
                 'favorited_total' => Apartment::getFavorited()->count(),
 
                 'filter_props' => [
+                    'id' => [],
+                    'sell_type' => Apartment::SELL_TYPE_SELL,
+
                     'rooms' => [],
 
                     'floor' => [

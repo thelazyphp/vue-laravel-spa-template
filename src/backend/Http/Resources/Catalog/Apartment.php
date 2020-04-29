@@ -82,17 +82,17 @@ class Apartment extends JsonResource
             ],
 
             'price' => [
-                'amount'   => $this->price_amount,
-                'per_sqm'   => $this->price_per_sqm,
-                'currency' => $this->price_currency,
                 'history'  => $this->price_history,
+                'per_sqm'  => $this->price_per_sqm,
+                'amount'   => $this->price_amount,
+                'currency' => $this->price_currency,
             ],
 
             'address' => [
                 'coordinates' => $this->address_coordinates,
                 'formatted'   => $this->address_formatted,
 
-                'components'   => [
+                'components' => [
                     'country'  => $this->address_components_country,
                     'province' => $this->address_components_province,
                     'area'     => $this->address_components_area,
