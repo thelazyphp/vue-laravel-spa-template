@@ -152,6 +152,7 @@
                     <td>
                         <a
                             href="javascript:void(0)"
+                            class="mx-1"
                             role="button"
                             :title="item.is_favorited ? 'Удалить из избранных' : 'Добавить в избранные'"
                             @click="$store.dispatch('catalog/toggleFavorited', { category: 'apartments', id: item.id })"><i :class="['fa-star', item.is_favorited ? 'fas' : 'far']"></i></a>
@@ -171,7 +172,12 @@
                     <td :title="item.bathroom.label">{{ item.bathroom.value }}</td>
                     <td :title="item.price.amount ? (item.price.amount + (item.price.currency ? (' ' + item.price.currency) : '')) : 'Цена договорная'">{{ item.price.amount ? item.price.amount : 'догов.' }}</td>
                     <td :title="item.price.amount && item.size.total ? (Math.round(item.price.amount / item.size.total) + (item.price.currency ? (' ' + item.price.currency + '/кв.м') : '')) : null">{{ item.price.amount && item.size.total ? (Math.round(item.price.amount / item.size.total)) : null }}</td>
-                    <td :title="item.seller.is_private ? 'Частное лицо' : 'Агентство/застройщик'">{{ item.seller.is_private ? 'ч' : 'а' }}</td>
+
+                    <td>
+                        <span
+                            :title="item.seller.is_private ? 'Частное лицо' : 'Агентство/застройщик'"
+                            :class="['p-1 alert', item.seller.is_private ? 'alert-danger' : 'alert-primary']">{{ item.seller.is_private ? 'ч' : 'а' }}</span>
+                    </td>
 
                     <td>
                         <div
@@ -212,19 +218,19 @@
                 default () {
                     return []
                 }
-            }
+            },
         },
 
         data () {
             return {
-                checkedItems: []
+                checkedItems: [],
             }
         },
 
         watch: {
             checkedItems (value) {
                 this.$emit('check-items', value)
-            }
+            },
         },
 
         computed: {
@@ -241,25 +247,17 @@
                         this.items.forEach(item => this.checkedItems.push(item))
                     }
                 }
-            }
+            },
         },
 
         methods: {
-            isSortAsc (prop) {
-                return this.sortValue == prop
-            },
-
-            isSortDesc (prop) {
-                return this.sortValue == `-${prop}`
-            },
-
             updateSortValue (prop) {
                 this.$emit(
                     'update-sort-value',
-                    this.isSortAsc(prop) ? `-${prop}` : prop
+                    this.sortValue == prop ? `-${prop}` : prop
                 )
-            }
-        }
+            },
+        },
     }
 </script>
 

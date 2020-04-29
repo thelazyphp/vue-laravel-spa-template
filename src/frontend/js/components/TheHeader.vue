@@ -32,14 +32,14 @@
         computed: {
             appName () {
                 return process.env.MIX_APP_NAME
-            }
+            },
         },
 
         methods: {
             signOut () {
                 this.$store.dispatch('auth/signOut')
                     .then(() => this.$router.push('/sign-in')).catch(error => console.log(error))
-            }
-        }
+            },
+        },
     }
 </script>

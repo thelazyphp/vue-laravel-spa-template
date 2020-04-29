@@ -4,13 +4,13 @@ export default {
     namespaced: true,
 
     state: {
-        current: null
+        current: null,
     },
 
     mutations: {
         setCurrent (state, payload) {
             state.current = payload
-        }
+        },
     },
 
     actions: {
@@ -25,6 +25,6 @@ export default {
                     })
                     .catch(error => reject(error))
             })
-        }
-    }
+        },
+    },
 }

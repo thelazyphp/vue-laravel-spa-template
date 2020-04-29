@@ -11,5 +11,5 @@ export default new Vuex.Store({
         auth,
         users,
         catalog,
-    }
+    },
 })

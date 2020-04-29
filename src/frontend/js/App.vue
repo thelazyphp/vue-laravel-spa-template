@@ -12,7 +12,7 @@
     import TheHeader from './components/TheHeader'
 
     export default {
-        components: { TheHeader }
+        components: { TheHeader },
     }
 </script>
 

@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import axios from 'axios'
 
 const serializeParams = (params, prefix = null) => {
@@ -45,30 +46,25 @@ const Http = {
         const instance = axios.create({
             baseURL: options.baseURL,
 
-            paramsSerializer: (params) => {
-                return serializeParams(params)
-            },
-
             headers: {
                 'accept': 'application/json',
                 'content-type': 'application/json',
-            }
+            },
+
+            paramsSerializer: (params) => serializeParams(params)
         })
-
-        instance.interceptors.request.use(request => {
-            if (
-                options.auth.type == 'Bearer'
-                && options.auth.token
-            ) {
-                request.headers.common['authorization'] = `Bearer ${options.auth.token}`
-            }
-
-            return request
-        }, error => Promise.reject(error))
 
         Vue.Http = instance
         Vue.prototype.$http = instance
-    }
+    },
+
+    forgetAccessToken () {
+        Vue.Http.defaults.headers.common['authorization'] = null
+    },
+
+    setAccessToken (token) {
+        Vue.Http.defaults.headers.common['authorization'] = `Bearer ${token}`
+    },
 }
 
 export default Http

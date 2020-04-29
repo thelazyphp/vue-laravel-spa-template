@@ -1,28 +1,31 @@
 import Vue from 'vue'
+import Http from '../plugins/Http'
 
 export default {
     namespaced: true,
 
     state: {
-        token: localStorage.getItem('token')
+        token: localStorage.getItem('token'),
     },
 
     getters: {
         isAuth (state) {
             return !!state.token
-        }
+        },
     },
 
     mutations: {
-        setToken (state, payload) {
-            state.token = payload
-            localStorage.setItem('token', payload)
-        },
-
         removeToken (state) {
             state.token = null
+            Http.forgetAccessToken()
             localStorage.removeItem('token')
-        }
+        },
+
+        setToken (state, payload) {
+            state.token = payload
+            Http.setAccessToken(payload)
+            localStorage.setItem('token', payload)
+        },
     },
 
     actions: {
@@ -54,6 +57,6 @@ export default {
                         commit('users/setCurrent', null, { root: true })
                     })
             })
-        }
-    }
+        },
+    },
 }

@@ -17,7 +17,7 @@ const router = new VueRouter({
         { path: '/sign-in', component: SignIn },
         { path: '/sign-up', component: SignUp },
         { path: '/catalog/:category', component: Catalog },
-        { path: '*', redirect: '/' }
+        { path: '*', redirect: '/' },
     ]
 })
 

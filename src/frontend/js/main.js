@@ -7,19 +7,13 @@ import Http from './plugins/Http'
 
 Vue.config.productionTip = false
 
-Vue.use(Http, {
-    baseURL: process.env.MIX_API_URL,
-
-    auth: {
-        type: 'Bearer',
-        token: store.state.auth.token
-    }
-})
+Vue.use(Http, { baseURL: process.env.MIX_API_URL })
+Http.setAccessToken(store.state.auth.token)
 
 Vue.component('VPagination', require('laravel-vue-pagination'))
 
 new Vue({
     store,
     router,
-    render: h => h(App)
+    render: h => h(App),
 }).$mount('#app')

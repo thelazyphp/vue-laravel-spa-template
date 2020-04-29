@@ -314,14 +314,14 @@
                         </div>
 
                         <div
-                            v-if="$store.state.catalog.data"
+                            v-if="sources"
                             class="form-group"
                         >
                             <p class="mb-2">Источник</p>
 
                             <div class="row no-gutters">
                                 <div
-                                    v-for="(source, index) in $store.state.catalog.data.included.sources"
+                                    v-for="(source, index) in sources"
                                     :key="index"
                                     class="col-sm-6"
                                 >
@@ -354,7 +354,7 @@
                             >
                                 <option :value="null">Любой</option>
                                 <option :value="1">Частное лицо</option>
-                                <option :value="0">Агентство недвижимости</option>
+                                <option :value="0">Агентство/застройщик</option>
                             </select>
                         </div>
 
@@ -406,7 +406,7 @@
 
                 <div class="modal-footer border-top-0">
                     <button
-                        v-show="!isFilterClear"
+                        v-show="!filterClear"
                         type="button"
                         class="btn btn-danger"
                         data-dismiss="modal"
@@ -428,6 +428,11 @@
         name: 'ApartmentsFiltersModal',
 
         props: {
+            sources: {
+                type: Array,
+                required: true
+            },
+
             filterValue: {
                 type: Object,
                 required: true
@@ -441,19 +446,19 @@
             filterOptions: {
                 type: Object,
                 required: true
-            }
+            },
         },
 
         data () {
             return {
-                filter: null
+                filter: null,
             }
         },
 
         computed: {
-            isFilterClear () {
+            filterClear () {
                 return JSON.stringify(this.filter) == JSON.stringify(this.filterProps)
-            }
+            },
         },
 
         created () {
@@ -471,7 +476,7 @@
 
             updateFilterValue () {
                 this.$emit('update-filter-value', this.filter)
-            }
+            },
         }
     }
 </script>

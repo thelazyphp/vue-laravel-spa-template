@@ -4,12 +4,19 @@ export default {
     namespaced: true,
 
     state: {
-        loading: false,
-        data: null,
+        table: 'db',
+        search: null,
         filter: null,
         sort: null,
         page: 1,
-        perPage: 25
+        perPage: 25,
+        loading: false,
+        data: null,
+        sources: null,
+        total: null,
+        favoritedTotal: null,
+        filterProps: null,
+        filterOptions: null,
     },
 
     getters: {
@@ -17,16 +24,16 @@ export default {
             return id => {
                 return state.data.data.find(item => item.id == id)
             }
-        }
+        },
     },
 
     mutations: {
-        setLoading (state, payload) {
-            state.loading = payload
+        setTable (state, payload) {
+            state.table = payload
         },
 
-        setData (state, payload) {
-            state.data = payload
+        setSearch (state, payload) {
+            state.search = payload
         },
 
         setFilter (state, payload) {
@@ -43,18 +50,59 @@ export default {
 
         setPerPage (state, payload) {
             state.perPage = payload
-        }
+        },
+
+        setLoading (state, payload) {
+            state.loading = payload
+        },
+
+        setData (state, payload) {
+            state.data = payload
+        },
+
+        setSources (state, payload) {
+            state.sources = payload
+        },
+
+        setTotal (state, payload) {
+            state.total = payload
+        },
+
+        setFavoritedTotal (state, payload) {
+            state.favoritedTotal = payload
+        },
+
+        incrementFavoritedTotal (state) {
+            state.favoritedTotal++
+        },
+
+        decrementFavoritedTotal (state) {
+            state.favoritedTotal--
+        },
+
+        setFilterProps (state, payload) {
+            state.filterProps = payload
+        },
+
+        setFilterOptions (state, payload) {
+            state.filterOptions = payload
+        },
     },
 
     actions: {
-        fetchData ({ state, commit }, category) {
-            const endpoint = `/catalog/${category}`
+        fetchData ({ state, commit }, { category, fetchFavorited }) {
+            let endpoint = `/catalog/${category}`
+
+            if (fetchFavorited) {
+                endpoint += '/favorited'
+            }
 
             const params = {
+                search: state.search,
                 filter: state.filter,
                 sort: state.sort,
                 page: state.page,
-                per_page: state.perPage
+                per_page: state.perPage,
             }
 
             return new Promise((resolve, reject) => {
@@ -70,18 +118,55 @@ export default {
             })
         },
 
-        toggleFavorited ({ getters }, { category, id }) {
+        favorite ({ getters, commit }, { category, id }) {
+            const item = getters.getItemById(id)
+            const endpoint = `/catalog/${category}/${id}/favorite`
+
+            return new Promise((resolve, reject) => {
+                Vue.Http.post(endpoint)
+                    .then(response => {
+                        commit('incrementFavoritedTotal')
+                        item.is_favorited = true
+                        return resolve(response)
+                    })
+                    .catch(error => reject(error))
+            })
+        },
+
+        unfavorite ({ getters, commit }, { category, id }) {
+            const item = getters.getItemById(id)
+            const endpoint = `/catalog/${category}/${id}/unfavorite`
+
+            return new Promise((resolve, reject) => {
+                Vue.Http.post(endpoint)
+                    .then(response => {
+                        commit('decrementFavoritedTotal')
+                        item.is_favorited = false
+                        return resolve(response)
+                    })
+                    .catch(error => reject(error))
+            })
+        },
+
+        toggleFavorited ({ getters, commit }, { category, id }) {
             const item = getters.getItemById(id)
             const endpoint = `/catalog/${category}/${id}/toggle-favorited`
 
             return new Promise((resolve, reject) => {
                 Vue.Http.post(endpoint)
                     .then(response => {
-                        item.is_favorited = !item.is_favorited
+                        if (item.is_favorited) {
+                            commit('decrementFavoritedTotal')
+                            item.is_favorited = false
+                        } else {
+                            commit('incrementFavoritedTotal')
+                            item.is_favorited = true
+                        }
+
                         return resolve(response)
                     })
                     .catch(error => reject(error))
             })
-        }
+        },
     }
 }

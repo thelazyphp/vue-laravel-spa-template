@@ -15,15 +15,8 @@
         name: 'VSortIcon',
 
         props: {
-            sortProp: {
-                type: String,
-                required: true
-            },
-
-            sortValue: {
-                type: String,
-                required: true
-            }
+            sortProp: String,
+            sortValue: String,
         },
 
         computed: {
@@ -33,7 +26,7 @@
 
             desc () {
                 return this.sortValue == `-${this.sortProp}`
-            }
-        }
+            },
+        },
     }
 </script>
