@@ -89,8 +89,8 @@ class Apartment extends JsonResource
             ],
 
             'address' => [
-                'coordinates' => $this->address_coordinates,
                 'formatted'   => $this->address_formatted,
+                'coordinates' => $this->address_coordinates,
 
                 'components' => [
                     'country'  => $this->address_components_country,
