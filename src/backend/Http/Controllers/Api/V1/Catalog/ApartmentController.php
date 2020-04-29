@@ -64,6 +64,30 @@ class ApartmentController extends Controller
     }
 
     /**
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getFavorited(Request $request)
+    {
+        $this->validate($request, [
+            'filter' => 'array',
+            'sort' => 'string',
+            'per_page' => 'integer|min:1',
+        ]);
+
+        $favorited = Apartment::getFavorited()->map(function ($favorited) {
+            return $favorited->id;
+        });
+
+        return new ApartmentCollection(
+            Apartment::whereIn('id', $favorited)
+                ->where('is_published', true)
+                ->filterBy($request->get('filter', []))
+                ->sortBy($request->get('sort', '-published_at'))->paginate($request->get('per_page'))
+        );
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
