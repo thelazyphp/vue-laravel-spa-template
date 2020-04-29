@@ -1,11 +1,11 @@
 <template>
     <i
-        v-if="asc"
+        v-if="isSortAsc"
         key="sortAsc"
         class="fas fa-long-arrow-alt-up"></i>
 
     <i
-        v-else-if="desc"
+        v-else-if="isSortDesc"
         key="sortDesc"
         class="fas fa-long-arrow-alt-down"></i>
 </template>
@@ -20,11 +20,11 @@
         },
 
         computed: {
-            asc () {
+            isSortAsc () {
                 return this.sortValue == this.sortProp
             },
 
-            desc () {
+            isSortDesc () {
                 return this.sortValue == `-${this.sortProp}`
             },
         },

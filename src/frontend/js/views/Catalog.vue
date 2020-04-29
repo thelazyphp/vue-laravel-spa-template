@@ -14,7 +14,8 @@
                     <li class="nav-item">
                         <a
                             href="javascript:void(0)"
-                            :class="['nav-link d-flex align-items-center justify-content-between', { active: $store.state.catalog.table == 'db' }]" @click="setTable('db')"
+                            :class="['nav-link d-flex align-items-center justify-content-between', { active: $store.state.catalog.table == 'db' }]"
+                            @click="setTable('db')"
                         >
                             <span><i class="fas mr-2 fa-database"></i> База данных</span>
                             <span :class="['badge badge-pill', $store.state.catalog.table == 'db' ? 'badge-light' : 'badge-primary']">{{ $store.state.catalog.total }}</span>
@@ -24,22 +25,13 @@
                     <li class="nav-item">
                         <a
                             href="javascript:void(0)"
-                            :class="['nav-link d-flex align-items-center justify-content-between', { active: $store.state.catalog.table == 'favorited' }]" @click="setTable('favorited')"
+                            :class="['nav-link d-flex align-items-center justify-content-between', { active: $store.state.catalog.table == 'favorited' }]"
+                            @click="setTable('favorited')"
                         >
                             <span><i class="fas mr-2 fa-star"></i> Избранные</span>
                             <span :class="['badge badge-pill', $store.state.catalog.table == 'favorited' ? 'badge-light' : 'badge-primary']">{{ $store.state.catalog.favoritedTotal }}</span>
                         </a>
                     </li>
-
-                    <!-- <li class="nav-item">
-                        <a
-                            href="javascript:void(0)"
-                            :class="['nav-link d-flex align-items-center justify-content-between', { active: $store.state.catalog.table == 'clientRequests' }]" @click="setTable('clientRequests')"
-                        >
-                            <span><i class="fas mr-2 fa-filter"></i> Показать заявки</span>
-                            <span :class="['badge badge-pill', $store.state.catalog.table == 'clientRequests' ? 'badge-light' : 'badge-primary']">{{ $store.state.catalog.favoritedTotal + 10 }}</span>
-                        </a>
-                    </li> -->
                 </ul>
             </div>
 
@@ -52,7 +44,7 @@
                         class="btn-toolbar"
                         role="toolbar"
                     >
-                        <form class="mr-2 input-group">
+                        <form class="mr-2 mb-3 flex-grow-1 input-group">
                             <input
                                 type="search"
                                 placeholder="Поиск"
@@ -62,7 +54,10 @@
                                 <button
                                     type="submit"
                                     title="Найти"
-                                    class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                    class="btn btn-primary"
+                                >
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
                         </form>
 
@@ -70,8 +65,8 @@
                             class="mr-2 btn-group"
                             role="group"
                         >
-                            <button type="button" :class="['btn btn-outline-primary', { active: sellType == 'rent' }]" @click="sellType = 'rent'">Аренда</button>
-                            <button type="button" :class="['btn btn-outline-primary', { active: sellType == 'sell' }]" @click="sellType = 'sell'">Продажа</button>
+                            <button type="button" :class="['btn mb-3 btn-outline-primary', { active: sellType == 'rent' }]" @click="sellType = 'rent'">Аренда</button>
+                            <button type="button" :class="['btn mb-3 btn-outline-primary', { active: sellType == 'sell' }]" @click="sellType = 'sell'">Продажа</button>
                         </div>
 
                         <div
@@ -80,9 +75,49 @@
                         >
                             <button
                                 type="button"
-                                class="btn btn-primary"
+                                class="btn mb-3 btn-primary"
                                 data-toggle="modal"
-                                data-target="#filtersModal"><i class="fas mr-2 fa-sliders-h"></i> Фильтры</button>
+                                data-target="#filtersModal"
+                            >
+                                <i class="fas mr-2 fa-sliders-h"></i> Фильтры</button>
+                        </div>
+
+                        <div
+                            class="mr-2 btn-group"
+                            role="group"
+                        >
+                            <button
+                                type="button"
+                                class="btn mb-3 btn-primary dropdown-toggle"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">С отмеченными</button>
+
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a
+                                    href="javascript:void(0)"
+                                    class="dropdown-item"
+                                >
+                                    <i class="far mr-2 fa-star"></i> Удалить из избранных</a>
+
+                                <a
+                                    href="javascript:void(0)"
+                                    class="dropdown-item"
+                                >
+                                    <i class="fas mr-2 fa-star"></i> Добавить в избранные</a>
+                            </div>
+                        </div>
+
+                        <div
+                            v-if="$store.state.catalog.table == 'db'"
+                            class="mr-2 btn-group"
+                            role="group"
+                        >
+                            <button
+                                type="button"
+                                class="btn mb-3 btn-primary"
+                            >
+                                <i class="fas fa-filter"></i><i class="fas mr-2 fa-xs fa-plus"></i> Сохранить заявку</button>
                         </div>
                     </div>
                 </div>
@@ -220,6 +255,12 @@
         methods: {
             setTable (table) {
                 this.$store.commit('catalog/setTable', table)
+
+                this.$store.commit(
+                    'catalog/setFilter',
+                    this.$store.state.catalog.filterProps
+                )
+
                 this.$store.commit('catalog/setPage', 1)
                 return this.fetchData()
             },

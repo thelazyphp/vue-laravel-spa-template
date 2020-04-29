@@ -119,7 +119,7 @@
 
         data () {
             return {
-                loading: false,
+                isLoading: false,
 
                 form: {
                     firstName: null,
@@ -127,8 +127,8 @@
                     companyName: null,
                     email: null,
                     password: null,
-                    passwordConfirmation: null
-                }
+                    passwordConfirmation: null,
+                },
             }
         },
 
@@ -151,23 +151,23 @@
                     company_name: this.form.companyName,
                     email: this.form.email,
                     password: this.form.password,
-                    password_confirmation: this.form.passwordConfirmation
+                    password_confirmation: this.form.passwordConfirmation,
                 }
 
-                this.loading = true
+                this.isLoading = true
 
                 return this.$http.post(endpoint, formData)
                     .then(() => {
                         const formData = {
                             username: this.form.email,
-                            password: this.form.password
+                            password: this.form.password,
                         }
 
                         this.$store.dispatch('auth/signIn', formData)
                             .then(() => this.$router.push('/'))
                     })
-                    .catch(error => console.log(error)).finally(() => this.loading = false)
-            }
-        }
+                    .catch(error => console.log(error)).finally(() => this.isLoading = false)
+            },
+        },
     }
 </script>

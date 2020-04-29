@@ -409,13 +409,17 @@
                         type="button"
                         class="btn btn-danger"
                         data-dismiss="modal"
-                        @click="clearFilterValue"><i class="fas fa-times mr-2"></i> Отчистить</button>
+                        @click="clearFilterValue"
+                    >
+                        <i class="fas fa-times mr-2"></i> Отчистить</button>
 
                     <button
                         type="button"
                         class="btn btn-success"
                         data-dismiss="modal"
-                        @click="updateFilterValue"><i class="fas fa-search mr-2"></i> Показать</button>
+                        @click="updateFilterValue"
+                    >
+                        <i class="fas fa-search mr-2"></i> Показать</button>
                 </div>
             </div>
         </div>
@@ -470,6 +474,6 @@
             updateFilterValue () {
                 this.$emit('update-filter-value', this.filter)
             },
-        }
+        },
     }
 </script>

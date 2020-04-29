@@ -11,7 +11,14 @@
         >
             <button
                 type="submit"
-                class="btn btn-outline-primary">Выйти</button>
+                class="btn btn-outline-primary"
+                :disabled="$store.state.auth.isLoading"
+            >
+                <span
+                    v-if="$store.state.auth.isLoading"
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"></span> Выйти</button>
         </form>
 
         <form

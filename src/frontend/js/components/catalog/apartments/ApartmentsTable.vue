@@ -9,7 +9,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по номеру"
-                        @click="updateSortValue('id')"><v-sort-icon
+                        @click="updateSortValue('id')"
+                    >
+                        <v-sort-icon
                             sort-prop="id"
                             :sort-value="sortValue"></v-sort-icon> №</th>
 
@@ -17,7 +19,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по дате публикации"
-                        @click="updateSortValue('published_at')"><v-sort-icon
+                        @click="updateSortValue('published_at')"
+                    >
+                        <v-sort-icon
                             sort-prop="published_at"
                             :sort-value="sortValue"></v-sort-icon> Опубликовано</th>
 
@@ -25,7 +29,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по количеству комнат"
-                        @click="updateSortValue('rooms')"><v-sort-icon
+                        @click="updateSortValue('rooms')"
+                    >
+                        <v-sort-icon
                             sort-prop="rooms"
                             :sort-value="sortValue"></v-sort-icon> Комнат</th>
 
@@ -33,7 +39,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по этажу"
-                        @click="updateSortValue('floor')"><v-sort-icon
+                        @click="updateSortValue('floor')"
+                    >
+                        <v-sort-icon
                             sort-prop="floor"
                             :sort-value="sortValue"></v-sort-icon> Этаж</th>
 
@@ -41,7 +49,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по этажности"
-                        @click="updateSortValue('floors')"><v-sort-icon
+                        @click="updateSortValue('floors')"
+                    >
+                        <v-sort-icon
                             sort-prop="floors"
                             :sort-value="sortValue"></v-sort-icon> Этажность</th>
 
@@ -49,7 +59,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по году постройки"
-                        @click="updateSortValue('year_built')"><v-sort-icon
+                        @click="updateSortValue('year_built')"
+                    >
+                        <v-sort-icon
                             sort-prop="year_built"
                             :sort-value="sortValue"></v-sort-icon> Год постройки</th>
 
@@ -57,7 +69,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по общей площади"
-                        @click="updateSortValue('size_total')"><v-sort-icon
+                        @click="updateSortValue('size_total')"
+                    >
+                        <v-sort-icon
                             sort-prop="size_total"
                             :sort-value="sortValue"></v-sort-icon> Пл.общ.</th>
 
@@ -65,7 +79,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по жилой площади"
-                        @click="updateSortValue('size_living')"><v-sort-icon
+                        @click="updateSortValue('size_living')"
+                    >
+                        <v-sort-icon
                             sort-prop="size_living"
                             :sort-value="sortValue"></v-sort-icon> Пл.жил.</th>
 
@@ -73,7 +89,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по площади кухни"
-                        @click="updateSortValue('size_kitchen')"><v-sort-icon
+                        @click="updateSortValue('size_kitchen')"
+                    >
+                        <v-sort-icon
                             sort-prop="size_kitchen"
                             :sort-value="sortValue"></v-sort-icon> Пл.кухни</th>
 
@@ -81,7 +99,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по типу стен"
-                        @click="updateSortValue('walls')"><v-sort-icon
+                        @click="updateSortValue('walls')"
+                    >
+                        <v-sort-icon
                             sort-prop="walls"
                             :sort-value="sortValue"></v-sort-icon> Стены</th>
 
@@ -89,7 +109,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по типу балкона"
-                        @click="updateSortValue('balcony')"><v-sort-icon
+                        @click="updateSortValue('balcony')"
+                    >
+                        <v-sort-icon
                             sort-prop="balcony"
                             :sort-value="sortValue"></v-sort-icon> Балкон</th>
 
@@ -97,7 +119,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по типу санузла"
-                        @click="updateSortValue('bathroom')"><v-sort-icon
+                        @click="updateSortValue('bathroom')"
+                    >
+                        <v-sort-icon
                             sort-prop="bathroom"
                             :sort-value="sortValue"></v-sort-icon> Санузел</th>
 
@@ -105,7 +129,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по цене"
-                        @click="updateSortValue('price_amount')"><v-sort-icon
+                        @click="updateSortValue('price_amount')"
+                    >
+                        <v-sort-icon
                             sort-prop="price_amount"
                             :sort-value="sortValue"></v-sort-icon> Цена</th>
 
@@ -113,7 +139,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по цене за квадратный метр"
-                        @click="updateSortValue('price_per_sqm')"><v-sort-icon
+                        @click="updateSortValue('price_per_sqm')"
+                    >
+                        <v-sort-icon
                             sort-prop="price_per_sqm"
                             :sort-value="sortValue"></v-sort-icon> Цена/кв.м</th>
 
@@ -121,7 +149,9 @@
                         scope="col"
                         class="sortable"
                         title="Сортировать по типу продавца"
-                        @click="updateSortValue('seller_is_private')"><v-sort-icon
+                        @click="updateSortValue('seller_is_private')"
+                    >
+                        <v-sort-icon
                             sort-prop="seller_is_private"
                             :sort-value="sortValue"></v-sort-icon> Продавец</th>
 

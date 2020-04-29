@@ -40,10 +40,10 @@
                         <button
                             type="submit"
                             class="btn btn-lg btn-block btn-primary"
-                            :disabled="loading"
+                            :disabled="$store.state.auth.isLoading"
                         >
                             <span
-                                v-if="loading"
+                                v-if="$store.state.auth.isLoading"
                                 class="spinner-border spinner-border-sm"
                                 role="status"
                                 aria-hidden="true"></span> Войти</button>
@@ -62,12 +62,10 @@
 
         data () {
             return {
-                loading: false,
-
                 form: {
                     email: null,
-                    password: null
-                }
+                    password: null,
+                },
             }
         },
 
@@ -84,15 +82,12 @@
             signIn () {
                 const formData = {
                     username: this.form.email,
-                    password: this.form.password
+                    password: this.form.password,
                 }
 
-                this.loading = true
-
                 return this.$store.dispatch('auth/signIn', formData)
-                    .then(() => this.$router.push('/'))
-                    .catch(error => console.log(error)).finally(() => this.loading = false)
-            }
-        }
+                    .then(() => this.$router.push('/')).catch(error => console.log(error))
+            },
+        },
     }
 </script>

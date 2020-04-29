@@ -10,7 +10,7 @@ export default {
         sort: null,
         page: 1,
         perPage: 25,
-        loading: false,
+        isLoading: false,
         data: null,
         sources: null,
         total: null,
@@ -52,8 +52,8 @@ export default {
             state.perPage = payload
         },
 
-        setLoading (state, payload) {
-            state.loading = payload
+        setIsLoading (state, payload) {
+            state.isLoading = payload
         },
 
         setData (state, payload) {
@@ -106,7 +106,7 @@ export default {
             }
 
             return new Promise((resolve, reject) => {
-                commit('setLoading', true)
+                commit('setIsLoading', true)
 
                 Vue.Http.get(endpoint, { params })
                     .then(response => {
@@ -114,7 +114,7 @@ export default {
                         return resolve(response)
                     })
                     .catch(error => reject(error))
-                    .finally(() => commit('setLoading', false))
+                    .finally(() => commit('setIsLoading', false))
             })
         },
 
@@ -168,5 +168,5 @@ export default {
                     .catch(error => reject(error))
             })
         },
-    }
+    },
 }
