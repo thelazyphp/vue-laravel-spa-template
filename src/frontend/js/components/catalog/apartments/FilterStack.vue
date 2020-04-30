@@ -2,7 +2,7 @@
 
 <script>
     export default {
-        name: 'FiltersStack',
+        name: 'FilterStack',
 
         computed: {
             filters () {
