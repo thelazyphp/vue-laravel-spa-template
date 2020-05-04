@@ -1,0 +1,503 @@
+<template>
+    <form
+        @reset.prevent="resetFilter"
+        @submit.prevent="updateFilterValue"
+    >
+        <div class="form-group d-flex btn-group btn-group-sm">
+            <label
+                v-for="(option, index) in rooms"
+                :key="index"
+                :class="['btn', { active: filter.rooms.includes(option.value) }]"
+                :title="option.title">{{ option.label }}<input
+                    v-model="filter.rooms"
+                    type="checkbox"
+                    class="d-none"
+                    :value="option.value"></label>
+        </div>
+
+        <div class="form-group input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Этаж</span>
+            </div>
+
+            <input
+                v-model.number="filter.floor.min"
+                type="number"
+                placeholder="C"
+                class="form-control"
+                :min="1"
+                :step="1">
+
+            <input
+                v-model.number="filter.floor.max"
+                type="number"
+                placeholder="По"
+                class="form-control"
+                :min="1"
+                :step="1">
+
+            <div
+                v-if="filter.floor.min !== null || filter.floor.max !== null"
+                class="input-group-append d-flex align-items-center"
+            >
+                <a
+                    href="javascript:void(0)"
+                    title="Сбросить"
+                    class="ml-2 text-danger"
+                    @click="filter.floor.min = null, filter.floor.max = null, isFilterReset ? updateFilterValue() : false"><i class="fas fa-times"></i></a>
+            </div>
+        </div>
+
+        <div class="form-group input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Этажность</span>
+            </div>
+
+            <input
+                v-model.number="filter.floors.min"
+                type="number"
+                placeholder="От"
+                class="form-control"
+                :min="1"
+                :step="1">
+
+            <input
+                v-model.number="filter.floors.max"
+                type="number"
+                placeholder="До"
+                class="form-control"
+                :min="1"
+                :step="1">
+
+            <div
+                v-if="filter.floors.min !== null || filter.floors.max !== null"
+                class="input-group-append d-flex align-items-center"
+            >
+                <a
+                    href="javascript:void(0)"
+                    title="Сбросить"
+                    class="ml-2 text-danger"
+                    @click="filter.floors.min = null, filter.floors.max = null, isFilterReset ? updateFilterValue() : false"><i class="fas fa-times"></i></a>
+            </div>
+        </div>
+
+        <div class="form-group input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Год постройки</span>
+            </div>
+
+            <select
+                v-model="filter.year_built.min"
+                class="custom-select"
+            >
+                <option :value="null">-- С --</option>
+
+                <option
+                    v-for="year in years"
+                    :key="year"
+                    :value="year">{{ year }}</option>
+            </select>
+
+            <select
+                v-model="filter.year_built.max"
+                class="custom-select"
+            >
+                <option :value="null">-- По --</option>
+
+                <option
+                    v-for="year in years"
+                    :key="year"
+                    :value="year">{{ year }}</option>
+            </select>
+
+            <div
+                v-if="filter.year_built.min !== null || filter.year_built.max !== null"
+                class="input-group-append d-flex align-items-center"
+            >
+                <a
+                    href="javascript:void(0)"
+                    title="Сбросить"
+                    class="ml-2 text-danger"
+                    @click="filter.year_built.min = null, filter.year_built.max = null, isFilterReset ? updateFilterValue() : false"><i class="fas fa-times"></i></a>
+            </div>
+        </div>
+
+        <div class="form-group input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Площадь общая</span>
+            </div>
+
+            <input
+                v-model.number="filter.size_total.min"
+                type="number"
+                placeholder="От"
+                class="form-control"
+                :min="0.01"
+                :step="0.01">
+
+            <input
+                v-model.number="filter.size_total.max"
+                type="number"
+                placeholder="До"
+                class="form-control"
+                :min="0.01"
+                :step="0.01">
+
+            <div class="input-group-append">
+                <span class="input-group-text">м<sup>2</sup></span>
+            </div>
+
+            <div
+                v-if="filter.size_total.min !== null || filter.size_total.max !== null"
+                class="input-group-append d-flex align-items-center"
+            >
+                <a
+                    href="javascript:void(0)"
+                    title="Сбросить"
+                    class="ml-2 text-danger"
+                    @click="filter.size_total.min = null, filter.size_total.max = null, isFilterReset ? updateFilterValue() : false"><i class="fas fa-times"></i></a>
+            </div>
+        </div>
+
+        <div class="form-group input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Площадь жилая</span>
+            </div>
+
+            <input
+                v-model.number="filter.size_living.min"
+                type="number"
+                placeholder="От"
+                class="form-control"
+                :min="0.01"
+                :step="0.01">
+
+            <input
+                v-model.number="filter.size_living.max"
+                type="number"
+                placeholder="До"
+                class="form-control"
+                :min="0.01"
+                :step="0.01">
+
+            <div class="input-group-append">
+                <span class="input-group-text">м<sup>2</sup></span>
+            </div>
+
+            <div
+                v-if="filter.size_living.min !== null || filter.size_living.max !== null"
+                class="input-group-append d-flex align-items-center"
+            >
+                <a
+                    href="javascript:void(0)"
+                    title="Сбросить"
+                    class="ml-2 text-danger"
+                    @click="filter.size_living.min = null, filter.size_living.max = null, isFilterReset ? updateFilterValue() : false"><i class="fas fa-times"></i></a>
+            </div>
+        </div>
+
+        <div class="form-group input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Площадь кухни</span>
+            </div>
+
+            <input
+                v-model.number="filter.size_kitchen.min"
+                type="number"
+                placeholder="От"
+                class="form-control"
+                :min="0.01"
+                :step="0.01">
+
+            <input
+                v-model.number="filter.size_kitchen.max"
+                type="number"
+                placeholder="До"
+                class="form-control"
+                :min="0.01"
+                :step="0.01">
+
+            <div class="input-group-append">
+                <span class="input-group-text">м<sup>2</sup></span>
+            </div>
+
+            <div
+                v-if="filter.size_kitchen.min !== null || filter.size_kitchen.max !== null"
+                class="input-group-append d-flex align-items-center"
+            >
+                <a
+                    href="javascript:void(0)"
+                    title="Сбросить"
+                    class="ml-2 text-danger"
+                    @click="filter.size_kitchen.min = null, filter.size_kitchen.max = null, isFilterReset ? updateFilterValue() : false"><i class="fas fa-times"></i></a>
+            </div>
+        </div>
+
+        <div class="form-group input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Стоимость</span>
+            </div>
+
+            <input
+                v-model.number="filter.price_amount.min"
+                type="number"
+                placeholder="От"
+                class="form-control"
+                :min="0"
+                :step="1">
+
+            <input
+                v-model.number="filter.price_amount.max"
+                type="number"
+                placeholder="До"
+                class="form-control"
+                :min="0"
+                :step="1">
+
+            <div class="input-group-append">
+                <span class="input-group-text">USD</span>
+            </div>
+
+            <div
+                v-if="filter.price_amount.min !== null || filter.price_amount.max !== null"
+                class="input-group-append d-flex align-items-center"
+            >
+                <a
+                    href="javascript:void(0)"
+                    title="Сбросить"
+                    class="ml-2 text-danger"
+                    @click="filter.price_amount.min = null, filter.price_amount.max = null, isFilterReset ? updateFilterValue() : false"><i class="fas fa-times"></i></a>
+            </div>
+        </div>
+
+        <div class="form-group input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Дата размещ.</span>
+            </div>
+
+            <input
+                v-model="filter.published_at.date_min"
+                type="date"
+                placeholder="С"
+                class="form-control">
+
+            <input
+                v-model="filter.published_at.date_max"
+                type="date"
+                placeholder="По"
+                class="form-control">
+
+            <div
+                v-if="filter.published_at.date_min !== null || filter.published_at.date_max !== null"
+                class="input-group-append d-flex align-items-center"
+            >
+                <a
+                    href="javascript:void(0)"
+                    title="Сбросить"
+                    class="ml-2 text-danger"
+                    @click="filter.published_at.date_min = null, filter.published_at.date_max = null, isFilterReset ? updateFilterValue() : false"><i class="fas fa-times"></i></a>
+            </div>
+        </div>
+
+        <div class="form-group input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Время размещ.</span>
+            </div>
+
+            <input
+                v-model="filter.published_at.time_min"
+                type="time"
+                placeholder="С"
+                class="form-control">
+
+            <input
+                v-model="filter.published_at.time_max"
+                type="time"
+                placeholder="По"
+                class="form-control">
+
+            <div
+                v-if="filter.published_at.time_min !== null || filter.published_at.time_max !== null"
+                class="input-group-append d-flex align-items-center"
+            >
+                <a
+                    href="javascript:void(0)"
+                    title="Сбросить"
+                    class="ml-2 text-danger"
+                    @click="filter.published_at.time_min = null, filter.published_at.time_max = null, isFilterReset ? updateFilterValue() : false"><i class="fas fa-times"></i></a>
+            </div>
+        </div>
+
+        <div
+            v-if="!isFilterReset"
+            class="d-flex flex-column flex-sm-row justify-content-end"
+        >
+            <button
+                type="reset"
+                class="mb-3 mb-sm-0 btn btn-sm btn-danger"><i class="mr-2 fas fa-times"></i>Сбросить</button>
+
+            <button
+                type="submit"
+                class="ml-0 ml-sm-2 btn btn-sm btn-success"><i class="mr-2 fas fa-search"></i>Показать</button>
+        </div>
+    </form>
+</template>
+
+<script>
+    export default {
+        name: 'ApartmentsFiltersForm',
+
+        props: {
+            options: {
+                type: Object,
+
+                default () {
+                    return {}
+                }
+            },
+        },
+
+        data () {
+            return {
+                filter: {
+                    source_id: [],
+                    rooms: [],
+                    floor: { min: null, max: null },
+                    floors: { min: null, max: null },
+                    year_built: { min: null, max: null },
+                    size_total: { min: null, max: null },
+                    size_living: { min: null, max: null },
+                    size_kitchen: { min: null, max: null },
+                    walls: [],
+                    balcony: [],
+                    bathroom: [],
+                    price_amount: { min: null, max: null },
+
+                    published_at: {
+                        date_min: null,
+                        date_max: null,
+                        time_min: null,
+                        time_max: null,
+                    },
+                },
+            }
+        },
+
+        computed: {
+            rooms () {
+                return [
+                    {
+                        label: '1к',
+                        value: 1,
+                        title: '1-комнатные',
+                    },
+                    {
+                        label: '2к',
+                        value: 2,
+                        title: '2-комнатные',
+                    },
+                    {
+                        label: '3к',
+                        value: 3,
+                        title: '3-комнатные',
+                    },
+                    {
+                        label: '4к+',
+                        value: '4+',
+                        title: '4-комнатные и больше',
+                    },
+                ]
+            },
+
+            years () {
+                let arr = []
+
+                for (let i = 1901; i <= 2038; i++) {
+                    arr.push(i)
+                }
+
+                return arr
+            },
+
+            isFilterReset () {
+                return !this.filter.source_id.length
+                    && !this.filter.rooms.length
+                    && this.filter.floor.min             == null
+                    && this.filter.floor.max             == null
+                    && this.filter.floors.min            == null
+                    && this.filter.floors.max            == null
+                    && this.filter.year_built.min        == null
+                    && this.filter.year_built.max        == null
+                    && this.filter.size_total.min        == null
+                    && this.filter.size_total.max        == null
+                    && this.filter.size_living.min       == null
+                    && this.filter.size_living.max       == null
+                    && this.filter.size_kitchen.min      == null
+                    && this.filter.size_kitchen.max      == null
+                    && !this.filter.walls.length
+                    && !this.filter.balcony.length
+                    && !this.filter.bathroom.length
+                    && this.filter.price_amount.min      == null
+                    && this.filter.price_amount.max      == null
+                    && this.filter.published_at.date_min == null
+                    && this.filter.published_at.date_max == null
+                    && this.filter.published_at.time_min == null
+                    && this.filter.published_at.time_max == null
+            },
+        },
+
+        methods: {
+            resetFilter () {
+                this.filter.source_id             = []
+                this.filter.rooms                 = []
+                this.filter.floor.min             = null
+                this.filter.floor.max             = null
+                this.filter.floors.min            = null
+                this.filter.floors.max            = null
+                this.filter.year_built.min        = null
+                this.filter.year_built.max        = null
+                this.filter.size_total.min        = null
+                this.filter.size_total.max        = null
+                this.filter.size_living.min       = null
+                this.filter.size_living.max       = null
+                this.filter.size_kitchen.min      = null
+                this.filter.size_kitchen.max      = null
+                this.filter.walls                 = []
+                this.filter.balcony               = []
+                this.filter.bathroom              = []
+                this.filter.price_amount.min      = null
+                this.filter.price_amount.max      = null
+                this.filter.published_at.date_min = null
+                this.filter.published_at.date_max = null
+                this.filter.published_at.time_min = null
+                this.filter.published_at.time_max = null
+
+                this.updateFilterValue()
+            },
+
+            updateFilterValue () {
+                this.$emit('update-filter-value', this.filter)
+            },
+        },
+    }
+</script>
+
+<style scoped>
+    .btn-group .btn {
+        color: #495057;
+        border-color: #ced4da;
+    }
+
+    .btn-group .btn.active {
+        background-color: #f7f6f0;
+    }
+
+    .input-group-text {
+        background-color: #f7f6f0;
+    }
+
+    .input-group-prepend .input-group-text {
+        width: 125px;
+        min-width: 125px;
+    }
+</style>
