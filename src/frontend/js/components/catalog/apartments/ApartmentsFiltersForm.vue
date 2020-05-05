@@ -481,6 +481,8 @@
         },
 
         computed: {
+            nullableProps: [],
+
             rooms () {
                 return [
                     {
@@ -593,16 +595,22 @@
                             && this.filter[key] !== null
                             && typeof this.filter[key] == 'object'
                         ) {
-                            if (Object.keys(this.filter[key]).length) {
-                                value[key] = {}
-
-                                Object.keys(this.filter[key]).forEach(nestedKey => {
-                                    if (this.filter[key][nestedKey] !== null) {
-                                        value[key][nestedKey] = this.filter[key][nestedKey]
+                            Object.keys(this.filter[key]).forEach(nestedKey => {
+                                if (
+                                    this.nullableProps.includes(nestedKey)
+                                    || this.filter[key][nestedKey] !== null
+                                ) {
+                                    if (typeof value[key] != 'object') {
+                                        value[key] = {}
                                     }
-                                })
-                            }
-                        } else if (this.filter[key] !== null) {
+
+                                    value[key][nestedKey] = this.filter[key][nestedKey]
+                                }
+                            })
+                        } else if (
+                            this.nullableProps.includes(key)
+                            || this.filter[key] !== null
+                        ) {
                             value[key] = this.filter[key]
                         }
                     })
