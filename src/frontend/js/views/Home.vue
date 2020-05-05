@@ -1,43 +1,53 @@
 <template>
     <div class="page-wrapper">
         <main
-            class="container"
             role="main"
+            class="container"
         >
-            <div class="py-5 text-center">
+            <section class="py-5 text-center">
                 <h1 class="font-weight-light">Недвижимость</h1>
                 <p class="lead">Каталог объявлений о продаже и аренде недвижимости</p>
 
                 <template v-if="!$store.getters['auth/isAuth']">
                     <p><router-link
                         to="/sign-in"
-                        class="btn btn-lg btn-primary"
-                        role="button">Войти</router-link></p>
+                        role="button"
+                        class="btn btn-lg btn-primary">Войти</router-link></p>
 
                     <p>или <router-link to="/sign-up">зарегистрироваться</router-link></p>
                 </template>
-            </div>
+            </section>
 
-            <ul
+            <section
                 v-if="$store.getters['auth/isAuth']"
-                class="list-group list-group-flush"
+                class="py-5"
             >
-                <router-link
-                    to="/catalog/apartments"
-                    class="list-group-item list-group-item-action">Квартиры</router-link>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <router-link
+                            to="/catalog/apartments"
+                            class="nav-link">Квартиры</router-link>
+                    </li>
 
-                <router-link
-                    to="/catalog/lands"
-                    class="list-group-item list-group-item-action">Земельные участки</router-link>
+                    <li class="nav-item">
+                        <router-link
+                            to="/catalog/lands"
+                            class="nav-link">Земельные участки</router-link>
+                    </li>
 
-                <router-link
-                    to="/catalog/houses"
-                    class="list-group-item list-group-item-action">Дома, дачи, коттеджи</router-link>
+                    <li class="nav-item">
+                        <router-link
+                            to="/catalog/houses"
+                            class="nav-link">Дома, дачи, коттеджи</router-link>
+                    </li>
 
-                <router-link
-                    to="/catalog/commercial"
-                    class="list-group-item list-group-item-action">Коммерческая недвижимость</router-link>
-            </ul>
+                    <li class="nav-item">
+                        <router-link
+                            to="/catalog/commercial"
+                            class="nav-link">Коммерческая недвижимость</router-link>
+                    </li>
+                </ul>
+            </section>
         </main>
     </div>
 </template>

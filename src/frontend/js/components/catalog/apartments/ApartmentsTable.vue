@@ -1,6 +1,6 @@
 <template>
     <div class="table-responsive">
-        <table class="table table-sm table-hover">
+        <table class="table table-sm">
             <thead>
                 <tr>
                     <th scope="col"></th>
@@ -23,7 +23,7 @@
                     >
                         <v-sort-icon
                             sort-prop="published_at"
-                            :sort-value="sortValue"></v-sort-icon> Опубликовано</th>
+                            :sort-value="sortValue"></v-sort-icon> Размещено</th>
 
                     <th
                         scope="col"
@@ -143,7 +143,7 @@
                     >
                         <v-sort-icon
                             sort-prop="price_per_sqm"
-                            :sort-value="sortValue"></v-sort-icon> Цена/кв.м</th>
+                            :sort-value="sortValue"></v-sort-icon> Цена/м<sup>2</sup></th>
 
                     <th
                         scope="col"
@@ -154,6 +154,16 @@
                         <v-sort-icon
                             sort-prop="seller_is_private"
                             :sort-value="sortValue"></v-sort-icon> Продавец</th>
+
+                    <th
+                        scope="col"
+                        class="sortable"
+                        title="Сортировать по номеру"
+                        @click="updateSortValue('status')"
+                    >
+                        <v-sort-icon
+                            sort-prop="status"
+                            :sort-value="sortValue"></v-sort-icon> Статус</th>
 
                     <th scope="col">
                         <div
@@ -185,7 +195,7 @@
                             class="mx-1"
                             role="button"
                             :title="item.is_favorited ? 'Удалить из избранных' : 'Добавить в избранные'"
-                            @click="$store.dispatch('catalog/toggleFavorited', { category: 'apartments', id: item.id })"><i :class="['fa-star', item.is_favorited ? 'fas' : 'far']"></i></a>
+                            @click="$store.dispatch('catalog/toggleFavorited', { category: 'apartments', id: item.id })"><i :class="['fa-heart', item.is_favorited ? 'fas' : 'far']"></i></a>
                     </td>
 
                     <td>{{ item.id }}</td>
@@ -194,19 +204,28 @@
                     <td>{{ item.floor }}</td>
                     <td>{{ item.floors }}</td>
                     <td>{{ item.year_built }}</td>
-                    <td>{{ item.size.total }}</td>
-                    <td>{{ item.size.living }}</td>
-                    <td>{{ item.size.kitchen }}</td>
+                    <td :title="item.size.total ? (item.size.total + ' м2') : null">{{ item.size.total }}</td>
+                    <td :title="item.size.total ? (item.size.living + ' м2') : null">{{ item.size.living }}</td>
+                    <td :title="item.size.total ? (item.size.kitchen + ' м2') : null">{{ item.size.kitchen }}</td>
                     <td :title="item.walls.label">{{ item.walls.value }}</td>
                     <td :title="item.balcony.label">{{ item.balcony.value }}</td>
                     <td :title="item.bathroom.label">{{ item.bathroom.value }}</td>
                     <td :title="item.price.amount ? (item.price.amount + (item.price.currency ? (' ' + item.price.currency) : '')) : 'Цена договорная'">{{ item.price.amount ? item.price.amount : 'догов.' }}</td>
-                    <td :title="item.price.amount && item.size.total ? (Math.round(item.price.amount / item.size.total) + (item.price.currency ? (' ' + item.price.currency + '/кв.м') : '')) : null">{{ item.price.amount && item.size.total ? (Math.round(item.price.amount / item.size.total)) : null }}</td>
+                    <td :title="item.price.amount && item.size.total ? (Math.round(item.price.amount / item.size.total) + (item.price.currency ? (' ' + item.price.currency + '/м2') : '')) : null">{{ item.price.amount && item.size.total ? (Math.round(item.price.amount / item.size.total)) : null }}</td>
 
                     <td>
                         <span
                             :title="item.seller.is_private ? 'Частное лицо' : 'Агентство/застройщик'"
                             :class="['p-1 alert', item.seller.is_private ? 'alert-danger' : 'alert-primary']">{{ item.seller.is_private ? 'ч' : 'а' }}</span>
+                    </td>
+
+                    <td>
+                        <select class="custom-select custom-select-sm">
+                            <option>Нет</option>
+                            <option value="in_work">В работе</option>
+                            <option value="accept">Принять</option>
+                            <option value="archived">В архиве</option>
+                        </select>
                     </td>
 
                     <td>
@@ -280,23 +299,7 @@
             },
         },
 
-        created () {
-            this.initItems()
-        },
-
-        updated () {
-            this.initItems()
-        },
-
         methods: {
-            initItems () {
-                this.items.forEach(item => {
-                    if (item.checked) {
-                        this.checkedItems.push(item)
-                    }
-                })
-            },
-
             updateSortValue (prop) {
                 this.$emit(
                     'update-sort-value',
@@ -308,16 +311,15 @@
 </script>
 
 <style scoped>
-    .table {
-        font-size: 13px;
-    }
-
     .table th, td {
         white-space: nowrap;
     }
 
     .table > thead > tr > th {
+        font-size: 11px;
+        font-weight: 700;
         border-top: none;
+        border-bottom: none;
     }
 
     .table > thead > tr > th.sortable {
@@ -325,6 +327,7 @@
     }
 
     .table > tbody > tr > td {
+        font-size: 13px;
         vertical-align: middle;
     }
 </style>

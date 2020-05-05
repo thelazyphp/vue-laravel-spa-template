@@ -12,7 +12,6 @@ export default {
         perPage: 25,
         isLoading: false,
         data: null,
-        sources: null,
         total: null,
         favoritedTotal: null,
         filterProps: null,
@@ -60,10 +59,6 @@ export default {
             state.data = payload
         },
 
-        setSources (state, payload) {
-            state.sources = payload
-        },
-
         setTotal (state, payload) {
             state.total = payload
         },
@@ -97,12 +92,26 @@ export default {
                 endpoint += '/favorited'
             }
 
-            const params = {
-                search: state.search,
-                filter: state.filter,
-                sort: state.sort,
-                page: state.page,
-                per_page: state.perPage,
+            let params = {}
+
+            if (state.search !== null) {
+                params['search'] = state.search
+            }
+
+            if (state.filter !== null) {
+                params['filter'] = state.filter
+            }
+
+            if (state.sort !== null) {
+                params['sort'] = state.sort
+            }
+
+            if (state.page !== null) {
+                params['page'] = state.page
+            }
+
+            if (state.perPage !== null) {
+                params['per_page'] = state.perPage
             }
 
             return new Promise((resolve, reject) => {

@@ -6,35 +6,34 @@ const serializeParams = (params, prefix = null) => {
     let res = []
 
     Object.keys(params).forEach(key => {
-        if (
-            params[key] !== undefined
-            && params[key] !== null
-        ) {
-            const resKey = prefix ? `${__(prefix)}[${__(key)}]` : __(key)
+        const resKey = prefix ? `${__(prefix)}[${__(key)}]` : __(key)
 
-            if (Array.isArray(params[key])) {
-                params[key].forEach(value => {
-                    const resValue = __(value)
-
-                    res.push(
-                        `${resKey}[]=${resValue}`
-                    )
-                })
-            } else if (typeof params[key] == 'object') {
-                const resValue = serializeParams(
-                    params[key], resKey
-                )
-
-                if (resValue) {
-                    res.push(resValue)
-                }
-            } else {
-                const resValue = __(params[key])
+        if (Array.isArray(params[key])) {
+            params[key].forEach(value => {
+                const resValue = __(value)
 
                 res.push(
-                    `${resKey}=${resValue}`
+                    `${resKey}[]=${resValue}`
                 )
+            })
+        } else if (
+            params[key] !== undefined
+            && params[key] !== null
+            && typeof params[key] == 'object'
+        ) {
+            const resValue = serializeParams(
+                params[key], resKey
+            )
+
+            if (resValue) {
+                res.push(resValue)
             }
+        } else {
+            const resValue = __(params[key])
+
+            res.push(
+                `${resKey}=${resValue}`
+            )
         }
     })
 
