@@ -442,7 +442,7 @@
                 default: null
             },
 
-            options: {
+            filterOptions: {
                 type: Object,
 
                 default () {
@@ -480,9 +480,29 @@
             }
         },
 
-        computed: {
-            nullableProps: [],
+        watch: {
+            filterValue: {
+                deep: true,
 
+                handler (value) {
+                    if (value !== null) {
+                        Object.keys(value).forEach(key => {
+                            if (
+                                value[key] !== undefined
+                                && value[key] !== null
+                                && typeof value[key] == 'object'
+                            ) {
+                                Object.assign(this.filter[key], value[key])
+                            } else {
+                                this.filter[key] = value[key]
+                            }
+                        })
+                    }
+                }
+            },
+        },
+
+        computed: {
             rooms () {
                 return [
                     {
@@ -519,8 +539,8 @@
             },
 
             isFilterReset () {
-                return !this.filter.source_id.length
-                    && !this.filter.rooms.length
+                return this.filter.source_id.length      == 0
+                    && this.filter.rooms.length          == 0
                     && this.filter.floor.min             == null
                     && this.filter.floor.max             == null
                     && this.filter.floors.min            == null
@@ -533,9 +553,9 @@
                     && this.filter.size_living.max       == null
                     && this.filter.size_kitchen.min      == null
                     && this.filter.size_kitchen.max      == null
-                    && !this.filter.walls.length
-                    && !this.filter.balcony.length
-                    && !this.filter.bathroom.length
+                    && this.filter.walls.length          == 0
+                    && this.filter.balcony.length        == 0
+                    && this.filter.bathroom.length       == 0
                     && this.filter.price_amount.min      == null
                     && this.filter.price_amount.max      == null
                     // && this.filter.price_per_sqm.min  == null
@@ -596,10 +616,7 @@
                             && typeof this.filter[key] == 'object'
                         ) {
                             Object.keys(this.filter[key]).forEach(nestedKey => {
-                                if (
-                                    this.nullableProps.includes(nestedKey)
-                                    || this.filter[key][nestedKey] !== null
-                                ) {
+                                if (this.filter[key][nestedKey] !== null) {
                                     if (typeof value[key] != 'object') {
                                         value[key] = {}
                                     }
@@ -607,10 +624,7 @@
                                     value[key][nestedKey] = this.filter[key][nestedKey]
                                 }
                             })
-                        } else if (
-                            this.nullableProps.includes(key)
-                            || this.filter[key] !== null
-                        ) {
+                        } else if (this.filter[key] !== null) {
                             value[key] = this.filter[key]
                         }
                     })
