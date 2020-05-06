@@ -418,15 +418,13 @@
             class="col-12"
         >
             <div class="d-flex justify-content-end">
-                <div>
-                    <button
-                        type="reset"
-                        class="btn btn-link text-decoration-none">Сбросить</button>
+                <button
+                    type="reset"
+                    class="btn btn-sm btn-link text-decoration-none">Сбросить</button>
 
-                    <button
-                        type="submit"
-                        class="btn btn-sm btn-primary"><i class="mr-2 fas fa-search"></i>Показать</button>
-                </div>
+                <button
+                    type="submit"
+                    class="btn btn-sm btn-primary"><i class="mr-2 fas fa-search"></i>Показать</button>
             </div>
         </div>
     </form>
@@ -584,17 +582,17 @@
                 this.updateFilterValue()
             },
 
-            setFilter (filterValue) {
-                if (filterValue !== null) {
-                    Object.keys(filterValue).forEach(key => {
+            setFilter (value) {
+                if (value !== null) {
+                    Object.keys(value).forEach(key => {
                         if (
-                            filterValue[key] !== undefined
-                            && filterValue[key] !== null
-                            && typeof filterValue[key] == 'object'
+                            value[key] !== undefined
+                            && value[key] !== null
+                            && typeof value[key] == 'object'
                         ) {
-                            Object.assign(this.filter[key], filterValue[key])
+                            Object.assign(this.filter[key], value[key])
                         } else {
-                            this.filter[key] = filterValue[key]
+                            this.filter[key] = value[key]
                         }
                     })
                 }
