@@ -8,162 +8,145 @@
                     <th
                         scope="col"
                         class="sortable"
-                        title="Сортировать по номеру"
-                        @click="updateSortValue('id')"
-                    >
-                        <v-sort-icon
+                        title="Сортировать по номеру объявления"
+                        @click="updateSortValue('id')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="id"
-                            :sort-value="sortValue"></v-sort-icon> №</th>
+                            :sort-value="sortValue"></v-sort-icon>№</th>
 
                     <th
                         scope="col"
                         class="sortable"
-                        title="Сортировать по дате публикации"
-                        @click="updateSortValue('published_at')"
-                    >
-                        <v-sort-icon
+                        title="Сортировать по дате/времени размещения"
+                        @click="updateSortValue('published_at')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="published_at"
-                            :sort-value="sortValue"></v-sort-icon> Размещено</th>
+                            :sort-value="sortValue"></v-sort-icon>Размещено</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по количеству комнат"
-                        @click="updateSortValue('rooms')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('rooms')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="rooms"
-                            :sort-value="sortValue"></v-sort-icon> Комнат</th>
+                            :sort-value="sortValue"></v-sort-icon>Комнат</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по этажу"
-                        @click="updateSortValue('floor')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('floor')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="floor"
-                            :sort-value="sortValue"></v-sort-icon> Этаж</th>
+                            :sort-value="sortValue"></v-sort-icon>Этаж</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по этажности"
-                        @click="updateSortValue('floors')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('floors')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="floors"
-                            :sort-value="sortValue"></v-sort-icon> Этажность</th>
+                            :sort-value="sortValue"></v-sort-icon>Этажность</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по году постройки"
-                        @click="updateSortValue('year_built')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('year_built')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="year_built"
-                            :sort-value="sortValue"></v-sort-icon> Год постройки</th>
+                            :sort-value="sortValue"></v-sort-icon>Год постройки</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по общей площади"
-                        @click="updateSortValue('size_total')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('size_total')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="size_total"
-                            :sort-value="sortValue"></v-sort-icon> Пл.общ.</th>
+                            :sort-value="sortValue"></v-sort-icon>Пл.общ.</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по жилой площади"
-                        @click="updateSortValue('size_living')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('size_living')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="size_living"
-                            :sort-value="sortValue"></v-sort-icon> Пл.жил.</th>
+                            :sort-value="sortValue"></v-sort-icon>Пл.жил.</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по площади кухни"
-                        @click="updateSortValue('size_kitchen')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('size_kitchen')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="size_kitchen"
-                            :sort-value="sortValue"></v-sort-icon> Пл.кухни</th>
+                            :sort-value="sortValue"></v-sort-icon>Пл.кухни</th>
 
                     <th
                         scope="col"
                         class="sortable"
-                        title="Сортировать по типу стен"
-                        @click="updateSortValue('walls')"
-                    >
-                        <v-sort-icon
+                        title="Сортировать по типу стен"><v-sort-icon
+                            class="mr-2"
                             sort-prop="walls"
-                            :sort-value="sortValue"></v-sort-icon> Стены</th>
+                            :sort-value="sortValue"></v-sort-icon>Стены</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по типу балкона"
-                        @click="updateSortValue('balcony')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('balcony')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="balcony"
-                            :sort-value="sortValue"></v-sort-icon> Балкон</th>
+                            :sort-value="sortValue"></v-sort-icon>Балкон</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по типу санузла"
-                        @click="updateSortValue('bathroom')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('bathroom')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="bathroom"
-                            :sort-value="sortValue"></v-sort-icon> Санузел</th>
+                            :sort-value="sortValue"></v-sort-icon>Санузел</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по цене"
-                        @click="updateSortValue('price_amount')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('price_amount')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="price_amount"
-                            :sort-value="sortValue"></v-sort-icon> Цена</th>
+                            :sort-value="sortValue"></v-sort-icon>Цена</th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по цене за квадратный метр"
-                        @click="updateSortValue('price_per_sqm')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('price_per_sqm')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="price_per_sqm"
-                            :sort-value="sortValue"></v-sort-icon> Цена/м<sup>2</sup></th>
+                            :sort-value="sortValue"></v-sort-icon>Цена/м<sup>2</sup></th>
 
                     <th
                         scope="col"
                         class="sortable"
                         title="Сортировать по типу продавца"
-                        @click="updateSortValue('seller_is_private')"
-                    >
-                        <v-sort-icon
+                        @click="updateSortValue('seller_is_private')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="seller_is_private"
-                            :sort-value="sortValue"></v-sort-icon> Продавец</th>
+                            :sort-value="sortValue"></v-sort-icon>Продавец</th>
 
                     <th
                         scope="col"
                         class="sortable"
-                        title="Сортировать по номеру"
-                        @click="updateSortValue('status')"
-                    >
-                        <v-sort-icon
+                        title="Сортировать по статусу объявления"
+                        @click="updateSortValue('status')"><v-sort-icon
+                            class="mr-2"
                             sort-prop="status"
-                            :sort-value="sortValue"></v-sort-icon> Статус</th>
+                            :sort-value="sortValue"></v-sort-icon>Статус</th>
 
                     <th scope="col">
                         <div
@@ -177,8 +160,8 @@
                                 class="custom-control-input">
 
                             <label
-                                class="custom-control-label"
-                                for="allAdsCheck"></label>
+                                for="allAdsCheck"
+                                class="custom-control-label"></label>
                         </div>
                     </th>
                 </tr>
@@ -192,8 +175,8 @@
                     <td>
                         <a
                             href="javascript:void(0)"
-                            class="mx-1"
                             role="button"
+                            class="mx-1"
                             :title="item.is_favorited ? 'Удалить из избранных' : 'Добавить в избранные'"
                             @click="$store.dispatch('catalog/toggleFavorited', { category: 'apartments', id: item.id })"><i :class="['fa-heart', item.is_favorited ? 'fas' : 'far']"></i></a>
                     </td>
@@ -221,7 +204,7 @@
 
                     <td>
                         <select class="custom-select custom-select-sm">
-                            <option>Нет</option>
+                            <option>--</option>
                             <option value="in_work">В работе</option>
                             <option value="accept">Принять</option>
                             <option value="archived">В архиве</option>
