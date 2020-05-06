@@ -480,28 +480,6 @@
             }
         },
 
-        watch: {
-            filterValue: {
-                deep: true,
-
-                handler (value) {
-                    if (value !== null) {
-                        Object.keys(value).forEach(key => {
-                            if (
-                                value[key] !== undefined
-                                && value[key] !== null
-                                && typeof value[key] == 'object'
-                            ) {
-                                Object.assign(this.filter[key], value[key])
-                            } else {
-                                this.filter[key] = value[key]
-                            }
-                        })
-                    }
-                }
-            },
-        },
-
         computed: {
             rooms () {
                 return [
@@ -567,6 +545,14 @@
             },
         },
 
+        created () {
+            this.setFilter(this.filterValue)
+        },
+
+        updated () {
+            this.setFilter(this.filterValue)
+        },
+
         methods: {
             resetFilter () {
                 this.filter.source_id             = []
@@ -596,6 +582,22 @@
                 this.filter.published_at.time_max = null
 
                 this.updateFilterValue()
+            },
+
+            setFilter (filterValue) {
+                if (filterValue !== null) {
+                    Object.keys(filterValue).forEach(key => {
+                        if (
+                            filterValue[key] !== undefined
+                            && filterValue[key] !== null
+                            && typeof filterValue[key] == 'object'
+                        ) {
+                            Object.assign(this.filter[key], filterValue[key])
+                        } else {
+                            this.filter[key] = filterValue[key]
+                        }
+                    })
+                }
             },
 
             updateFilterValue () {
