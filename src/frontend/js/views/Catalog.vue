@@ -36,26 +36,6 @@
                             <span class="badge badge-pill badge-primary">{{ $store.state.catalog.favoritedTotal || 0 }}</span>
                         </a>
                     </div>
-
-                    <div class="nav-item">
-                        <a
-                            href="javascript:void(0)"
-                            :class="['nav-link text-muted d-flex align-items-center justify-content-between', { active: $store.state.catalog.table == 'nop1' }]"
-                            @click="setTable('nop1')"
-                        >
-                            <span><i class="mr-2 fas fa-filter"></i>Заявки</span>
-                        </a>
-                    </div>
-
-                    <div class="nav-item">
-                        <a
-                            href="javascript:void(0)"
-                            :class="['nav-link text-muted d-flex align-items-center justify-content-between', { active: $store.state.catalog.table == 'nop2' }]"
-                            @click="setTable('nop2')"
-                        >
-                            <span><i class="mr-2 fas fa-address-card"></i>Клиенты</span>
-                        </a>
-                    </div>
                 </div>
             </div>
 
@@ -68,10 +48,11 @@
                         class="py-3"
                         :is="filtersFormComponentName"
                         :filter-value="$store.state.catalog.filter"
+                        :filter-options="$store.state.catalog.data.meta.filter_options"
                         @update-filter-value="setFilter($event)"></component>
 
-                    <div class="btn-toolbar mb-3 justify-content-end">
-                        <div class="input-group input-group-sm">
+                    <div class="btn-toolbar flex-column flex-sm-row">
+                        <div class="mb-3 order-2 order-sm-1 input-group input-group-sm">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">На странице</span>
                             </div>
@@ -87,6 +68,25 @@
                                     :value="number">{{ number }}</option>
                             </select>
                         </div>
+
+                        <form
+                            class="mb-3 ml-0 ml-sm-2 order-1 order-sm-2 flex-grow-1 input-group input-group-sm"
+                            @submit.prevent="search"
+                        >
+                            <input
+                                type="search"
+                                placeholder="Поиск"
+                                class="form-control"
+                                :value="$store.state.catalog.search"
+                                @input="setSearch($event.target.value)">
+
+                            <div class="input-group-append">
+                                <button
+                                    type="submit"
+                                    title="Найти"
+                                    class="btn btn-primary"><i class="fas fa-search"></i></button>
+                            </div>
+                        </form>
                     </div>
 
                     <template v-if="$store.state.catalog.data">
@@ -179,6 +179,7 @@
         methods: {
             setTable (table) {
                 this.$store.commit('catalog/setTable', table)
+                this.$store.commit('catalog/setSearch', null)
                 this.$store.commit('catalog/setFilter', null)
                 this.$store.commit('catalog/setSort', null)
                 this.$store.commit('catalog/setPage', 1)

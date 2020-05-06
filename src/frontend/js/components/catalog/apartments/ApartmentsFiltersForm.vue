@@ -9,7 +9,7 @@
                 <label
                     v-for="(option, index) in rooms"
                     :key="index"
-                    :class="['btn btn-checkbox', { active: filter.rooms.includes(option.value) }]"
+                    :class="['mb-0 btn btn-checkbox', { active: filter.rooms.includes(option.value) }]"
                     :title="option.title">{{ option.label }}<input
                         v-model="filter.rooms"
                         type="checkbox"
@@ -478,6 +478,16 @@
             }
         },
 
+        watch: {
+            filterValue: {
+                deep: true,
+
+                handler (value) {
+                    this.setFilter(value)
+                }
+            },
+        },
+
         computed: {
             rooms () {
                 return [
@@ -499,7 +509,7 @@
                     {
                         label: '4к+',
                         value: '4+',
-                        title: '4-комнатные и больше',
+                        title: '4 и более комнат',
                     },
                 ]
             },
