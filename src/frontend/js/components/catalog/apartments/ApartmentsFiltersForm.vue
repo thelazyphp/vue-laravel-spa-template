@@ -4,6 +4,48 @@
         @reset.prevent="resetFilter"
         @submit.prevent="updateFilterValue"
     >
+        <div
+            v-if="filterOptions && moreFilters"
+            class="col-sm-6 col-lg-4 col-xl-3 form-group"
+        >
+            <div class="accordion">
+                <div class="card">
+                    <div
+                        class="card-header dropdown-toggle"
+                        role="button"
+                        data-toggle="collapse"
+                        data-target="#sourceIdCollapse"
+                        aria-expanded="false"
+                        aria-controls="sourceIdCollapse">Источник</div>
+
+                    <div
+                        id="sourceIdCollapse"
+                        class="collapse"
+                    >
+                        <div class="card-body">
+                            <div
+                                v-for="(option, index) in filterOptions.sources"
+                                :key="index"
+                                class="custom-control custom-checkbox"
+                            >
+                                <input
+                                    :id="`sourceId${index}`"
+                                    v-model="filter.source_id"
+                                    type="checkbox"
+                                    class="custom-control-input"
+                                    :value="option.value">
+
+                                <label
+                                    class="custom-control-label"
+                                    :for="`sourceId${index}`"
+                                    :title="option.title">{{ option.label }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="col-sm-6 col-lg-4 col-xl-3 form-group">
             <div class="d-flex btn-group btn-group-sm">
                 <label
@@ -260,6 +302,132 @@
             </div>
         </div>
 
+        <div
+            v-if="filterOptions && moreFilters"
+            class="col-sm-6 col-lg-4 col-xl-3 form-group"
+        >
+            <div class="accordion">
+                <div class="card">
+                    <div
+                        class="card-header dropdown-toggle"
+                        role="button"
+                        data-toggle="collapse"
+                        data-target="#wallsCollapse"
+                        aria-expanded="false"
+                        aria-controls="wallsCollapse">Стены</div>
+
+                    <div
+                        id="wallsCollapse"
+                        class="collapse"
+                    >
+                        <div class="card-body">
+                            <div
+                                v-for="(option, index) in filterOptions.walls"
+                                :key="index"
+                                class="custom-control custom-checkbox"
+                            >
+                                <input
+                                    :id="`walls${index}`"
+                                    v-model="filter.walls"
+                                    type="checkbox"
+                                    class="custom-control-input"
+                                    :value="option.value">
+
+                                <label
+                                    class="custom-control-label"
+                                    :for="`walls${index}`"
+                                    :title="option.title">{{ option.label }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            v-if="filterOptions && moreFilters"
+            class="col-sm-6 col-lg-4 col-xl-3 form-group"
+        >
+            <div class="accordion">
+                <div class="card">
+                    <div
+                        class="card-header dropdown-toggle"
+                        role="button"
+                        data-toggle="collapse"
+                        data-target="#balconyCollapse"
+                        aria-expanded="false"
+                        aria-controls="balconyCollapse">Балкон</div>
+
+                    <div
+                        id="balconyCollapse"
+                        class="collapse"
+                    >
+                        <div class="card-body">
+                            <div
+                                v-for="(option, index) in filterOptions.balcony"
+                                :key="index"
+                                class="custom-control custom-checkbox"
+                            >
+                                <input
+                                    :id="`balcony${index}`"
+                                    v-model="filter.balcony"
+                                    type="checkbox"
+                                    class="custom-control-input"
+                                    :value="option.value">
+
+                                <label
+                                    class="custom-control-label"
+                                    :for="`balcony${index}`"
+                                    :title="option.title">{{ option.label }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            v-if="filterOptions && moreFilters"
+            class="col-sm-6 col-lg-4 col-xl-3 form-group"
+        >
+            <div class="accordion">
+                <div class="card">
+                    <div
+                        class="card-header dropdown-toggle"
+                        role="button"
+                        data-toggle="collapse"
+                        data-target="#bathroomCollapse"
+                        aria-expanded="false"
+                        aria-controls="bathroomCollapse">Санузел</div>
+
+                    <div
+                        id="bathroomCollapse"
+                        class="collapse"
+                    >
+                        <div class="card-body">
+                            <div
+                                v-for="(option, index) in filterOptions.bathroom"
+                                :key="index"
+                                class="custom-control custom-checkbox"
+                            >
+                                <input
+                                    :id="`bathroom${index}`"
+                                    v-model="filter.bathroom"
+                                    type="checkbox"
+                                    class="custom-control-input"
+                                    :value="option.value">
+
+                                <label
+                                    class="custom-control-label"
+                                    :for="`bathroom${index}`"
+                                    :title="option.title">{{ option.label }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="col-sm-6 col-lg-4 col-xl-3 form-group">
             <div class="input-group input-group-sm">
                 <div class="input-group-prepend">
@@ -307,7 +475,6 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">Цена/м<sup>2</sup></span>
                 </div>
-
                 <input
                     v-model.number="filter.price_per_sqm.min"
                     type="number"
@@ -315,7 +482,6 @@
                     class="form-control"
                     :min="0.1"
                     :step="0.1">
-
                 <input
                     v-model.number="filter.price_per_sqm.max"
                     type="number"
@@ -323,11 +489,9 @@
                     class="form-control"
                     :min="0.1"
                     :step="0.1">
-
                 <div class="input-group-append">
                     <span class="input-group-text">USD/м<sup>2</sup></span>
                 </div>
-
                 <div
                     v-if="filter.price_per_sqm.min !== null || filter.price_per_sqm.max !== null"
                     class="input-group-append d-flex align-items-center"
@@ -447,6 +611,11 @@
                     return {}
                 }
             },
+
+            showAllFilters: {
+                type: Boolean,
+                default: false
+            },
         },
 
         data () {
@@ -485,6 +654,10 @@
                 handler (value) {
                     this.setFilter(value)
                 }
+            },
+
+            showAllFilters (value) {
+                this.moreFilters = value
             },
         },
 
@@ -554,10 +727,18 @@
         },
 
         created () {
+            if (this.showAllFilters) {
+                this.moreFilters = true
+            }
+
             this.setFilter(this.filterValue)
         },
 
         updated () {
+            if (this.showAllFilters) {
+                this.moreFilters = true
+            }
+
             this.setFilter(this.filterValue)
         },
 
@@ -663,5 +844,36 @@
     .input-group-prepend .input-group-text {
         width: 125px;
         min-width: 125px;
+    }
+
+    .accordion .card {
+        border-color: #ced4da;
+        border-radius: 0.2rem;
+    }
+
+    .accordion .card .card-body {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .accordion .card .card-header {
+        display: flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.7875rem;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: center;
+        white-space: nowrap;
+        color: #495057;
+        border-color: #ced4da;
+        background-color: #fff;
+    }
+
+    .accordion .card .card-header[role="button"] {
+        cursor: pointer;
+    }
+
+    .accordion .card .card-header[data-toggle="collapse"][aria-expanded="false"] {
+        background-color: #f7f6f0;
     }
 </style>
