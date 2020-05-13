@@ -12,9 +12,7 @@ export default {
     namespaced: true,
 
     state: {
-        category: 'apartments',
         search: null,
-        filter: null,
         sort: null,
         page: 1,
         perPage: 25,
@@ -23,10 +21,6 @@ export default {
     },
 
     getters: {
-        isFilterClear (state) {
-            return state.filter === null
-        },
-
         getItems (state) {
             return state.data ? state.data.data : []
         },
@@ -42,23 +36,11 @@ export default {
                 return getItemIndexById(state.data.data, id)
             }
         },
-
-        getFilterOptions (state) {
-            return state.data ? state.data.meta.filter_options : null
-        },
     },
 
     mutations: {
-        setCategory (state, payload) {
-            state.category = payload
-        },
-
         setSearch (state, payload) {
             state.search = payload
-        },
-
-        setFilter (state, payload) {
-            state.filter = payload
         },
 
         setSort (state, payload) {
@@ -80,39 +62,22 @@ export default {
         setData (state, payload) {
             state.data = payload
         },
+
+        removeItem (state, payload) {
+            state.data.data.splice(
+                getItemIndexById(state.data.data, payload), 1
+            )
+        },
     },
 
     actions: {
-        filterItems ({ commit, dispatch }, filter) {
-            commit('setFilter', filter)
-            commit('setPage', 1)
-            return dispatch('fetchData')
-        },
-
-        sortItems ({ commit, dispatch }, sort) {
-            commit('setSort', sort)
-            commit('setPage', 1)
-            return dispatch('fetchData')
-        },
-
-        changeItemsPage ({ commit, dispatch }, page) {
-            commit('setPage', page)
-            return dispatch('fetchData')
-        },
-
         fetchData ({ state, commit }) {
-            let endpoint = '/catalog'
+            const endpoint = '/clients'
 
             let params = {}
 
-            params['category'] = state.category
-
             if (state.search !== null) {
                 params['search'] = state.search
-            }
-
-            if (state.filter !== null) {
-                params['filter'] = state.filter
             }
 
             if (state.sort !== null) {
@@ -133,7 +98,35 @@ export default {
                 Vue.Http.get(endpoint, { params })
                     .then(response => {
                         commit('setData', response.data)
-                        window.scrollTo({ top: 0 })
+                        return resolve(response)
+                    })
+                    .catch(error => reject(error))
+                    .finally(() => commit('setIsLoading', false))
+            })
+        },
+
+        create ({ commit }, formData) {
+            const endpoint = '/clients'
+
+            return new Promise((resolve, reject) => {
+                commit('setIsLoading', true)
+
+                Vue.Http.post(endpoint, formData)
+                    .then(response => resolve(response))
+                    .catch(error => reject(error))
+                    .finally(() => commit('setIsLoading', false))
+            })
+        },
+
+        delete ({ commit }, id) {
+            const endpoint = `/clients/${id}`
+
+            return new Promise((resolve, reject) => {
+                commit('setIsLoading', true)
+
+                Vue.Http.delete(endpoint)
+                    .then(response => {
+                        commit('removeItem', id)
                         return resolve(response)
                     })
                     .catch(error => reject(error))

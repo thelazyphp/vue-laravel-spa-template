@@ -1,23 +1,18 @@
 <template>
-    <div
-        id="app"
-        class="app-wrapper"
-    >
-        <the-header></the-header>
-        <router-view></router-view>
-    </div>
+    <component :is="layout"></component>
 </template>
 
 <script>
-    import TheHeader from './components/TheHeader'
+    import Default from './layouts/Default'
+    import Sidebar from './layouts/Sidebar'
 
     export default {
-        components: { TheHeader },
+        components: { Default, Sidebar },
+
+        computed: {
+            layout () {
+                return this.$route.meta.layout == 'default' ? 'Default' : 'Sidebar'
+            },
+        },
     }
 </script>
-
-<style scoped>
-    .app-wrapper {
-        position: relative;
-    }
-</style>

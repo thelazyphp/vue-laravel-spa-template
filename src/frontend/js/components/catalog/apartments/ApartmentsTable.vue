@@ -1,169 +1,107 @@
 <template>
     <div class="table-responsive">
-        <table class="table table-sm">
+        <table class="table">
             <thead>
                 <tr>
-                    <th scope="col"></th>
+                    <v-table-header></v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по номеру объявления"
-                        @click="updateSortValue('id')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="id"
-                            :sort-value="sortValue"></v-sort-icon>№</th>
+                        sort-prop="id"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('id')">№</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по дате/времени размещения"
-                        @click="updateSortValue('published_at')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="published_at"
-                            :sort-value="sortValue"></v-sort-icon>Размещено</th>
+                        sort-prop="published_at"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('published_at')">Размещено</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по количеству комнат"
-                        @click="updateSortValue('rooms')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="rooms"
-                            :sort-value="sortValue"></v-sort-icon>Комнат</th>
+                        sort-prop="rooms"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('rooms')">Комнат</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по этажу"
-                        @click="updateSortValue('floor')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="floor"
-                            :sort-value="sortValue"></v-sort-icon>Этаж</th>
+                        sort-prop="floor"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('floor')">Этаж</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по этажности"
-                        @click="updateSortValue('floors')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="floors"
-                            :sort-value="sortValue"></v-sort-icon>Этажность</th>
+                        sort-prop="floors"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('floors')">Этажность</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по году постройки"
-                        @click="updateSortValue('year_built')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="year_built"
-                            :sort-value="sortValue"></v-sort-icon>Год постройки</th>
+                        sort-prop="year_built"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('year_built')">Год постройки</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по общей площади"
-                        @click="updateSortValue('size_total')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="size_total"
-                            :sort-value="sortValue"></v-sort-icon>Пл.общ.</th>
+                        sort-prop="size_total"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('size_total')">Пл.общ.</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по жилой площади"
-                        @click="updateSortValue('size_living')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="size_living"
-                            :sort-value="sortValue"></v-sort-icon>Пл.жил.</th>
+                        sort-prop="size_living"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('size_living')">Пл.жил.</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по площади кухни"
-                        @click="updateSortValue('size_kitchen')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="size_kitchen"
-                            :sort-value="sortValue"></v-sort-icon>Пл.кухни</th>
+                        sort-prop="size_kitchen"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('size_kitchen')">Пл.кухни</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
-                        title="Сортировать по типу стен"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="walls"
-                            :sort-value="sortValue"></v-sort-icon>Стены</th>
+                    <v-table-header
+                        title="Сортировать по типу стен"
+                        sort-prop="walls"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('walls')">Стены</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по типу балкона"
-                        @click="updateSortValue('balcony')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="balcony"
-                            :sort-value="sortValue"></v-sort-icon>Балкон</th>
+                        sort-prop="balcony"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('balcony')">Балкон</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по типу санузла"
-                        @click="updateSortValue('bathroom')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="bathroom"
-                            :sort-value="sortValue"></v-sort-icon>Санузел</th>
+                        sort-prop="bathroom"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('bathroom')">Санузел</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по цене"
-                        @click="updateSortValue('price_amount')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="price_amount"
-                            :sort-value="sortValue"></v-sort-icon>Цена</th>
+                        sort-prop="price_amount"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('price_amount')">Цена</v-table-header>
 
-                    <th
-                        scope="col"
-                        class="sortable"
+                    <v-table-header
                         title="Сортировать по цене за квадратный метр"
-                        @click="updateSortValue('price_per_sqm')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="price_per_sqm"
-                            :sort-value="sortValue"></v-sort-icon>Цена/м<sup>2</sup></th>
-
-                    <th
-                        scope="col"
-                        class="sortable"
-                        title="Сортировать по типу продавца"
-                        @click="updateSortValue('seller_is_private')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="seller_is_private"
-                            :sort-value="sortValue"></v-sort-icon>Продавец</th>
-
-                    <th
-                        scope="col"
-                        class="sortable"
-                        title="Сортировать по статусу объявления"
-                        @click="updateSortValue('status')"><v-sort-icon
-                            class="mr-2"
-                            sort-prop="status"
-                            :sort-value="sortValue"></v-sort-icon>Статус</th>
-
-                    <th scope="col">
-                        <div
-                            title="Отметить все объявления"
-                            class="custom-control custom-checkbox"
-                        >
-                            <input
-                                id="allAdsCheck"
-                                v-model="allAdsCheck"
-                                type="checkbox"
-                                class="custom-control-input">
-
-                            <label
-                                for="allAdsCheck"
-                                class="custom-control-label"></label>
-                        </div>
-                    </th>
+                        sort-prop="price_per_sqm"
+                        :is-sortable="true"
+                        :sort-value="sortValue"
+                        @click.native="updateSortValue('price_per_sqm')">Цена/м<sup>2</sup></v-table-header>
                 </tr>
             </thead>
 
@@ -173,12 +111,13 @@
                     :key="item.id"
                 >
                     <td>
-                        <a
-                            href="javascript:void(0)"
-                            role="button"
-                            class="mx-1"
+                        <button
+                            type="button"
+                            class="btn btn-link text-danger"
                             :title="item.is_favorited ? 'Удалить из избранных' : 'Добавить в избранные'"
-                            @click="$store.dispatch('catalog/toggleFavorited', { category: 'apartments', id: item.id })"><i :class="['fa-heart', item.is_favorited ? 'fas' : 'far']"></i></a>
+                        >
+                            <i :class="['fa-heart', item.is_favorited ? 'fas' : 'far']"></i>
+                        </button>
                     </td>
 
                     <td>{{ item.id }}</td>
@@ -195,39 +134,6 @@
                     <td :title="item.bathroom.label">{{ item.bathroom.value }}</td>
                     <td :title="item.price.amount ? (item.price.amount + (item.price.currency ? (' ' + item.price.currency) : '')) : 'Цена договорная'">{{ item.price.amount ? item.price.amount : 'догов.' }}</td>
                     <td :title="item.price.amount && item.size.total ? (Math.round(item.price.amount / item.size.total) + (item.price.currency ? (' ' + item.price.currency + '/м2') : '')) : null">{{ item.price.amount && item.size.total ? (Math.round(item.price.amount / item.size.total)) : null }}</td>
-
-                    <td>
-                        <span
-                            :title="item.seller.is_private ? 'Частное лицо' : 'Агентство/застройщик'"
-                            :class="['p-1 alert', item.seller.is_private ? 'alert-danger' : 'alert-primary']">{{ item.seller.is_private ? 'ч' : 'а' }}</span>
-                    </td>
-
-                    <td>
-                        <select class="custom-select custom-select-sm">
-                            <option>--</option>
-                            <option value="in_work">В работе</option>
-                            <option value="accept">Принять</option>
-                            <option value="archived">В архиве</option>
-                        </select>
-                    </td>
-
-                    <td>
-                        <div
-                            class="custom-control custom-checkbox"
-                            :title="`Отметить объявление №${item.id}`"
-                        >
-                            <input
-                                :id="`adCheck${item.id}`"
-                                v-model="checkedItems"
-                                type="checkbox"
-                                class="custom-control-input"
-                                :value="item">
-
-                            <label
-                                class="custom-control-label"
-                                :for="`adCheck${item.id}`"></label>
-                        </div>
-                    </td>
                 </tr>
             </tbody>
         </table>
@@ -235,11 +141,11 @@
 </template>
 
 <script>
-    import VSortIcon from '../../VSortIcon'
+    import VTableHeader from '../../VTableHeader'
 
     export default {
         name: 'ApartmentsTable',
-        components: { VSortIcon },
+        components: { VTableHeader },
 
         props: {
             sortValue: String,
@@ -249,35 +155,6 @@
 
                 default () {
                     return []
-                }
-            },
-        },
-
-        data () {
-            return {
-                checkedItems: [],
-            }
-        },
-
-        watch: {
-            checkedItems (value) {
-                this.$emit('check-items', value)
-            },
-        },
-
-        computed: {
-            allAdsCheck: {
-                get () {
-                    return this.items.length
-                        && this.checkedItems.length == this.items.length
-                },
-
-                set (value) {
-                    this.checkedItems = []
-
-                    if (value) {
-                        this.items.forEach(item => this.checkedItems.push(item))
-                    }
                 }
             },
         },
@@ -299,18 +176,11 @@
     }
 
     .table > thead > tr > th {
-        font-size: 11px;
-        font-weight: 700;
         border-top: none;
         border-bottom: none;
     }
 
-    .table > thead > tr > th.sortable {
-        cursor: pointer;
-    }
-
     .table > tbody > tr > td {
-        font-size: 13px;
         vertical-align: middle;
     }
 </style>
