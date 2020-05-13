@@ -32,7 +32,7 @@
                         type="button"
                         title="Сбросить"
                         class="btn btn-link text-danger"
-                        @click="filter.price_amount.min = null, filter.price_amount.max = null, isFilterReset ? updateFilterValue() : false"
+                        @click="filter.price_amount.min = null, filter.price_amount.max = null"
                     >
                         <i class="fas fa-times"></i>
                     </button>
@@ -46,7 +46,7 @@
                 type="button"
                 title="Сбросить"
                 class="btn btn-link text-danger"
-                @click="filter.rooms = [], isFilterReset ? updateFilterValue() : false"
+                @click="filter.rooms = []"
             >
                 <i class="fas fa-times"></i>
             </button></p>
@@ -98,7 +98,7 @@
                         type="button"
                         title="Сбросить"
                         class="btn btn-link text-danger"
-                        @click="filter.size_total.min = null, filter.size_total.max = null, isFilterReset ? updateFilterValue() : false"
+                        @click="filter.size_total.min = null, filter.size_total.max = null"
                     >
                         <i class="fas fa-times"></i>
                     </button>
@@ -115,7 +115,7 @@
                 type="button"
                 title="Сбросить"
                 class="btn btn-link text-danger"
-                @click="filter.bathroom = [], isFilterReset ? updateFilterValue() : false"
+                @click="filter.bathroom = []"
             >
                 <i class="fas fa-times"></i>
             </button></p>
@@ -176,7 +176,7 @@
                         type="button"
                         title="Сбросить"
                         class="btn btn-link text-danger"
-                        @click="filter.year_built.min = null, filter.year_built.max = null, isFilterReset ? updateFilterValue() : false"
+                        @click="filter.year_built.min = null, filter.year_built.max = null"
                     >
                         <i class="fas fa-times"></i>
                     </button>
@@ -213,7 +213,7 @@
                         type="button"
                         title="Сбросить"
                         class="btn btn-link text-danger"
-                        @click="filter.floor.min = null, filter.floor.max = null, isFilterReset ? updateFilterValue() : false"
+                        @click="filter.floor.min = null, filter.floor.max = null"
                     >
                         <i class="fas fa-times"></i>
                     </button>
@@ -250,7 +250,7 @@
                         type="button"
                         title="Сбросить"
                         class="btn btn-link text-danger"
-                        @click="filter.floors.min = null, filter.floors.max = null, isFilterReset ? updateFilterValue() : false"
+                        @click="filter.floors.min = null, filter.floors.max = null"
                     >
                         <i class="fas fa-times"></i>
                     </button>
@@ -287,7 +287,7 @@
                         type="button"
                         title="Сбросить"
                         class="btn btn-link text-danger"
-                        @click="filter.size_living.min = null, filter.size_living.max = null, isFilterReset ? updateFilterValue() : false"
+                        @click="filter.size_living.min = null, filter.size_living.max = null"
                     >
                         <i class="fas fa-times"></i>
                     </button>
@@ -324,7 +324,7 @@
                         type="button"
                         title="Сбросить"
                         class="btn btn-link text-danger"
-                        @click="filter.size_kitchen.min = null, filter.size_kitchen.max = null, isFilterReset ? updateFilterValue() : false"
+                        @click="filter.size_kitchen.min = null, filter.size_kitchen.max = null"
                     >
                         <i class="fas fa-times"></i>
                     </button>
@@ -341,7 +341,7 @@
                 type="button"
                 title="Сбросить"
                 class="btn btn-link text-danger"
-                @click="filter.walls = [], isFilterReset ? updateFilterValue() : false"
+                @click="filter.walls = []"
             >
                 <i class="fas fa-times"></i>
             </button></p>
@@ -374,7 +374,7 @@
                 type="button"
                 title="Сбросить"
                 class="btn btn-link text-danger"
-                @click="filter.balcony = [], isFilterReset ? updateFilterValue() : false"
+                @click="filter.balcony = []"
             >
                 <i class="fas fa-times"></i>
             </button></p>
@@ -426,7 +426,7 @@
                         type="button"
                         title="Сбросить"
                         class="btn btn-link text-danger"
-                        @click="filter.published_at.date_min = null, filter.published_at.date_max = null, isFilterReset ? updateFilterValue() : false"
+                        @click="filter.published_at.date_min = null, filter.published_at.date_max = null"
                     >
                         <i class="fas fa-times"></i>
                     </button>
@@ -462,7 +462,7 @@
                         type="button"
                         title="Сбросить"
                         class="btn btn-link text-danger"
-                        @click="filter.published_at.time_min = null, filter.published_at.time_max = null, isFilterReset ? updateFilterValue() : false"
+                        @click="filter.published_at.time_min = null, filter.published_at.time_max = null"
                     >
                         <i class="fas fa-times"></i>
                     </button>
