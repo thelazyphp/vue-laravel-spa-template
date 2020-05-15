@@ -8,6 +8,7 @@ import Welcome from '../views/Welcome'
 import Catalog from '../views/Catalog'
 import Clients from '../views/Clients'
 import ClientCreate from '../views/ClientCreate'
+import ClientRequestCreate from '../views/ClientRequestCreate'
 import TheSidebar from '../components/TheSidebar'
 
 Vue.use(VueRouter)
@@ -74,6 +75,17 @@ const router = new VueRouter({
 
             components: {
                 default: ClientCreate,
+                sidebar: TheSidebar,
+            },
+
+            meta: { layout: 'sidebar', requiresAuth: true },
+        },
+        {
+            path: '/client-requests/create',
+            name: 'createClientRequest',
+
+            components: {
+                default: ClientRequestCreate,
                 sidebar: TheSidebar,
             },
 

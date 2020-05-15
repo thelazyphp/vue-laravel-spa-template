@@ -15,6 +15,12 @@
 
             <li class="nav-item">
                 <router-link
+                    :to="{ name: 'createClientRequest' }"
+                    :class="['nav-link', { active: isLinkActive('createClientRequest') }]"><i class="mr-3 far fa-address-card"></i>Заявки</router-link>
+            </li>
+
+            <li class="nav-item">
+                <router-link
                     :to="{ name: 'clients' }"
                     :class="['nav-link', { active: isLinkActive('clients') }]"><i class="mr-3 fas fa-phone-alt"></i>Клиенты</router-link>
             </li>
@@ -24,30 +30,38 @@
                     :to="{ name: 'compilations' }"
                     :class="['nav-link', { active: isLinkActive('compilations') }]"><i class="mr-3 fas fa-filter"></i>Подборки</router-link>
             </li>
+
+            <li class="nav-item">
+                <router-link
+                    :to="{ name: 'favorites' }"
+                    :class="['nav-link', { active: isLinkActive('favorites') }]"><i class="mr-3 fas fa-heart"></i>Избранные</router-link>
+            </li>
         </ul>
 
         <template v-if="$route.name == 'catalog'">
             <hr>
 
             <component
-                :is="catalogFiltersBar"
-                :filter-value="$store.state.catalog.filter"
-                :filter-options="$store.getters['catalog/getFilterOptions']"
-                @update-filter-value="$store.dispatch('catalog/filterItems', $event)"></component>
+                :is="catalogFiltersForm"
+                :value="$store.state.catalog.filter"
+                :options="$store.getters['catalog/getFilterOptions']"
+                @reset="$store.dispatch('catalog/filterItems')"
+                @submit="$store.dispatch('catalog/filterItems')"
+                @input="$store.commit('catalog/setFilter', $event)"></component>
         </template>
     </div>
 </template>
 
 <script>
-    import CatalogApartmentsFiltersBar from '../components/catalog/apartments/ApartmentsFiltersBar'
+    import CatalogApartmentsFiltersForm from '../components/catalog/apartments/ApartmentsFiltersForm'
 
     export default {
         name: 'TheSidebar',
-        components: { CatalogApartmentsFiltersBar },
+        components: { CatalogApartmentsFiltersForm },
 
         computed: {
-            catalogFiltersBar () {
-                return 'CatalogApartmentsFiltersBar'
+            catalogFiltersForm () {
+                return 'CatalogApartmentsFiltersForm'
             },
         },
 

@@ -1,18 +1,6 @@
 <template>
     <div class="main-content">
         <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-light">
-                    <li class="breadcrumb-item">
-                        <router-link :to="{ name: 'home' }">Главная</router-link>
-                    </li>
-
-                    <li
-                        class="breadcrumb-item active"
-                        aria-current="page">Клиенты</li>
-                </ol>
-            </nav>
-
             <div class="card card-body border-0 shadow-sm">
                 <div class="mb-3 btn-toolbar">
                     <div class="btn-group">
@@ -33,6 +21,9 @@
                                 <th scope="col">Фамилия</th>
                                 <th scope="col">Имя</th>
                                 <th scope="col">Отчество</th>
+                                <th scope="col">Телефон</th>
+                                <th scope="col">E-Mail</th>
+                                <th scope="col">Адрес</th>
                                 <th scope="col">Действие</th>
                             </tr>
                         </thead>
@@ -46,6 +37,21 @@
                                 <td>{{ item.l_name }}</td>
                                 <td>{{ item.f_name }}</td>
                                 <td>{{ item.m_name }}</td>
+
+                                <td>
+                                    <div
+                                        v-for="(phone, index) in item.phones"
+                                        :key="index"
+                                    >
+                                        <a :href="`tel:${phone}`">{{ phone }}</a>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <a :href="`mailto:${item.email}`">{{ item.email }}</a>
+                                </td>
+
+                                <td>{{ item.address }}</td>
 
                                 <td>
                                     <button
@@ -91,8 +97,16 @@
         padding-bottom: 15px;
     }
 
-    .table thead th {
+    .table th, td {
+        white-space: nowrap;
+    }
+
+    .table > thead > tr > th {
         border-top: none;
         border-bottom: none;
+    }
+
+    .table > tbody > tr > td {
+        vertical-align: middle;
     }
 </style>

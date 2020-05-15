@@ -83,20 +83,8 @@ export default {
     },
 
     actions: {
-        filterItems ({ commit, dispatch }, filter) {
-            commit('setFilter', filter)
+        filterItems ({ commit, dispatch }) {
             commit('setPage', 1)
-            return dispatch('fetchData')
-        },
-
-        sortItems ({ commit, dispatch }, sort) {
-            commit('setSort', sort)
-            commit('setPage', 1)
-            return dispatch('fetchData')
-        },
-
-        changeItemsPage ({ commit, dispatch }, page) {
-            commit('setPage', page)
             return dispatch('fetchData')
         },
 

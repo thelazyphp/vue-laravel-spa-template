@@ -1,27 +1,82 @@
 <template>
     <div class="main-content">
         <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-light">
-                    <li class="breadcrumb-item">
-                        <router-link :to="{ name: 'home' }">Главная</router-link>
-                    </li>
-
-                    <li
-                        class="breadcrumb-item active"
-                        aria-current="page">Каталог</li>
-                </ol>
-            </nav>
-
             <div class="card card-body border-0 shadow-sm">
+                <div class="btn-toolbar">
+                    <div class="mb-3 mx-1 input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Категория</span>
+                        </div>
+
+                        <select class="custom-select">
+                            <option value="apartments">Квартиры</option>
+                            <option value="lands">Участки</option>
+                            <option value="houses">Дачи, коттеджи</option>
+                            <option value="commercial">Коммерческая</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 mx-1 input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Тип</span>
+                        </div>
+
+                        <select class="custom-select">
+                            <option value="rent">Аренда</option>
+                            <option value="sell">Продажа</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 mx-1 input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">На странице</span>
+                        </div>
+
+                        <select class="custom-select">
+                            <option value="15">15</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+
+                    <form
+                        class="mb-3 mx-1 flex-grow-1 input-group"
+                        @submit.prevent
+                    >
+                        <input
+                            type="search"
+                            placeholder="Поиск"
+                            class="form-control">
+
+                        <div class="input-group-append">
+                            <button
+                                type="submit"
+                                class="btn btn-primary">Найти</button>
+                        </div>
+                    </form>
+                </div>
+
+                <component
+                    class="mb-3"
+                    :is="filtersTags"
+                    :filter="$store.state.catalog.filter"
+                    @reset="$store.commit('catalog/setFilter', null), $store.dispatch('catalog/filterItems')"></component>
+
                 <div
                     v-if="!$store.getters['catalog/isFilterClear']"
-                    class="mb-3 btn-toolbar"
+                    class="btn-toolbar flex-col flex-sm-row"
                 >
-                    <div class="btn-group">
+                    <div class="mx-1 mb-3 btn-group">
                         <button
                             type="button"
-                            class="btn btn-danger"
+                            class="btn btn-outline-primary"
+                            @click="createCompilation"><i class="mr-3 far fa-address-card"></i>Сохранить заявку</button>
+                    </div>
+
+                    <div class="mx-1 mb-3 btn-group">
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary"
                             @click="createCompilation"><i class="mr-3 fas fa-filter"></i>Сохранить подборку</button>
                     </div>
                 </div>
@@ -31,7 +86,7 @@
                         :is="table"
                         :items="$store.getters['catalog/getItems']"
                         :sort-value="$store.state.catalog.sort"
-                        @update-sort-value="$store.dispatch('catalog/sortItems', $event)"></component>
+                        @update-sort-value="$store.commit('catalog/setSort', $event), $store.dispatch('catalog/filterItems')"></component>
 
                     <v-pagination
                         class="mt-3"
@@ -39,7 +94,7 @@
                         :limit="1"
                         :show-disabled="true"
                         :data="$store.state.catalog.data"
-                        @pagination-change-page="$store.dispatch('catalog/changeItemsPage', $event)"></v-pagination>
+                        @pagination-change-page="$store.commit('catalog/setPage', $event), $store.dispatch('catalog/fetchData')"></v-pagination>
                 </template>
             </div>
         </div>
@@ -47,16 +102,22 @@
 </template>
 
 <script>
+    import ApartmentsFiltersTags from '../components/catalog/apartments/ApartmentsFiltersTags'
     import ApartmentsTable from '../components/catalog/apartments/ApartmentsTable'
 
     export default {
         name: 'Catalog',
 
         components: {
+            ApartmentsFiltersTags,
             ApartmentsTable,
         },
 
         computed: {
+            filtersTags () {
+                return 'ApartmentsFiltersTags'
+            },
+
             table () {
                 return 'ApartmentsTable'
             },

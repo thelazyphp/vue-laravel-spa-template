@@ -1,22 +1,6 @@
 <template>
     <div class="main-content">
         <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-light">
-                    <li class="breadcrumb-item">
-                        <router-link :to="{ name: 'home' }">Главная</router-link>
-                    </li>
-
-                    <li class="breadcrumb-item">
-                        <router-link :to="{ name: 'clients' }">Клиенты</router-link>
-                    </li>
-
-                    <li
-                        class="breadcrumb-item active"
-                        aria-current="page">Добавить клиента</li>
-                </ol>
-            </nav>
-
             <div class="card card-body border-0 shadow-sm">
                 <form @submit.prevent="createClient">
                     <div class="form-row">
