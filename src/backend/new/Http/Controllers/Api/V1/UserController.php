@@ -129,7 +129,6 @@ class UserController extends Controller
             $this->authorize('updateRole', $user);
 
             $rules['role'] = [
-                'required',
                 'string',
                 Rule::in(User::VALID_ROLES),
             ];
