@@ -160,9 +160,9 @@ class Rule
     /**
      * @return self
      */
-    public function castToBoolean()
+    public function castToFloat()
     {
-        return $this->castTo('bool');
+        return $this->castTo('float');
     }
 
     /**
@@ -176,8 +176,8 @@ class Rule
     /**
      * @return self
      */
-    public function castToFloat()
+    public function castToBoolean()
     {
-        return $this->castTo('float');
+        return $this->castTo('bool');
     }
 }
