@@ -5,24 +5,9 @@ namespace App\Parsing;
 class Rule
 {
     /**
-     * @var string
+     * @var mixed
      */
-    protected $prepend;
-
-    /**
-     * @var string
-     */
-    protected $append;
-
-    /**
-     * @var string
-     */
-    protected $cast = 'string';
-
-    /**
-     * @var array
-     */
-    protected $patterns = [];
+    protected $default = null;
 
     /**
      * @var array
@@ -32,7 +17,12 @@ class Rule
     /**
      * @var string
      */
-    protected $attribute = 'plaintext';
+    protected $property = 'plaintext';
+
+    /**
+     * @var array
+     */
+    protected $patterns = [];
 
     /**
      * @var array
@@ -40,71 +30,27 @@ class Rule
     protected $replacements = [];
 
     /**
-     * @param  string  $value
-     * @return self
+     * @var string
      */
-    public function prepend($value)
-    {
-        $this->prepend = $value;
-        return $this;
-    }
+    protected $append = '';
 
     /**
-     * @param  string  $value
-     * @return self
+     * @var string
      */
-    public function append($value)
-    {
-        $this->append = $value;
-        return $this;
-    }
+    protected $prepend = '';
 
     /**
-     * @param  string  $type
-     * @return self
+     * @var string
      */
-    public function castTo($type)
-    {
-        $this->cast = $type;
-        return $this;
-    }
+    protected $cast = 'string';
 
     /**
+     * @param  mixed  $value
      * @return self
      */
-    public function castToInteger()
+    public function default($value)
     {
-        return $this->castTo('int');
-    }
-
-    /**
-     * @return self
-     */
-    public function castToFloat()
-    {
-        return $this->castTo('float');
-    }
-
-    /**
-     * @return self
-     */
-    public function castToBoolean()
-    {
-        return $this->castTo('bool');
-    }
-
-    /**
-     * @param  string  $pattern
-     * @param  int  $index
-     * @return self
-     */
-    public function match($pattern, $index = 0)
-    {
-        $this->patterns[] = [
-            'pattern' => $pattern,
-            'index' => $index,
-        ];
-
+        $this->default = $value;
         return $this;
     }
 
@@ -129,7 +75,7 @@ class Rule
      */
     public function attribute($name)
     {
-        $this->attribute = $name;
+        $this->property = $name;
         return $this;
     }
 
@@ -138,7 +84,7 @@ class Rule
      */
     public function innerText()
     {
-        return $this->attribute('plaintext');
+        $this->property = 'plaintext';
     }
 
     /**
@@ -146,12 +92,27 @@ class Rule
      */
     public function innerHtml()
     {
-        return $this->attribute('innertext');
+        $this->property = 'innertext';
     }
 
     /**
-     * @param  string  $search
-     * @param  string  $replacement
+     * @param  string  $pattern
+     * @param  int  $index
+     * @return self
+     */
+    public function match($pattern, $index = 0)
+    {
+        $this->patterns[] = [
+            'pattern' => $pattern,
+            'index' => $index,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @param  string|string[]  $search
+     * @param  string|string[]  $replacement
      * @return self
      */
     public function replace($search, $replacement)
@@ -165,17 +126,56 @@ class Rule
     }
 
     /**
-     * @param  string  $pattern
-     * @param  string  $replacement
+     * @param  string  $value
      * @return self
      */
-    public function replacePattern($pattern, $replacement)
+    public function append($value)
     {
-        $this->replacements[] = [
-            'pattern' => $pattern,
-            'replacement' => $replacement,
-        ];
-
+        $this->append = $value;
         return $this;
+    }
+
+    /**
+     * @param  string  $value
+     * @return self
+     */
+    public function prepend($value)
+    {
+        $this->prepend = $value;
+        return $this;
+    }
+
+    /**
+     * @param  string  $type
+     * @return self
+     */
+    public function castTo($type)
+    {
+        $this->cast = $type;
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function castToBoolean()
+    {
+        return $this->castTo('bool');
+    }
+
+    /**
+     * @return self
+     */
+    public function castToInteger()
+    {
+        return $this->castTo('int');
+    }
+
+    /**
+     * @return self
+     */
+    public function castToFloat()
+    {
+        return $this->castTo('float');
     }
 }
