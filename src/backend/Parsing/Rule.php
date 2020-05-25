@@ -85,6 +85,7 @@ class Rule
     public function innerText()
     {
         $this->property = 'plaintext';
+        return $this;
     }
 
     /**
@@ -93,6 +94,7 @@ class Rule
     public function innerHtml()
     {
         $this->property = 'innertext';
+        return $this;
     }
 
     /**
