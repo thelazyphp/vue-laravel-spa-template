@@ -52,7 +52,7 @@ class Parser
             && !($links instanceof Collection)
         ) {
             throw new Exception(
-                'Methd [parseLinks] must return an array or an instance of [\Illuminate\Support\Collection]!'
+                'Method [parseLinks] must return an array or an instance of [\Illuminate\Support\Collection]!'
             );
         }
 
