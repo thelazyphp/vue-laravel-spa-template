@@ -5,14 +5,14 @@ namespace App\Parsing;
 class Rule
 {
     /**
-     * @var mixed
+     * @var array
      */
-    protected $default = null;
+    protected $selectors = [];
 
     /**
      * @var array
      */
-    protected $selectors = [];
+    protected $methods = [];
 
     /**
      * @var string
@@ -25,57 +25,13 @@ class Rule
     protected $patterns = [];
 
     /**
-     * @var array
-     */
-    protected $replacements = [];
-
-    /**
-     * @var string
-     */
-    protected $append = '';
-
-    /**
-     * @var string
-     */
-    protected $prepend = '';
-
-    /**
-     * @var string
-     */
-    protected $cast = 'string';
-
-    /**
-     * @param  mixed  $value
-     * @return self
-     */
-    public function default($value)
-    {
-        $this->default = $value;
-        return $this;
-    }
-
-    /**
      * @param  string  $selector
      * @param  int  $index
      * @return self
      */
     public function find($selector, $index = 0)
     {
-        $this->selectors[] = [
-            'selector' => $selector,
-            'index' => $index,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  string  $name
-     * @return self
-     */
-    public function attribute($name)
-    {
-        $this->property = $name;
+        $this->selectors[] = compact('selector', 'index');
         return $this;
     }
 
@@ -98,86 +54,77 @@ class Rule
     }
 
     /**
+     * @return self
+     */
+    public function outerHtml()
+    {
+        $this->property = 'outertext';
+        return $this;
+    }
+
+    /**
+     * @param  string  $name
+     * @return self
+     */
+    public function attribute($name)
+    {
+        $this->property = $name;
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function parent()
+    {
+        $this->methods[] = 'parent';
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function prev()
+    {
+        $this->methods[] = 'prev_sibling';
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function next()
+    {
+        $this->methods[] = 'next_sibling';
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function firstChild()
+    {
+        $this->methods[] = 'first_child';
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function lastChild()
+    {
+        $this->methods[] = 'last_child';
+        return $this;
+    }
+
+    /**
      * @param  string  $pattern
      * @param  int  $index
      * @return self
      */
     public function match($pattern, $index = 0)
     {
-        $this->patterns[] = [
-            'pattern' => $pattern,
-            'index' => $index,
-        ];
-
+        $this->patterns[] = compact('pattern', 'index');
         return $this;
-    }
-
-    /**
-     * @param  string|string[]  $search
-     * @param  string|string[]  $replacement
-     * @return self
-     */
-    public function replace($search, $replacement)
-    {
-        $this->replacements[] = [
-            'search' => $search,
-            'replacement' => $replacement,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  string  $value
-     * @return self
-     */
-    public function append($value)
-    {
-        $this->append = $value;
-        return $this;
-    }
-
-    /**
-     * @param  string  $value
-     * @return self
-     */
-    public function prepend($value)
-    {
-        $this->prepend = $value;
-        return $this;
-    }
-
-    /**
-     * @param  string  $type
-     * @return self
-     */
-    public function castTo($type)
-    {
-        $this->cast = $type;
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function castToFloat()
-    {
-        return $this->castTo('float');
-    }
-
-    /**
-     * @return self
-     */
-    public function castToInteger()
-    {
-        return $this->castTo('int');
-    }
-
-    /**
-     * @return self
-     */
-    public function castToBoolean()
-    {
-        return $this->castTo('bool');
     }
 }

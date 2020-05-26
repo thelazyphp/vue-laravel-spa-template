@@ -5,6 +5,7 @@ namespace App\Parsing;
 use function str_get_html;
 
 use Exception;
+use simple_html_dom;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 
@@ -16,9 +17,24 @@ class Parser
     protected $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36';
 
     /**
+     * @var array
+     */
+    protected $httpClientConfig = [];
+
+    /**
      * @var string
      */
     protected $model;
+
+    /**
+     * @var array
+     */
+    protected $rules = [];
+
+    /**
+     * @var bool
+     */
+    protected $json = false;
 
     /**
      * @var Client
@@ -26,15 +42,11 @@ class Parser
     protected $httpClient;
 
     /**
-     * @var array
-     */
-    protected $httpClientConfig = [];
-
-    /**
      *
      */
     public function __construct()
     {
+        $this->registerRules();
         $this->httpClient = $this->makeHttpClient();
     }
 
@@ -43,6 +55,7 @@ class Parser
      */
     public function run()
     {
+        error_reporting(E_ALL);
         set_time_limit(0);
 
         $links = $this->parseLinks();
@@ -55,10 +68,14 @@ class Parser
                 'Method [parseLinks] must return an array or an instance of [\Illuminate\Support\Collection]!'
             );
         }
+    }
 
-        if (is_array($links)) {
-            $links = new Collection($links);
-        }
+    /**
+     * @return void
+     */
+    protected function registerRules()
+    {
+        //
     }
 
     /**
