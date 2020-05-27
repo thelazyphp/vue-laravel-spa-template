@@ -55,6 +55,11 @@ class Rule
     protected $castType = 'string';
 
     /**
+     * @var string
+     */
+    protected $dateTimeFormat;
+
+    /**
      *
      */
     public function __construct()
@@ -142,6 +147,14 @@ class Rule
     public function getCastType()
     {
         return $this->castType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateTimeFormat()
+    {
+        return $this->dateTimeFormat;
     }
 
     // Setters:
@@ -671,5 +684,51 @@ class Rule
     public function castToFloat()
     {
         return $this->castTo('float');
+    }
+
+    /**
+     * @return self
+     */
+    public function castToArray()
+    {
+        return $this->castTo('array');
+    }
+
+    /**
+     * @return self
+     */
+    public function castToTimestamp()
+    {
+        return $this->castTo('timestamp');
+    }
+
+    /**
+     * @param  string  $format
+     * @return self
+     */
+    public function castToDate($format)
+    {
+        $this->dateTimeFormat = $format;
+        return $this->castTo('date');
+    }
+
+    /**
+     * @param  string  $format
+     * @return self
+     */
+    public function castToTime($format)
+    {
+        $this->dateTimeFormat = $format;
+        return $this->castTo('time');
+    }
+
+    /**
+     * @param  string  $format
+     * @return self
+     */
+    public function castToDateTime($format)
+    {
+        $this->dateTimeFormat = $format;
+        return $this->castTo('date_time');
     }
 }

@@ -193,13 +193,18 @@ class Parser
                         break;
                     case 'float':
                         $value = (float) str_replace(',', '.', $value);
+                        break;
+                    case 'array':
+                        $value = (array) $value;
+                        break;
+                    case 'timestamp':
+                    case 'date':
+                    case 'time':
+                    case 'date_time':
                 }
 
                 $model->{$attribute} = $value;
             }
-
-            echo '<pre>';
-            print_r($model);
         }
     }
 
