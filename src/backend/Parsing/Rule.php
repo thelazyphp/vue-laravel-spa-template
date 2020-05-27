@@ -5,9 +5,39 @@ namespace App\Parsing;
 class Rule
 {
     /**
+     * @var bool
+     */
+    protected $definedAsConstValue = false;
+
+    /**
+     * @var mixed
+     */
+    protected $constValue;
+
+    /**
      * @var mixed
      */
     protected $defaultValue = null;
+
+    /**
+     * @var array
+     */
+    protected $findRules = [];
+
+    /**
+     * @var array
+     */
+    protected $matchRules = [];
+
+    /**
+     * @var array
+     */
+    protected $replaceRules = [];
+
+    /**
+     * @var string
+     */
+    protected $property = 'plaintext';
 
     /**
      * @var string
@@ -25,31 +55,6 @@ class Rule
     protected $castType = 'string';
 
     /**
-     * @var array
-     */
-    protected $selectors = [];
-
-    /**
-     * @var array
-     */
-    protected $methods = [];
-
-    /**
-     * @var string
-     */
-    protected $property = 'plaintext';
-
-    /**
-     * @var array
-     */
-    protected $patterns = [];
-
-    /**
-     * @var array
-     */
-    protected $replacements = [];
-
-    /**
      *
      */
     public function __construct()
@@ -57,9 +62,23 @@ class Rule
         //
     }
 
+    // Getters:
+
     /**
-     * Getters:
+     * @return bool
      */
+    public function isDefinedAsConstValue()
+    {
+        return $this->definedAsConstValue;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConstValue()
+    {
+        return $this->constValue;
+    }
 
     /**
      * @return mixed
@@ -67,6 +86,38 @@ class Rule
     public function getDefaultValue()
     {
         return $this->defaultValue;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFindRules()
+    {
+        return $this->findRules;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMatchRules()
+    {
+        return $this->matchRules;
+    }
+
+    /**
+     * @return array
+     */
+    public function getReplaceRules()
+    {
+        return $this->replaceRules;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProperty()
+    {
+        return $this->property;
     }
 
     /**
@@ -93,49 +144,19 @@ class Rule
         return $this->castType;
     }
 
-    /**
-     * @return array
-     */
-    public function getSelectors()
-    {
-        return $this->selectors;
-    }
+    // Setters:
 
     /**
-     * @return array
+     * @param  mixed  $value
+     * @return self
      */
-    public function getMethods()
+    public function defineAsConstValue($value)
     {
-        return $this->methods;
-    }
+        $this->definedAsConstValue = true;
+        $this->constValue = $value;
 
-    /**
-     * @return string
-     */
-    public function getProperty()
-    {
-        return $this->property;
+        return $this;
     }
-
-    /**
-     * @return array
-     */
-    public function getPatterns()
-    {
-        return $this->patterns;
-    }
-
-    /**
-     * @return array
-     */
-    public function getReplacements()
-    {
-        return $this->replacements;
-    }
-
-    /**
-     * Setters:
-     */
 
     /**
      * @param  mixed  $value
@@ -148,7 +169,458 @@ class Rule
     }
 
     /**
-     * @param  string  $value
+     * @param  string  $selector
+     * @param  int|null  $index
+     * @return self
+     */
+    public function find($selector, $index = null)
+    {
+        $type = 'selector';
+
+        $this->findRules[] = compact(
+            'type', 'selector', 'index'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $selector
+     * @return self
+     */
+    public function findAll($selector)
+    {
+        return $this->find($selector);
+    }
+
+    /**
+     * @param  string  $selector
+     * @return self
+     */
+    public function findFirst($selector)
+    {
+        return $this->find($selector, 0);
+    }
+
+    /**
+     * @param  string  $selector
+     * @return self
+     */
+    public function findLast($selector)
+    {
+        return $this->find($selector, -1);
+    }
+
+    /**
+     * @param  int|null  $index
+     * @return self
+     */
+    public function children($index = null)
+    {
+        $type = 'method';
+        $params = [$index];
+        $method = 'children';
+
+        $this->findRules[] = compact(
+            'type', 'params', 'method'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function parent()
+    {
+        $type = 'method';
+        $params = [];
+        $method = 'parent';
+
+        $this->findRules[] = compact(
+            'type', 'params', 'method'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function firstChild()
+    {
+        $type = 'method';
+        $params = [];
+        $method = 'first_child';
+
+        $this->findRules[] = compact(
+            'type', 'params', 'method'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function lastChild()
+    {
+        $type = 'method';
+        $params = [];
+        $method = 'last_child';
+
+        $this->findRules[] = compact(
+            'type', 'params', 'method'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function prevSibling()
+    {
+        $type = 'method';
+        $params = [];
+        $method = 'prev_sibling';
+
+        $this->findRules[] = compact(
+            'type', 'params', 'method'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function nextSibling()
+    {
+        $type = 'method';
+        $params = [];
+        $method = 'next_sibling';
+
+        $this->findRules[] = compact(
+            'type', 'params', 'method'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @param  int|null  $index
+     * @return self
+     */
+    public function findWhereText($selector, $text, $index = null)
+    {
+        $type = 'where_text';
+
+        $this->findRules[] = compact(
+            'type', 'selector', 'text', 'index'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findAllWhereText($selector, $text)
+    {
+        return $this->findWhereText($selector, $text);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findFirstWhereText($selector, $text)
+    {
+        return $this->findWhereText($selector, $text, 0);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findLastWhereText($selector, $text)
+    {
+        return $this->findWhereText($selector, $text, -1);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @param  int|null  $index
+     * @return self
+     */
+    public function findWhereTextHas($selector, $text, $index = null)
+    {
+        $type = 'where_text_has';
+
+        $this->findRules[] = compact(
+            'type', 'selector', 'text', 'index'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findAllWhereTextHas($selector, $text)
+    {
+        return $this->findWhereTextHas($selector, $text);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findFirstWhereTextHas($selector, $text)
+    {
+        return $this->findWhereTextHas($selector, $text, 0);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findLastWhereTextHas($selector, $text)
+    {
+        return $this->findWhereTextHas($selector, $text, -1);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @param  int|null  $index
+     * @return self
+     */
+    public function findWhereTextStartsWith($selector, $text, $index = null)
+    {
+        $type = 'where_text_starts';
+
+        $this->findRules[] = compact(
+            'type', 'selector', 'text', 'index'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findAllWhereTextStartsWith($selector, $text)
+    {
+        return $this->findWhereTextStartsWith($selector, $text);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findFirstWhereTextStartsWith($selector, $text)
+    {
+        return $this->findWhereTextStartsWith($selector, $text, 0);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findLastWhereTextStartsWith($selector, $text)
+    {
+        return $this->findWhereTextStartsWith($selector, $text, -1);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @param  int|null  $index
+     * @return self
+     */
+    public function findWhereTextEndsWith($selector, $text, $index = null)
+    {
+        $type = 'where_text_ends';
+
+        $this->findRules[] = compact(
+            'type', 'selector', 'text', 'index'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findAllWhereTextEndsWith($selector, $text)
+    {
+        return $this->findWhereTextEndsWith($selector, $text);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findFirstWhereTextEndsWith($selector, $text)
+    {
+        return $this->findWhereTextEndsWith($selector, $text, 0);
+    }
+
+    /**
+     * @param  string  $selector
+     * @param  string  $text
+     * @return self
+     */
+    public function findLastWhereTextEndsWith($selector, $text)
+    {
+        return $this->findWhereTextEndsWith($selector, $text, -1);
+    }
+
+    /**
+     * @return self
+     */
+    public function innerHtml()
+    {
+        $this->property = 'innertext';
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function outerHtml()
+    {
+        $this->property = 'outertext';
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function text()
+    {
+        $this->property = 'plaintext';
+        return $this;
+    }
+
+    /**
+     * @param  string  $name
+     * @return self
+     */
+    public function attribute($name)
+    {
+        $this->property = $name;
+        return $this;
+    }
+
+    /**
+     * @param  string  $pattern
+     * @param  int  $group
+     * @return self
+     */
+    public function match($pattern, $group = 0)
+    {
+        $this->matchRules[] = compact(
+            'pattern', 'group'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  string|string[]  $search
+     * @param  string|string[]  $replace
+     * @return self
+     */
+    public function replace($search, $replace)
+    {
+        $type = 'simple';
+
+        $this->replaceRules[] = compact(
+            'type', 'search', 'replace'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  string|string[]  $pattern
+     * @param  string|string[]  $replacement
+     * @return self
+     */
+    public function replaceMatched($pattern, $replacement)
+    {
+        $type = 'matched';
+
+        $this->replaceRules[] = compact(
+            'type', 'pattern', 'replacement'
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function takeNumeric()
+    {
+        return $this->match(
+            '/[\d.,]+/'
+        );
+    }
+
+    /**
+     * @return self
+     */
+    public function takeDigits()
+    {
+        return $this->replaceMatched(
+            '/\D/', ''
+        );
+    }
+
+    /**
+     * @return self
+     */
+    public function removeSpaces()
+    {
+        return $this->replaceMatched(
+            '/\s/', ''
+        );
+    }
+
+    /**
+     * @return self
+     */
+    public function removeHtmlEntities()
+    {
+        return $this->replaceMatched(
+            '/&[a-zA-Z]+;/', ''
+        );
+    }
+
+    /**
+     * @param  mixed  $value
      * @return self
      */
     public function prepend($value)
@@ -158,7 +630,7 @@ class Rule
     }
 
     /**
-     * @param  string  $value
+     * @param  mixed  $value
      * @return self
      */
     public function append($value)
@@ -182,17 +654,7 @@ class Rule
      */
     public function castToBoolean()
     {
-        $this->castType = 'bool';
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function castToFloat()
-    {
-        $this->castType = 'float';
-        return $this;
+        return $this->castTo('bool');
     }
 
     /**
@@ -200,278 +662,14 @@ class Rule
      */
     public function castToInteger()
     {
-        $this->castType = 'int';
-        return $this;
+        return $this->castTo('int');
     }
 
     /**
-     * @param  string  $selector
-     * @param  int  $index
-     * @param  callback  $callback
      * @return self
      */
-    public function find(
-        $selector,
-        $index = 0,
-        $callback = null
-    ) {
-        $this->selectors[] = [
-            'selector' => $selector,
-            'index' => $index,
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  string  $selector
-     * @param  callback  $callback
-     * @return self
-     */
-    public function findAll($selector, $callback = null) {
-        $this->selectors[] = [
-            'selector' => $selector,
-            'index' => null,
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  string  $selector
-     * @param  callback  $callback
-     * @return self
-     */
-    public function findFirst($selector, $callback = null)
+    public function castToFloat()
     {
-        return $this->find(
-            $selector, 0, $callback
-        );
-    }
-
-    /**
-     * @param  string  $selector
-     * @param  callback  $callback
-     * @return self
-     */
-    public function findLast($selector, $callback = null)
-    {
-        return $this->find(
-            $selector, -1, $callback
-        );
-    }
-
-    /**
-     * @param  callback  $callback
-     * @return self
-     */
-    public function parent($callback = null)
-    {
-        $this->methods[] = [
-            'name' => 'parent',
-            'params' => [],
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  callback  $callback
-     * @return self
-     */
-    public function children($callback = null)
-    {
-        $this->methods[] = [
-            'name' => 'children',
-            'params' => [],
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  int  $index
-     * @param  callback  $callback
-     * @return self
-     */
-    public function child($index, $callback = null)
-    {
-        $this->methods[] = [
-            'name' => 'children',
-            'params' => [$index],
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  callback  $callback
-     * @return self
-     */
-    public function firstChild($callback = null)
-    {
-        $this->methods[] = [
-            'name' => 'first_child',
-            'params' => [],
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  callback  $callback
-     * @return self
-     */
-    public function lastChild($callback = null)
-    {
-        $this->methods[] = [
-            'name' => 'last_child',
-            'params' => [],
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  callback  $callback
-     * @return self
-     */
-    public function prevSibling($callback = null)
-    {
-        $this->methods[] = [
-            'name' => 'prev_sibling',
-            'params' => [],
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  callback  $callback
-     * @return self
-     */
-    public function nextSibling($callback = null)
-    {
-        $this->methods[] = [
-            'name' => 'next_sibling',
-            'params' => [],
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function innerText()
-    {
-        $this->property = 'plaintext';
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function innerHtml()
-    {
-        $this->property = 'innertext';
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function outerText()
-    {
-        $this->property = 'outertext';
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function tagName()
-    {
-        $this->property = 'tag';
-        return $this;
-    }
-
-    /**
-     * @param  string  $name
-     * @return self
-     */
-    public function attribute($name)
-    {
-        $this->property = $name;
-        return $this;
-    }
-
-    /**
-     * @param  string  $pattern
-     * @param  int  $group
-     * @param  callback  $callback
-     * @return self
-     */
-    public function match(
-        $pattern,
-        $group = 0,
-        $callback = null
-    ) {
-        $this->patterns[] = [
-            'pattern' => $pattern,
-            'group' => $group,
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  string  $search
-     * @param  string  $replace
-     * @param  callback  $callback
-     * @return self
-     */
-    public function replace(
-        $search,
-        $replace,
-        $callback = null
-    ) {
-        $this->replacements[] = [
-            'search' => $search,
-            'replace' => $replace,
-            'callback' => $callback,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param  string  $pattern
-     * @param  string  $replacement
-     * @param  callback  $callback
-     * @return self
-     */
-    public function replaceMatched(
-        $pattern,
-        $replacement,
-        $callback = null
-    ) {
-        $this->replacements[] = [
-            'pattern' => $pattern,
-            'replacement' => $replacement,
-            'callback' => $callback,
-        ];
-
-        return $this;
+        return $this->castTo('float');
     }
 }
