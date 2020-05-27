@@ -19,8 +19,7 @@ class OnlinerCatalogApartmentsParser extends Parser
     {
         $this->rules['seller_contact_person'] = (new Rule)->findFirst('[href^=https://profile.onliner.by/user/]');
 
-        $this->rules['seller_phone'] = (new Rule)
-            ->findFirst('[href^=tel]')
+        $this->rules['seller_phone'] = (new Rule)->findFirst('[href^=tel]')
             ->takeDigits();
 
         $this->rules['seller_company_name'] = (new Rule)->findFirstWhereTextHas('.apartment-info__sub-line_complementary', 'УНП: ')
