@@ -654,6 +654,15 @@ class Crawler
     }
 
     /**
+     * @return self
+     */
+    public function trim()
+    {
+        $this->result = trim($this->result);
+        return $this;
+    }
+
+    /**
      * @param  string  $value
      * @return self
      */
