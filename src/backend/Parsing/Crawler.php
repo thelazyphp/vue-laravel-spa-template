@@ -4,13 +4,14 @@ namespace App\Crawling;
 
 use simple_html_dom;
 use simple_html_dom_node;
+use InvalidArgumentException;
 
 class Crawler
 {
     /**
      * @var mixed
      */
-    protected $value;
+    protected $result;
 
     /**
      * @var mixed
@@ -23,7 +24,16 @@ class Crawler
      */
     public function __construct($html, $default = null)
     {
-        $this->value = $html;
+        if (
+            !($html instanceof simple_html_dom_node)
+            && !($html instanceof simple_html_dom)
+        ) {
+            throw new InvalidArgumentException(
+                'HTML must be an instance of [\simple_html_dom] or an instance of [\simple_html_dom_node]!'
+            );
+        }
+
+        $this->result = $html;
         $this->default = $default;
     }
 
@@ -35,10 +45,10 @@ class Crawler
     public function find($selector, $index = 0)
     {
         if (
-            $this->value instanceof simple_html_dom_node
-            || $this->value instanceof simple_html_dom
+            $this->result instanceof simple_html_dom_node
+            || $this->result instanceof simple_html_dom
         ) {
-            $this->value->find($selector, $index);
+            $this->result = $this->result->find($selector, $index);
         }
 
         return $this;
@@ -76,13 +86,13 @@ class Crawler
         $index = 0
     ) {
         if (
-            $this->value instanceof simple_html_dom_node
-            || $this->value instanceof simple_html_dom
+            $this->result instanceof simple_html_dom_node
+            || $this->result instanceof simple_html_dom
         ) {
             $function = $caseSensitive ? 'strcasecmp' : 'strcmp';
             $found = [];
 
-            foreach ($this->value->find($selector) as $element) {
+            foreach ($this->result->find($selector) as $element) {
                 $result = call_user_func(
                     $function, $element->plaintext, $text
                 );
@@ -92,7 +102,7 @@ class Crawler
                 }
             }
 
-            $this->value = $index === null
+            $this->result = $index === null
                 ? $found
                 : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
         }
@@ -146,13 +156,13 @@ class Crawler
         $index = 0
     ) {
         if (
-            $this->value instanceof simple_html_dom_node
-            || $this->value instanceof simple_html_dom
+            $this->result instanceof simple_html_dom_node
+            || $this->result instanceof simple_html_dom
         ) {
             $function = $caseSensitive ? 'stripos' : 'strpos';
             $found = [];
 
-            foreach ($this->value->find($selector) as $element) {
+            foreach ($this->result->find($selector) as $element) {
                 $result = call_user_func(
                     $function, $element->plaintext, $text
                 );
@@ -162,7 +172,7 @@ class Crawler
                 }
             }
 
-            $this->value = $index === null
+            $this->result = $index === null
                 ? $found
                 : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
         }
@@ -216,13 +226,13 @@ class Crawler
         $index = 0
     ) {
         if (
-            $this->value instanceof simple_html_dom_node
-            || $this->value instanceof simple_html_dom
+            $this->result instanceof simple_html_dom_node
+            || $this->result instanceof simple_html_dom
         ) {
             $function = $caseSensitive ? 'stripos' : 'strpos';
             $found = [];
 
-            foreach ($this->value->find($selector) as $element) {
+            foreach ($this->result->find($selector) as $element) {
                 $result = call_user_func(
                     $function, $element->plaintext, $text
                 );
@@ -232,7 +242,7 @@ class Crawler
                 }
             }
 
-            $this->value = $index === null
+            $this->result = $index === null
                 ? $found
                 : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
         }
@@ -286,13 +296,13 @@ class Crawler
         $index = 0
     ) {
         if (
-            $this->value instanceof simple_html_dom_node
-            || $this->value instanceof simple_html_dom
+            $this->result instanceof simple_html_dom_node
+            || $this->result instanceof simple_html_dom
         ) {
             $function = $caseSensitive ? 'stripos' : 'strpos';
             $found = [];
 
-            foreach ($this->value->find($selector) as $element) {
+            foreach ($this->result->find($selector) as $element) {
                 $result = call_user_func(
                     $function, $element->plaintext, $text
                 );
@@ -304,7 +314,7 @@ class Crawler
                 }
             }
 
-            $this->value = $index === null
+            $this->result = $index === null
                 ? $found
                 : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
         }
@@ -356,18 +366,18 @@ class Crawler
         $index = 0
     ) {
         if (
-            $this->value instanceof simple_html_dom_node
-            || $this->value instanceof simple_html_dom
+            $this->result instanceof simple_html_dom_node
+            || $this->result instanceof simple_html_dom
         ) {
             $found = [];
 
-            foreach ($this->value->find($selector) as $element) {
-                if (preg_match($this->normalizePattern($pattern), $element->plaintext)) {
+            foreach ($this->result->find($selector) as $element) {
+                if (preg_match($pattern, $element->plaintext)) {
                     $found[] = $element;
                 }
             }
 
-            $this->value = $index === null
+            $this->result = $index === null
                 ? $found
                 : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
         }
@@ -398,16 +408,101 @@ class Crawler
     }
 
     /**
+     * @return self
+     */
+    public function prevSibling()
+    {
+        if ($this->result instanceof simple_html_dom_node) {
+            $this->result = $this->result->prev_sibling();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function nextSibling()
+    {
+        if ($this->result instanceof simple_html_dom_node) {
+            $this->result = $this->result->next_sibling();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function parent()
+    {
+        if ($this->result instanceof simple_html_dom_node) {
+            $this->result = $this->result->parent();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function children()
+    {
+        if ($this->result instanceof simple_html_dom_node) {
+            $this->result = $this->result->children();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  int  $index
+     * @return self
+     */
+    public function child($index)
+    {
+        if ($this->result instanceof simple_html_dom_node) {
+            $this->result = $this->result->children($index);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function firstChild()
+    {
+        if ($this->result instanceof simple_html_dom_node) {
+            $this->result = $this->result->first_child();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function lastChild()
+    {
+        if ($this->result instanceof simple_html_dom_node) {
+            $this->result = $this->result->last_child();
+        }
+
+        return $this;
+    }
+
+    /**
      * @param  string  $name
      * @return self
      */
     public function getAttribute($name)
     {
         if (
-            $this->value instanceof simple_html_dom_node
-            || $this->value instanceof simple_html_dom
+            $this->result instanceof simple_html_dom_node
+            || $this->result instanceof simple_html_dom
         ) {
-            $this->value = $this->value->{$name};
+            $this->result = $this->result->{$name};
         }
 
         return $this;
@@ -444,9 +539,9 @@ class Crawler
      */
     public function match($pattern, $capturingGroup = 0)
     {
-        if (preg_match($this->normalizePattern($pattern), (string) $this->value, $matches)) {
+        if (preg_match($pattern, (string) $this->result, $matches)) {
             if (isset($matches[$capturingGroup])) {
-                $this->value = $matches[$capturingGroup];
+                $this->result = $matches[$capturingGroup];
             }
         }
 
@@ -460,7 +555,7 @@ class Crawler
      */
     public function matchAll($pattern, $capturingGroup = 0)
     {
-        if (preg_match_all($this->normalizePattern($pattern), (string) $this->value, $matches)) {
+        if (preg_match_all($pattern, (string) $this->result, $matches)) {
             $result = [];
 
             foreach ($matches as $match) {
@@ -469,7 +564,7 @@ class Crawler
                 }
             }
 
-            $this->value = $result;
+            $this->result = $result;
         }
 
         return $this;
@@ -482,8 +577,8 @@ class Crawler
      */
     public function replace($search, $replace)
     {
-        $this->value = str_replace(
-            $search, $replace, (string) $this->value
+        $this->result = str_replace(
+            $search, $replace, (string) $this->result
         );
 
         return $this;
@@ -496,8 +591,8 @@ class Crawler
      */
     public function replaceMatched($pattern, $replacement)
     {
-        $this->value = preg_replace(
-            $pattern, $replacement, (string) $this->value
+        $this->result = preg_replace(
+            $pattern, $replacement, (string) $this->result
         );
 
         return $this;
@@ -509,8 +604,10 @@ class Crawler
      */
     public function takeDigits($count = null)
     {
-        $this->value = substr(
-            preg_replace('/\D/', '', $this->value), 0, $count
+        $this->replaceMatched('/\D/', '');
+
+        $this->result = substr(
+            $this->result, 0, $count
         );
 
         return $this;
@@ -521,13 +618,7 @@ class Crawler
      */
     public function takeInteger()
     {
-        if (preg_match('/(\d+)/', $this->value, $matches)) {
-            if (isset($matches[1])) {
-                $this->value = $matches[1];
-            }
-        }
-
-        return $this;
+        return $this->match('/(\d+)/', 1);
     }
 
     /**
@@ -535,13 +626,7 @@ class Crawler
      */
     public function takeFloat()
     {
-        if (preg_match('/(\d+[.,]\d+)/', $this->value, $matches)) {
-            if (isset($matches[1])) {
-                $this->value = $matches[1];
-            }
-        }
-
-        return $this;
+        return $this->match('/(\d+(?:[.,]\d+)?)/', 1);
     }
 
     /**
@@ -549,13 +634,7 @@ class Crawler
      */
     public function takeNumeric()
     {
-        if (preg_match('/(\d+(?:[.,]\d+)?)/', $this->value, $matches)) {
-            if (isset($matches[1])) {
-                $this->value = $matches[1];
-            }
-        }
-
-        return $this;
+        return $this->takeFloat();
     }
 
     /**
@@ -563,11 +642,7 @@ class Crawler
      */
     public function removeSpaces()
     {
-        $this->value = preg_replace(
-            '/\s/', '', $this->value
-        );
-
-        return $this;
+        return $this->replaceMatched('/\s/', '');
     }
 
     /**
@@ -575,11 +650,7 @@ class Crawler
      */
     public function removeHtmlEntities()
     {
-        $this->value = preg_replace(
-            '/&[a-zA-Z]+;/', '', $this->value
-        );
-
-        return $this;
+        return $this->replaceMatched('/&[a-zA-Z]+;/', '');
     }
 
     /**
@@ -588,7 +659,7 @@ class Crawler
      */
     public function append($value)
     {
-        $this->value .= $value;
+        $this->result .= $value;
         return $this;
     }
 
@@ -598,7 +669,7 @@ class Crawler
      */
     public function prepend($value)
     {
-        $this->value = $value.$this->value;
+        $this->result = $value.$this->result;
         return $this;
     }
 
@@ -611,22 +682,22 @@ class Crawler
         switch ($type) {
             case 'boolean':
             case 'bool':
-                $this->value = (bool) $this->value;
+                $this->result = (bool) $this->result;
                 break;
             case 'integer':
             case 'int':
-                $this->value = (int) $this->value;
+                $this->result = (int) $this->result;
                 break;
             case 'double':
             case 'float':
             case 'real':
-                $this->value = (float) str_replace(',', '.', $this->value);
+                $this->result = (float) str_replace(',', '.', $this->result);
                 break;
             case 'object':
-                $this->value = (object) $this->value;
+                $this->result = (object) $this->result;
                 break;
             case 'array':
-                $this->value = is_array($this->value) ? $this->value : (array) $this->value;
+                $this->result = is_array($this->result) ? $this->result : (array) $this->result;
         }
 
         return $this;
@@ -677,7 +748,7 @@ class Crawler
      */
     public function castToTimestamp()
     {
-        $this->value = strtotime($this->value);
+        $this->result = strtotime($this->result);
         return $this;
     }
 
@@ -687,7 +758,7 @@ class Crawler
      */
     public function castToDateTime($format)
     {
-        $this->value = date(
+        $this->result = date(
             $format, $this->castToTimestamp()
         );
 
@@ -699,17 +770,13 @@ class Crawler
      */
     public function get()
     {
-        return $this->value;
-    }
+        if (
+            $this->result instanceof simple_html_dom_node
+            || $this->result instanceof simple_html_dom
+        ) {
+            $this->result = $this->result->plaintext;
+        }
 
-    /**
-     * @param  string  $pattern
-     * @return string
-     */
-    protected function normalizePattern($pattern)
-    {
-        return preg_quote(
-            '/'.trim($pattern, '/').'/'
-        );
+        return $this->result ?? $this->default;
     }
 }
