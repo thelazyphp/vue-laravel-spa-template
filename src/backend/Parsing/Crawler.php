@@ -104,7 +104,7 @@ class Crawler
 
             $this->result = $index === null
                 ? $found
-                : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
+                : (count($found) ? ($index >= 0 ? $found[$index] : $found[count($found) - 1]) : null);
         }
 
         return $this;
@@ -159,7 +159,7 @@ class Crawler
             $this->result instanceof simple_html_dom_node
             || $this->result instanceof simple_html_dom
         ) {
-            $function = $caseSensitive ? 'stripos' : 'strpos';
+            $function = $caseSensitive ? 'mb_stripos' : 'mb_strpos';
             $found = [];
 
             foreach ($this->result->find($selector) as $element) {
@@ -174,7 +174,7 @@ class Crawler
 
             $this->result = $index === null
                 ? $found
-                : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
+                : (count($found) ? ($index >= 0 ? $found[$index] : $found[count($found) - 1]) : null);
         }
 
         return $this;
@@ -229,7 +229,7 @@ class Crawler
             $this->result instanceof simple_html_dom_node
             || $this->result instanceof simple_html_dom
         ) {
-            $function = $caseSensitive ? 'stripos' : 'strpos';
+            $function = $caseSensitive ? 'mb_stripos' : 'mb_strpos';
             $found = [];
 
             foreach ($this->result->find($selector) as $element) {
@@ -244,7 +244,7 @@ class Crawler
 
             $this->result = $index === null
                 ? $found
-                : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
+                : (count($found) ? ($index >= 0 ? $found[$index] : $found[count($found) - 1]) : null);
         }
 
         return $this;
@@ -299,7 +299,7 @@ class Crawler
             $this->result instanceof simple_html_dom_node
             || $this->result instanceof simple_html_dom
         ) {
-            $function = $caseSensitive ? 'stripos' : 'strpos';
+            $function = $caseSensitive ? 'mb_stripos' : 'mb_strpos';
             $found = [];
 
             foreach ($this->result->find($selector) as $element) {
@@ -316,7 +316,7 @@ class Crawler
 
             $this->result = $index === null
                 ? $found
-                : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
+                : (count($found) ? ($index >= 0 ? $found[$index] : $found[count($found) - 1]) : null);
         }
 
         return $this;
@@ -379,7 +379,7 @@ class Crawler
 
             $this->result = $index === null
                 ? $found
-                : ($index >= 0 ? $found[$index] : $found[count($found) - 1]);
+                : (count($found) ? ($index >= 0 ? $found[$index] : $found[count($found) - 1]) : null);
         }
 
         return $this;
@@ -539,7 +539,7 @@ class Crawler
      */
     public function match($pattern, $capturingGroup = 0)
     {
-        if (preg_match($pattern, (string) $this->result, $matches)) {
+        if (preg_match($pattern, $this->result, $matches)) {
             if (isset($matches[$capturingGroup])) {
                 $this->result = $matches[$capturingGroup];
             }
@@ -555,7 +555,7 @@ class Crawler
      */
     public function matchAll($pattern, $capturingGroup = 0)
     {
-        if (preg_match_all($pattern, (string) $this->result, $matches)) {
+        if (preg_match_all($pattern, $this->result, $matches)) {
             $result = [];
 
             foreach ($matches as $match) {
@@ -578,7 +578,7 @@ class Crawler
     public function replace($search, $replace)
     {
         $this->result = str_replace(
-            $search, $replace, (string) $this->result
+            $search, $replace, $this->result
         );
 
         return $this;
@@ -592,7 +592,7 @@ class Crawler
     public function replaceMatched($pattern, $replacement)
     {
         $this->result = preg_replace(
-            $pattern, $replacement, (string) $this->result
+            $pattern, $replacement, $this->result
         );
 
         return $this;
@@ -674,6 +674,24 @@ class Crawler
     }
 
     /**
+     * @return self
+     */
+    public function toLowerCase()
+    {
+        $this->result = mb_strtolower($this->result);
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function toUpperCase()
+    {
+        $this->result = mb_strtoupper($this->result);
+        return $this;
+    }
+
+    /**
      * @param  string  $type
      * @return self
      */
@@ -748,7 +766,8 @@ class Crawler
      */
     public function castToTimestamp()
     {
-        $this->result = strtotime($this->result);
+        //
+
         return $this;
     }
 
@@ -758,25 +777,18 @@ class Crawler
      */
     public function castToDateTime($format)
     {
-        $this->result = date(
-            $format, $this->castToTimestamp()
-        );
+        //
 
         return $this;
     }
 
     /**
+     * @param  mixed  $default
      * @return mixed
      */
-    public function get()
+    public function get($default = null)
     {
-        if (
-            $this->result instanceof simple_html_dom_node
-            || $this->result instanceof simple_html_dom
-        ) {
-            $this->result = $this->result->plaintext;
-        }
-
-        return $this->result ?? $this->default;
+        $default = $default ?? $this->default;
+        return $this->result ?? $default;
     }
 }
