@@ -149,7 +149,7 @@ class Crawler
      * @param  int|null  $index
      * @return self
      */
-    public function findWhereTextHas(
+    public function findWhereTextContains(
         $selector,
         $text,
         $caseSensitive = true,
@@ -186,12 +186,12 @@ class Crawler
      * @param  bool  $caseSensitive
      * @return self
      */
-    public function findAllWhereTextHas(
+    public function findAllWhereTextContains(
         $selector,
         $text,
         $caseSensitive = true
     ) {
-        return $this->findWhereTextHas(
+        return $this->findWhereTextContains(
             $selector, $text, $caseSensitive, null
         );
     }
@@ -202,12 +202,12 @@ class Crawler
      * @param  bool  $caseSensitive
      * @return self
      */
-    public function findLastWhereTextHas(
+    public function findLastWhereTextContains(
         $selector,
         $text,
         $caseSensitive = true
     ) {
-        return $this->findWhereTextHas(
+        return $this->findWhereTextContains(
             $selector, $text, $caseSensitive, -1
         );
     }
@@ -496,7 +496,7 @@ class Crawler
      * @param  string  $name
      * @return self
      */
-    public function getAttribute($name)
+    public function attribute($name)
     {
         if (
             $this->result instanceof simple_html_dom_node
@@ -513,7 +513,7 @@ class Crawler
      */
     public function text()
     {
-        return $this->getAttribute('plaintext');
+        return $this->attribute('plaintext');
     }
 
     /**
@@ -521,7 +521,7 @@ class Crawler
      */
     public function innerHtml()
     {
-        return $this->getAttribute('innertext');
+        return $this->attribute('innertext');
     }
 
     /**
@@ -529,7 +529,7 @@ class Crawler
      */
     public function outerHtml()
     {
-        return $this->getAttribute('outertext');
+        return $this->attribute('outertext');
     }
 
     /**
@@ -618,7 +618,7 @@ class Crawler
      */
     public function takeInteger()
     {
-        return $this->match('/(\d+)/', 1);
+        return $this->match('/(-?\d+)/', 1);
     }
 
     /**
@@ -626,7 +626,7 @@ class Crawler
      */
     public function takeFloat()
     {
-        return $this->match('/(\d+(?:[.,]\d+)?)/', 1);
+        return $this->match('/(-?\d+(?:[.,]\d+)?)/', 1);
     }
 
     /**
