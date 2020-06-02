@@ -49,10 +49,7 @@ class Crawler
     public function __construct($src, Collection $cache = null)
     {
         $this->result = $src;
-
-        if (!is_null($cache)) {
-            $this->cache = $cache;
-        }
+        $this->cache = $cache;
     }
 
     /**
