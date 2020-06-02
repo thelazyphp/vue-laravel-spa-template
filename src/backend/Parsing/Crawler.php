@@ -6,11 +6,14 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Collection;
 use simple_html_dom;
 use simple_html_dom_node;
-use InvalidArgumentException;
 use Closure;
 
 class Crawler
 {
+    protected const INNER_HTML_PROP = 'innertext';
+    protected const OUTER_HTML_PROP = 'outertext';
+    protected const INNER_TEXT_PROP = 'plaintext';
+
     use Macroable;
 
     /**
@@ -24,22 +27,14 @@ class Crawler
     protected $result;
 
     /**
-     * @param \simple_html_dom|\simple_html_dom_node $html
+     * @param string|\simple_html_dom|\simple_html_dom_node $src
      * @param null|\Illuminate\Support\Collection $cache
      *
      * @return \App\Crawling\Crawler
-     *
-     * @throws \InvalidArgumentException
      */
-    public static function forHtml($html, Collection $cache = null)
+    public static function source($src, Collection $cache = null)
     {
-        if (!($html instanceof simple_html_dom) && (!$html instanceof simple_html_dom_node)) {
-            throw new InvalidArgumentException(
-                'HTML must be an instance of [\simple_html_dom] or [\simple_html_dom_node]!'
-            );
-        }
-
-        return new static($html, $cache);
+        return new static($src, $cache);
     }
 
     /**
@@ -65,7 +60,6 @@ class Crawler
 
     /**
      * @param mixed|\Closure $callback
-     *
      * @return self
      */
     public function each($callback)
@@ -83,56 +77,20 @@ class Crawler
 
     /**
      * @param mixed $default
-     *
      * @return mixed|\Illuminate\Support\Collection
      */
     public function getResult($default = null)
     {
-        if ($this->resultIsArray()) {
-            $arr = [];
+        if (is_array($this->result)) {
+            $this->each(function (Crawler $crawler) use ($default) {
+                return $crawler->text()->getResult() ?? $default;
+            });
 
-            foreach ($this->result as $result) {
-                $arr[] = is_null($result)
-                    ? $default
-                    : ($this->isHtml($result) ? $this->getHtmlInnerText($result) : $result);
-            }
-
-            return collect($arr);
+            return collect($this->result);
         }
 
-        if (is_null($this->result)) {
-            return $default;
-        }
-
-        return $this->isHtml($this->result) ? $this->getHtmlInnerText($this->result) : $this->result;
-    }
-
-    /**
-     * @return bool
-     */
-    public function resultIsArray()
-    {
-        return is_array($this->result);
-    }
-
-    /**
-     * @param string $selector
-     *
-     * @return self
-     */
-    public function findAll($selector)
-    {
-        return $this->find($selector, null);
-    }
-
-    /**
-     * @param string $selector
-     *
-     * @return self
-     */
-    public function findLast($selector)
-    {
-        return $this->find($selector, -1);
+        $this->text();
+        return $this->result ?? $default;
     }
 
     /**
@@ -145,6 +103,60 @@ class Crawler
     {
         if ($this->isHtml($this->result)) {
             $this->result = $this->querySelector($selector, $this->result, $index);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $selector
+     * @return self
+     */
+    public function findAll($selector)
+    {
+        return $this->find($selector, null);
+    }
+
+    /**
+     * @param string $selector
+     * @return self
+     */
+    public function findLast($selector)
+    {
+        return $this->find($selector, -1);
+    }
+
+    /**
+     * @param string $selector
+     * @param string $text
+     * @param bool $ignoreCase
+     * @param int|null $index
+     *
+     * @return self
+     */
+    public function findWhereText(
+        $selector,
+        $text,
+        $ignoreCase = false,
+        $index = 0
+    ) {
+        if ($this->isHtml($this->result)) {
+            $function = $ignoreCase ? 'strcasecmp' : 'strcmp';
+            $nodes = [];
+
+            foreach ($this->querySelector($selector, $this->result) as $node) {
+                $innerText = $this->getInnerText($node);
+
+                if (
+                    call_user_func(
+                        $function, $innerText, $text
+                    ) === 0
+                ) {
+                    $nodes[] = $node;
+                }
+            }
+
+            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
         }
 
         return $this;
@@ -192,30 +204,29 @@ class Crawler
      *
      * @return self
      */
-    public function findWhereText(
+    public function findWhereTextContains(
         $selector,
         $text,
         $ignoreCase = false,
         $index = 0
     ) {
-        $function = $ignoreCase ? 'strcasecmp' : 'strcmp';
-
         if ($this->isHtml($this->result)) {
-            $found = [];
+            $function = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
+            $nodes = [];
 
-            foreach ($this->querySelector($selector, $this->result) as $element) {
-                $innerText = $this->getHtmlInnerText($element);
+            foreach ($this->querySelector($selector, $this->result) as $node) {
+                $innerText = $this->getInnerText($node);
 
                 if (
                     call_user_func(
                         $function, $innerText, $text
-                    ) === 0
+                    ) !== false
                 ) {
-                    $found[] = $element;
+                    $nodes[] = $node;
                 }
             }
 
-            $this->result = $this->getItemByIndex($found, $index);
+            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
         }
 
         return $this;
@@ -263,30 +274,29 @@ class Crawler
      *
      * @return self
      */
-    public function findWhereTextContains(
+    public function findWhereTextStartsWith(
         $selector,
         $text,
         $ignoreCase = false,
         $index = 0
     ) {
-        $function = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
-
         if ($this->isHtml($this->result)) {
-            $found = [];
+            $function = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
+            $nodes = [];
 
-            foreach ($this->querySelector($selector, $this->result) as $element) {
-                $innerText = $this->getHtmlInnerText($element);
+            foreach ($this->querySelector($selector, $this->result) as $node) {
+                $innerText = $this->getInnerText($node);
 
                 if (
                     call_user_func(
                         $function, $innerText, $text
-                    ) !== false
+                    ) === 0
                 ) {
-                    $found[] = $element;
+                    $nodes[] = $node;
                 }
             }
 
-            $this->result = $this->getItemByIndex($found, $index);
+            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
         }
 
         return $this;
@@ -334,30 +344,30 @@ class Crawler
      *
      * @return self
      */
-    public function findWhereTextStartsWith(
+    public function findWhereTextEndsWith(
         $selector,
         $text,
         $ignoreCase = false,
         $index = 0
     ) {
-        $function = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
-
         if ($this->isHtml($this->result)) {
-            $found = [];
+            $function = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
+            $nodes = [];
 
-            foreach ($this->querySelector($selector, $this->result) as $element) {
-                $innerText = $this->getHtmlInnerText($element);
+            foreach ($this->querySelector($selector, $this->result) as $node) {
+                $innerText = $this->getInnerText($node);
+                $pos = mb_strlen($innerText) - mb_strlen($text);
 
                 if (
                     call_user_func(
                         $function, $innerText, $text
-                    ) === 0
+                    ) === $pos
                 ) {
-                    $found[] = $element;
+                    $nodes[] = $node;
                 }
             }
 
-            $this->result = $this->getItemByIndex($found, $index);
+            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
         }
 
         return $this;
@@ -399,37 +409,32 @@ class Crawler
 
     /**
      * @param string $selector
-     * @param string $text
-     * @param bool $ignoreCase
+     * @param string $pattern
+     * @param int $capturingGroup
      * @param int|null $index
      *
      * @return self
      */
-    public function findWhereTextEndsWith(
+    public function findWhereTextMatches(
         $selector,
-        $text,
-        $ignoreCase = false,
+        $pattern,
+        $capturingGroup = 0,
         $index = 0
     ) {
-        $function = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
-
         if ($this->isHtml($this->result)) {
-            $found = [];
+            $nodes = [];
 
-            foreach ($this->querySelector($selector, $this->result) as $element) {
-                $innerText = $this->getHtmlInnerText($element);
-                $pos = mb_strlen($innerText) - mb_strlen($text);
+            foreach ($this->querySelector($selector, $this->result) as $node) {
+                $innerText = $this->getInnerText($node);
 
-                if (
-                    call_user_func(
-                        $function, $innerText, $text
-                    ) === $pos
-                ) {
-                    $found[] = $element;
+                if (preg_match($pattern, $innerText, $matches)) {
+                    if (isset($matches[$capturingGroup])) {
+                        $nodes[] = $node;
+                    }
                 }
             }
 
-            $this->result = $this->getItemByIndex($found, $index);
+            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
         }
 
         return $this;
@@ -470,44 +475,11 @@ class Crawler
     }
 
     /**
-     * @param string $selector
-     * @param string $pattern
-     * @param int $capturingGroup
-     * @param int|null $index
-     *
-     * @return self
-     */
-    public function findWhereTextMatches(
-        $selector,
-        $pattern,
-        $capturingGroup = 0,
-        $index = 0
-    ) {
-        if ($this->isHtml($this->result)) {
-            $found = [];
-
-            foreach ($this->querySelector($selector, $this->result) as $element) {
-                $innerText = $this->getHtmlInnerText($element);
-
-                if (preg_match($pattern, $innerText, $matches)) {
-                    if (isset($matches[$capturingGroup])) {
-                        $found[] = $element;
-                    }
-                }
-            }
-
-            $this->result = $this->getItemByIndex($found, $index);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return self
      */
     public function prevSibling()
     {
-        if ($this->isHtml($this->result)) {
+        if ($this->isHtmlDomNode($this->result)) {
             $this->result = $this->result->prev_sibling();
         }
 
@@ -519,7 +491,7 @@ class Crawler
      */
     public function nextSibling()
     {
-        if ($this->isHtml($this->result)) {
+        if ($this->isHtmlDomNode($this->result)) {
             $this->result = $this->result->next_sibling();
         }
 
@@ -531,7 +503,7 @@ class Crawler
      */
     public function parent()
     {
-        if ($this->isHtml($this->result)) {
+        if ($this->isHtmlDomNode($this->result)) {
             $this->result = $this->result->parent();
         }
 
@@ -543,7 +515,7 @@ class Crawler
      */
     public function children()
     {
-        if ($this->isHtml($this->result)) {
+        if ($this->isHtmlDomNode($this->result)) {
             $this->result = $this->result->children();
         }
 
@@ -556,7 +528,7 @@ class Crawler
      */
     public function child($index)
     {
-        if ($this->isHtml($this->result)) {
+        if ($this->isHtmlDomNode($this->result)) {
             $this->result = $this->result->children($index);
         }
 
@@ -568,7 +540,7 @@ class Crawler
      */
     public function firstChild()
     {
-        if ($this->isHtml($this->result)) {
+        if ($this->isHtmlDomNode($this->result)) {
             $this->result = $this->result->first_child();
         }
 
@@ -580,7 +552,7 @@ class Crawler
      */
     public function lastChild()
     {
-        if ($this->isHtml($this->result)) {
+        if ($this->isHtmlDomNode($this->result)) {
             $this->result = $this->result->last_child();
         }
 
@@ -593,7 +565,7 @@ class Crawler
      */
     public function attribute($name)
     {
-        if ($this->isHtml($this->result)) {
+        if ($this->isHtmlDomNode($this->result)) {
             $this->result = $this->result->{$name};
         }
 
@@ -605,8 +577,8 @@ class Crawler
      */
     public function innerHtml()
     {
-        if ($this->isHtml($this->result)) {
-            $this->result = $this->result->innertext;
+        if ($this->isHtmlDomNode($this->result)) {
+            $this->result = $this->getInnerHtml($this->result);
         }
 
         return $this;
@@ -617,8 +589,8 @@ class Crawler
      */
     public function outerHtml()
     {
-        if ($this->isHtml($this->result)) {
-            $this->result = $this->result->outertext;
+        if ($this->isHtmlDomNode($this->result)) {
+            $this->result = $this->getOuterHtml($this->result);
         }
 
         return $this;
@@ -630,65 +602,18 @@ class Crawler
     public function text()
     {
         if ($this->isHtml($this->result)) {
-            $this->result = $this->getHtmlInnerText($this->result);
+            $this->result = $this->getInnerText($this->result);
         }
 
         return $this;
     }
 
     /**
-     * @param int|null $count
      * @return self
      */
-    public function takeDigits($count = null)
+    public function innerText()
     {
-        $this->text();
-
-        $this->result = mb_substr(
-            preg_replace('/\D/', '', $this->result), 0, $count
-        );
-
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function takeInteger()
-    {
-        return $this->match('/(-?\d+)/', 1);
-    }
-
-    /**
-     * @return self
-     */
-    public function takeNumeric()
-    {
-        return $this->takeFloat();
-    }
-
-    /**
-     * @return self
-     */
-    public function takeFloat()
-    {
-        return $this->match('/(-?\d+(?:[.,]\d+)?)/', 1);
-    }
-
-    /**
-     * @return self
-     */
-    public function removeSpaces()
-    {
-        return $this->replaceMatched('/\s/', '');
-    }
-
-    /**
-     * @return self
-     */
-    public function removeHtmlEntities()
-    {
-        return $this->replaceMatched('/&[a-zA-Z]+;/', '');
+        return $this->text();
     }
 
     /**
@@ -736,10 +661,12 @@ class Crawler
      *
      * @return self
      */
-    public function replace($search, $replace, $ignoreCase = false)
-    {
+    public function replace(
+        $search,
+        $replace,
+        $ignoreCase = false
+    ) {
         $function = $ignoreCase ? 'str_ireplace' : 'str_replace';
-
         $this->text();
 
         $this->result = call_user_func(
@@ -767,11 +694,102 @@ class Crawler
     }
 
     /**
+     * @param int|null $count
+     * @return self
+     */
+    public function takeDigits($count = null)
+    {
+        $this->replaceMatched('/\D/', '');
+
+        $this->result = mb_substr(
+            $this->result, 0, $count
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function takeInteger()
+    {
+        return $this->match('/(-?\d+)/', 1);
+    }
+
+    /**
+     * @return self
+     */
+    public function takeFloat()
+    {
+        return $this->match('/(-?\d+(?:[.,]\d+)?)/', 1);
+    }
+
+    /**
+     * @return self
+     */
+    public function takeNumeric()
+    {
+        return $this->takeFloat();
+    }
+
+    /**
+     * @return self
+     */
+    public function removeSpaces()
+    {
+        return $this->replaceMatched('/\s/', '');
+    }
+
+    /**
+     * @return self
+     */
+    public function removeHtmlEntities()
+    {
+        return $this->replaceMatched('/&[a-zA-Z]+;/', '');
+    }
+
+    /**
+     * @param string $delimiter
+     * @return self
+     */
+    public function explode($delimiter)
+    {
+        $this->text();
+
+        $this->result = explode(
+            $delimiter, $this->result
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param string $delimiter
+     * @return self
+     */
+    public function implode($delimiter)
+    {
+        $this->result = is_array($this->result) ? $this->result : (array) $this->result;
+
+        $this->each(function (Crawler $crawler) {
+            return $crawler->text()->getResult();
+        });
+
+        $this->result = implode(
+            $delimiter, $this->result
+        );
+
+        return $this;
+    }
+
+    /**
      * @return self
      */
     public function trim()
     {
+        $this->text();
         $this->result = trim($this->result);
+
         return $this;
     }
 
@@ -780,7 +798,9 @@ class Crawler
      */
     public function leftTrim()
     {
+        $this->text();
         $this->result = ltrim($this->result);
+
         return $this;
     }
 
@@ -789,7 +809,9 @@ class Crawler
      */
     public function rightTrim()
     {
+        $this->text();
         $this->result = rtrim($this->result);
+
         return $this;
     }
 
@@ -799,7 +821,9 @@ class Crawler
      */
     public function append($value)
     {
+        $this->text();
         $this->result .= $value;
+
         return $this;
     }
 
@@ -809,32 +833,40 @@ class Crawler
      */
     public function prepend($value)
     {
+        $this->text();
         $this->result = $value.$this->result;
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function castToTimestamp()
-    {
-        $this->text();
-        $this->result = strtotime($this->result);
 
         return $this;
     }
 
     /**
-     * @param string $format
+     * @param string $type
      * @return self
      */
-    public function castToDateTime($format)
+    public function castTo($type)
     {
         $this->text();
 
-        $this->result = date(
-            $format, strtotime($this->result)
-        );
+        switch ($type) {
+            case 'bool':
+            case 'boolean':
+                $this->result = (bool) $this->result;
+                break;
+            case 'int':
+            case 'integer':
+                $this->result = (int) $this->result;
+                break;
+            case 'real':
+            case 'float':
+            case 'double':
+                $this->result = (float) str_replace(',', '.', $this->result);
+                break;
+            case 'object':
+                $this->result = (object) $this->result;
+                break;
+            case 'array':
+                $this->result = is_array($this->result) ? $this->result : (array) $this->result;
+        }
 
         return $this;
     }
@@ -880,35 +912,37 @@ class Crawler
     }
 
     /**
-     * @param string $type
      * @return self
      */
-    public function castTo($type)
+    public function castToTimestamp()
+    {
+        $this->text();
+        $this->result = strtotime($this->result);
+
+        return $this;
+    }
+
+    /**
+     * @param string $format
+     * @return self
+     */
+    public function castToDateTime($format)
     {
         $this->text();
 
-        switch ($type) {
-            case 'boolean':
-            case 'bool':
-                $this->result = (bool) $this->result;
-                break;
-            case 'integer':
-            case 'int':
-                $this->result = (int) $this->result;
-                break;
-            case 'double':
-            case 'float':
-            case 'real':
-                $this->result = (float) str_replace(',', '.', $this->result);
-                break;
-            case 'object':
-                $this->result = (object) $this->result;
-                break;
-            case 'array':
-                $this->result = is_array($this->result) ? $this->result : (array) $this->result;
-        }
+        $this->result = date(
+            $format, strtotime($this->result)
+        );
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function usingCache()
+    {
+        return $this->cache instanceof Collection;
     }
 
     /**
@@ -925,7 +959,7 @@ class Crawler
     ) {
         if ($this->usingCache() && $this->cache->has($selector)) {
             $found = $this->cache->get($selector);
-            return is_array($found) ? $this->getItemByIndex($found, $index) : $found;
+            return is_array($found) ? $this->getHtmlDomNodeByIndex($found, $index) : $found;
         }
 
         $found = $html->find($selector, $index);
@@ -938,45 +972,52 @@ class Crawler
     }
 
     /**
-     * @return bool
+     * @param \simple_html_dom_node $html
+     * @return string
      */
-    protected function usingCache()
+    protected function getInnerHtml($html)
     {
-        return $this->cache instanceof Collection;
+        return trim($html->{self::INNER_HTML_PROP});
     }
 
     /**
-     * @param mixed[] $items
-     * @param int|null $index
-     *
-     * @return mixed|mixed[]|null
+     * @param \simple_html_dom_node $html
+     * @return string
      */
-    protected function getItemByIndex($items, $index)
+    protected function getOuterHtml($html)
     {
-        if (is_null($index)) {
-            return $items;
-        }
-
-        if ($index < 0) {
-            $index = count($items) - 1;
-        }
-
-        return isset($items[$index]) ? $items[$index] : null;
+        return trim($html->{self::OUTER_HTML_PROP});
     }
 
     /**
      * @param \simple_html_dom|\simple_html_dom_node $html
-     *
      * @return string
      */
-    protected function getHtmlInnerText($html)
+    protected function getInnerText($html)
     {
-        return trim($html->plaintext);
+        return trim($html->{self::INNER_TEXT_PROP});
     }
 
     /**
      * @param mixed $value
-     *
+     * @return bool
+     */
+    protected function isHtml($value)
+    {
+        return $this->isHtmlDom($value) || $this->isHtmlDomNode($value);
+    }
+
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isHtmlDom($value)
+    {
+        return $value instanceof simple_html_dom;
+    }
+
+    /**
+     * @param mixed $value
      * @return bool
      */
     protected function isHtmlDomNode($value)
@@ -985,12 +1026,21 @@ class Crawler
     }
 
     /**
-     * @param mixed $value
+     * @param \simple_html_dom_node[] $nodes
+     * @param int|null $index
      *
-     * @return bool
+     * @return null|\simple_html_dom_node|\simple_html_dom_node[]
      */
-    protected function isHtml($value)
+    protected function getHtmlDomNodeByIndex($nodes, $index)
     {
-        return $value instanceof simple_html_dom || $value instanceof simple_html_dom_node;
+        if (is_null($index)) {
+            return $nodes;
+        }
+
+        if ($index < 0) {
+            $index = count($nodes) - 1;
+        }
+
+        return isset($nodes[$index]) ? $nodes[$index] : null;
     }
 }
