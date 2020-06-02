@@ -48,8 +48,8 @@ class Crawler
      */
     public function __construct($src, Collection $cache = null)
     {
-        $this->result = $src;
         $this->cache = $cache;
+        $this->result = $src;
     }
 
     /**
