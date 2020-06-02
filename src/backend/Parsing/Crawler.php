@@ -49,7 +49,6 @@ class Crawler
 
     /**
      * @param \Illuminate\Support\Collection $cache
-     *
      * @return self
      */
     public function useCache(Collection $cache)
