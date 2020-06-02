@@ -17,7 +17,7 @@ class Crawler
     use Macroable;
 
     /**
-     * @var null|\lluminate\Support\Collection
+     * @var \lluminate\Support\Collection|null
      */
     protected $cache;
 
@@ -27,8 +27,8 @@ class Crawler
     protected $result;
 
     /**
-     * @param string|\simple_html_dom|\simple_html_dom_node $src
-     * @param null|\Illuminate\Support\Collection $cache
+     * @param \simple_html_dom|\simple_html_dom_node|string $src
+     * @param \lluminate\Support\Collection|null $cache
      *
      * @return \App\Crawling\Crawler
      */
@@ -38,8 +38,8 @@ class Crawler
     }
 
     /**
-     * @param string|\simple_html_dom|\simple_html_dom_node $src
-     * @param null|\Illuminate\Support\Collection $cache
+     * @param \simple_html_dom|\simple_html_dom_node|string $src
+     * @param \lluminate\Support\Collection|null $cache
      */
     public function __construct($src, Collection $cache = null)
     {
@@ -58,7 +58,7 @@ class Crawler
     }
 
     /**
-     * @param mixed|\Closure $callback
+     * @param \Closure|mixed $callback
      * @return self
      */
     public function each($callback)
@@ -66,9 +66,11 @@ class Crawler
         $this->result = is_array($this->result) ? $this->result : (array) $this->result;
 
         foreach ($this->result as $key => $value) {
-            $this->result[$key] = call_user_func(
+            $result = call_user_func(
                 $callback, new static($value, $this->cache)
             );
+
+            $this->result[$key] = ($result instanceof Crawler) ? $result->getResult() : $result;
         }
 
         return $this;
@@ -76,7 +78,7 @@ class Crawler
 
     /**
      * @param mixed $default
-     * @return mixed|\Illuminate\Support\Collection
+     * @return \lluminate\Support\Collection|mixed
      */
     public function getResult($default = null)
     {
@@ -155,7 +157,7 @@ class Crawler
                 }
             }
 
-            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
+            $this->result = $this->getItemByIndex($nodes, $index);
         }
 
         return $this;
@@ -225,7 +227,7 @@ class Crawler
                 }
             }
 
-            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
+            $this->result = $this->getItemByIndex($nodes, $index);
         }
 
         return $this;
@@ -295,7 +297,7 @@ class Crawler
                 }
             }
 
-            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
+            $this->result = $this->getItemByIndex($nodes, $index);
         }
 
         return $this;
@@ -366,7 +368,7 @@ class Crawler
                 }
             }
 
-            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
+            $this->result = $this->getItemByIndex($nodes, $index);
         }
 
         return $this;
@@ -433,7 +435,7 @@ class Crawler
                 }
             }
 
-            $this->result = $this->getHtmlDomNodeByIndex($nodes, $index);
+            $this->result = $this->getItemByIndex($nodes, $index);
         }
 
         return $this;
@@ -654,8 +656,63 @@ class Crawler
     }
 
     /**
-     * @param string $search
-     * @param string $replace
+     * @param string $delimiter
+     * @return self
+     */
+    public function explode($delimiter)
+    {
+        $this->text();
+
+        $this->result = explode(
+            $delimiter, $this->result
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param int $index
+     * @return self
+     */
+    public function take($index)
+    {
+        $this->result = $this->getItemByIndex(
+            is_array($this->result) ? $this->result : (array) $this->result, $index
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function takeLast()
+    {
+        return $this->take(-1);
+    }
+
+    /**
+     * @param string $delimiter
+     * @return self
+     */
+    public function implode($delimiter)
+    {
+        $this->result = is_array($this->result) ? $this->result : (array) $this->result;
+
+        $this->each(function (Crawler $crawler) {
+            return $crawler->text()->getResult();
+        });
+
+        $this->result = implode(
+            $delimiter, $this->result
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $search
+     * @param string|string[] $replace
      * @param bool $ignoreCase
      *
      * @return self
@@ -676,8 +733,8 @@ class Crawler
     }
 
     /**
-     * @param string $pattern
-     * @param string $replacement
+     * @param string|string[] $pattern
+     * @param string|string[] $replacement
      *
      * @return self
      */
@@ -744,41 +801,7 @@ class Crawler
      */
     public function removeHtmlEntities()
     {
-        return $this->replaceMatched('/&[a-zA-Z]+;/', '');
-    }
-
-    /**
-     * @param string $delimiter
-     * @return self
-     */
-    public function explode($delimiter)
-    {
-        $this->text();
-
-        $this->result = explode(
-            $delimiter, $this->result
-        );
-
-        return $this;
-    }
-
-    /**
-     * @param string $delimiter
-     * @return self
-     */
-    public function implode($delimiter)
-    {
-        $this->result = is_array($this->result) ? $this->result : (array) $this->result;
-
-        $this->each(function (Crawler $crawler) {
-            return $crawler->text()->getResult();
-        });
-
-        $this->result = implode(
-            $delimiter, $this->result
-        );
-
-        return $this;
+        return $this->replaceMatched('/&([a-zA-Z]+;)+/', '');
     }
 
     /**
@@ -949,7 +972,7 @@ class Crawler
      * @param \simple_html_dom|\simple_html_dom_node $html
      * @param int|null $index
      *
-     * @return null|\simple_html_dom_node|\simple_html_dom_node[]
+     * @return \simple_html_dom_node|\simple_html_dom_node[]|null
      */
     protected function querySelector(
         $selector,
@@ -958,7 +981,7 @@ class Crawler
     ) {
         if ($this->usingCache() && $this->cache->has($selector)) {
             $found = $this->cache->get($selector);
-            return is_array($found) ? $this->getHtmlDomNodeByIndex($found, $index) : $found;
+            return is_array($found) ? $this->getItemByIndex($found, $index) : $found;
         }
 
         $found = $html->find($selector, $index);
@@ -1025,21 +1048,21 @@ class Crawler
     }
 
     /**
-     * @param \simple_html_dom_node[] $nodes
+     * @param array $items
      * @param int|null $index
      *
-     * @return null|\simple_html_dom_node|\simple_html_dom_node[]
+     * @return array|mixed|null
      */
-    protected function getHtmlDomNodeByIndex($nodes, $index)
+    protected function getItemByIndex($items, $index)
     {
         if (is_null($index)) {
-            return $nodes;
+            return $items;
         }
 
         if ($index < 0) {
-            $index = count($nodes) - 1;
+            $index = count($items) - 1;
         }
 
-        return isset($nodes[$index]) ? $nodes[$index] : null;
+        return isset($items[$index]) ? $items[$index] : null;
     }
 }
