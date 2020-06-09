@@ -293,4 +293,88 @@ class Crawler
 
         return $this->take($nodes, $index);
     }
+
+    /**
+     * @param string[] $search
+     * @param string[] $replace
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    public function replace(
+        $search,
+        $replace,
+        $value
+    ) {
+        $value = (string) $value;
+
+        return str_replace(
+            $search, $replace, $value
+        );
+    }
+
+    /**
+     * @param string[] $pattern
+     * @param string[] $replacement
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    public function replaceMatched(
+        $pattern,
+        $replacement,
+        $value
+    ) {
+        $value = (string) $value;
+
+        return preg_replace(
+            $pattern, $replacement, $value
+        );
+    }
+
+    /**
+     * @param string $pattern
+     * @param mixed $value
+     * @param int $group
+     *
+     * @return mixed|null
+     */
+    protected function match(
+        $pattern,
+        $value,
+        $group = 1
+    ) {
+        $value = (string) $value;
+
+        $res = preg_match(
+            $pattern,
+            $value,
+            $matches
+        );
+
+        return ($res && isset($matches[$group])) ? $matches[$group] : null;
+    }
+
+    /**
+     * @param string $pattern
+     * @param mixed $value
+     * @param int $group
+     *
+     * @return mixed|null
+     */
+    protected function matchAll(
+        $pattern,
+        $value,
+        $group = 1
+    ) {
+        $value = (string) $value;
+
+        $res = preg_match_all(
+            $pattern,
+            $value,
+            $matches
+        );
+
+        return ($res && isset($matches[$group])) ? $matches[$group] : null;
+    }
 }
