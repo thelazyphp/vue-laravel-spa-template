@@ -13,11 +13,6 @@ use simple_html_dom_node;
 class Rule
 {
     /**
-     * @var bool
-     */
-    public $trimText = true;
-
-    /**
      * @var \Closure[]
      */
     protected $closures = [];
@@ -450,16 +445,7 @@ class Rule
     {
         $this->closures[] = function ($res) use ($name) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
-                $attr = $res->{$name};
-
-                switch ($name) {
-                    case 'innertext':
-                    case 'outertext':
-                    case 'plaintext':
-                        $attr = $this->trimText ? trim($attr) : $attr;
-                }
-
-                return $attr;
+                return $res->{$name};
             }
 
             return $res;
@@ -511,30 +497,41 @@ class Rule
     /**
      * @param string $pattern
      * @param int $group
+     * @param bool $all
      *
      * @return self
      */
-    public function match($pattern, $group = 1)
+    public function match(
+        $pattern,
+        $group = 1,
+        $all = false)
     {
-        $this->closures[] = function ($res, Collection $cache) use ($pattern, $group) {
-            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
-                $res = $this->trimText ? trim($res->plaintext) : $res;
-            }
+        $this->closures[] = function ($res) use ($pattern, $group, $all) {
+            $func = $all ? 'preg_match_all' : 'preg_match';
+            $matches = [];
 
-            if (!$cache->has($pattern)) {
-                if (preg_match($pattern, $res, $matches) && isset($matches[$group])) {
-                    $cache->put($pattern, $matches[$group]);
+            $res = call_user_func(
+                $func,
+                $pattern,
+                $res,
+                $matches
+            );
 
-                    return $matches[$group];
-                }
-
-                return null;
-            } else {
-                return $cache->get($pattern);
-            }
+            return ($res && isset($matches[$group])) ? $matches[$group] : null;
         };
 
         return $this;
+    }
+
+    /**
+     * @param string $pattern
+     * @param int $group
+     *
+     * @return self
+     */
+    public function matchAll($pattern, $group = 1)
+    {
+        return $this->match($pattern, $group, true);
     }
 
     /**
