@@ -2,8 +2,8 @@
 
 namespace App\Parsing;
 
-use Illuminate\Support\Collection;
 use Closure;
+use Illuminate\Support\Collection;
 use simple_html_dom;
 use simple_html_dom_node;
 
@@ -13,9 +13,9 @@ use simple_html_dom_node;
 class Rule
 {
     /**
-     * @var \Illuminate\Support\Collection
+     * @var bool
      */
-    protected $cache;
+    public $trimText = true;
 
     /**
      * @var \Closure[]
@@ -31,6 +31,14 @@ class Rule
     }
 
     /**
+     * @return \Closure[]
+     */
+    public function closures()
+    {
+        return $this->closures;
+    }
+
+    /**
      * @param string $selector
      * @param int|null $index
      *
@@ -39,7 +47,17 @@ class Rule
     public function find($selector, $index = 0)
     {
         $this->closures[] = $this->getFindClosure($selector, $index);
+
         return $this;
+    }
+
+    /**
+     * @param string $selector
+     * @return self
+     */
+    public function findAll($selector)
+    {
+        return $this->find($selector, null);
     }
 
     /**
@@ -53,10 +71,10 @@ class Rule
     public function findWithText(
         $selector,
         $value,
-        $index,
+        $index = 0,
         $ignoreCase = false)
     {
-        $this->closures[] = function ($res) use (
+        $this->closures[] = function ($res, Collection $cache) use (
             $selector,
             $value,
             $index,
@@ -66,7 +84,7 @@ class Rule
                 $func = $ignoreCase ? 'strcasecmp' : 'strcmp';
                 $found = [];
 
-                foreach ($this->getFindClosure($selector)($res) as $node) {
+                foreach ($this->getFindClosure($selector)($res, $cache) as $node) {
                     $text = trim($node->plaintext);
 
                     $res = call_user_func(
@@ -92,6 +110,26 @@ class Rule
     /**
      * @param string $selector
      * @param mixed $value
+     * @param bool $ignoreCase
+     *
+     * @return self
+     */
+    public function findAllWithText(
+        $selector,
+        $value,
+        $ignoreCase = false)
+    {
+        return $this->findWithText(
+            $selector,
+            $value,
+            null,
+            $ignoreCase
+        );
+    }
+
+    /**
+     * @param string $selector
+     * @param mixed $value
      * @param int|null $index
      * @param bool $ignoreCase
      *
@@ -100,10 +138,10 @@ class Rule
     public function findWithTextHas(
         $selector,
         $value,
-        $index,
+        $index = 0,
         $ignoreCase = false)
     {
-        $this->closures[] = function ($res) use (
+        $this->closures[] = function ($res, Collection $cache) use (
             $selector,
             $value,
             $index,
@@ -113,7 +151,7 @@ class Rule
                 $func = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
                 $found = [];
 
-                foreach ($this->getFindClosure($selector)($res) as $node) {
+                foreach ($this->getFindClosure($selector)($res, $cache) as $node) {
                     $text = trim($node->plaintext);
 
                     $res = call_user_func(
@@ -139,6 +177,26 @@ class Rule
     /**
      * @param string $selector
      * @param mixed $value
+     * @param bool $ignoreCase
+     *
+     * @return self
+     */
+    public function findAllWithTextHas(
+        $selector,
+        $value,
+        $ignoreCase = false)
+    {
+        return $this->findWithTextHas(
+            $selector,
+            $value,
+            null,
+            $ignoreCase
+        );
+    }
+
+    /**
+     * @param string $selector
+     * @param mixed $value
      * @param int|null $index
      * @param bool $ignoreCase
      *
@@ -147,10 +205,10 @@ class Rule
     public function findWithTextStarts(
         $selector,
         $value,
-        $index,
+        $index = 0,
         $ignoreCase = false)
     {
-        $this->closures[] = function ($res) use (
+        $this->closures[] = function ($res, Collection $cache) use (
             $selector,
             $value,
             $index,
@@ -160,7 +218,7 @@ class Rule
                 $func = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
                 $found = [];
 
-                foreach ($this->getFindClosure($selector)($res) as $node) {
+                foreach ($this->getFindClosure($selector)($res, $cache) as $node) {
                     $text = trim($node->plaintext);
 
                     $res = call_user_func(
@@ -186,6 +244,26 @@ class Rule
     /**
      * @param string $selector
      * @param mixed $value
+     * @param bool $ignoreCase
+     *
+     * @return self
+     */
+    public function findAllWithTextStarts(
+        $selector,
+        $value,
+        $ignoreCase = false)
+    {
+        return $this->findWithTextStarts(
+            $selector,
+            $value,
+            null,
+            $ignoreCase
+        );
+    }
+
+    /**
+     * @param string $selector
+     * @param mixed $value
      * @param int|null $index
      * @param bool $ignoreCase
      *
@@ -194,10 +272,10 @@ class Rule
     public function findWithTextEnds(
         $selector,
         $value,
-        $index,
+        $index = 0,
         $ignoreCase = false)
     {
-        $this->closures[] = function ($res) use (
+        $this->closures[] = function ($res, Collection $cache) use (
             $selector,
             $value,
             $index,
@@ -207,7 +285,7 @@ class Rule
                 $func = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
                 $found = [];
 
-                foreach ($this->getFindClosure($selector)($res) as $node) {
+                foreach ($this->getFindClosure($selector)($res, $cache) as $node) {
                     $text = trim($node->plaintext);
                     $pos = mb_strlen($text) - mb_strlen($value);
 
@@ -226,6 +304,234 @@ class Rule
             }
 
             return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @param string $selector
+     * @param mixed $value
+     * @param bool $ignoreCase
+     *
+     * @return self
+     */
+    public function findAllWithTextEnds(
+        $selector,
+        $value,
+        $ignoreCase = false)
+    {
+        return $this->findWithTextEnds(
+            $selector,
+            $value,
+            null,
+            $ignoreCase
+        );
+    }
+
+    /**
+     * @return self
+     */
+    public function nextSibling()
+    {
+        $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom_node) {
+                return $res->next_sibling();
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function prevSibling()
+    {
+        $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom_node) {
+                return $res->prev_sibling();
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function parent()
+    {
+        $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom_node) {
+                return $res->parent();
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function children()
+    {
+        $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom_node) {
+                return $res->children();
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @param int $index
+     * @return self
+     */
+    public function child($index)
+    {
+        $this->closures[] = function ($res) use ($index) {
+            if ($res instanceof simple_html_dom_node) {
+                return $res->children($index);
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function firstChild()
+    {
+        $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom_node) {
+                return $res->first_child();
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function lastChild()
+    {
+        $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom_node) {
+                return $res->last_child();
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return self
+     */
+    public function attr($name)
+    {
+        $this->closures[] = function ($res) use ($name) {
+            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+                $attr = $res->{$name};
+
+                switch ($name) {
+                    case 'innertext':
+                    case 'outertext':
+                    case 'plaintext':
+                        $attr = $this->trimText ? trim($attr) : $attr;
+                }
+
+                return $attr;
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function innerHtml()
+    {
+        return $this->attr('innertext');
+    }
+
+    /**
+     * @return self
+     */
+    public function outerHtml()
+    {
+        return $this->attr('outertext');
+    }
+
+    /**
+     * @return self
+     */
+    public function html()
+    {
+        return $this->innerHtml();
+    }
+
+    /**
+     * @return self
+     */
+    public function innerText()
+    {
+        return $this->attr('plaintext');
+    }
+
+    /**
+     * @return self
+     */
+    public function text()
+    {
+        return $this->innerText();
+    }
+
+    /**
+     * @param string $pattern
+     * @param int $group
+     *
+     * @return self
+     */
+    public function match($pattern, $group = 1)
+    {
+        $this->closures[] = function ($res, Collection $cache) use ($pattern, $group) {
+            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+                $res = $this->trimText ? trim($res->plaintext) : $res;
+            }
+
+            if (!$cache->has($pattern)) {
+                if (preg_match($pattern, $res, $matches) && isset($matches[$group])) {
+                    $cache->put($pattern, $matches[$group]);
+
+                    return $matches[$group];
+                }
+
+                return null;
+            } else {
+                return $cache->get($pattern);
+            }
         };
 
         return $this;
@@ -258,18 +564,20 @@ class Rule
      */
     protected function getFindClosure($selector, $index = null)
     {
-        return function ($res) use ($selector, $index) {
+        return function ($res, Collection $cache) use ($selector, $index) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
-                if (!$this->cache->has($selector)) {
-                    $res = $res->find($selector, $index);
+                if (!$cache->has($selector)) {
+                    $found = $res->find($selector, $index);
 
-                    if (!is_null($res)) {
-                        $this->cache->put($selector, $res);
+                    if (!is_null($found)) {
+                        $cache->put($selector, $found);
                     }
                 } else {
-                    $res = $this->cache->get($selector);
-                    return is_array($res) ? $this->take($res, $index) : $res;
+                    $found = $cache->get($selector);
+                    $found = is_array($found) ? $this->take($found, $index) : $found;
                 }
+
+                return $found;
             }
 
             return $res;
