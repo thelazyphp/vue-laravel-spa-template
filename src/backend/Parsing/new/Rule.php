@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Parsing;
+namespace App\Scraping;
 
 use Closure;
 use Illuminate\Support\Collection;
@@ -93,7 +93,7 @@ class Rule
                     }
                 }
 
-                return $this->take($found, $index);
+                return $this->node($found, $index);
             }
 
             return $res;
@@ -160,7 +160,7 @@ class Rule
                     }
                 }
 
-                return $this->take($found, $index);
+                return $this->node($found, $index);
             }
 
             return $res;
@@ -227,7 +227,7 @@ class Rule
                     }
                 }
 
-                return $this->take($found, $index);
+                return $this->node($found, $index);
             }
 
             return $res;
@@ -295,7 +295,7 @@ class Rule
                     }
                 }
 
-                return $this->take($found, $index);
+                return $this->node($found, $index);
             }
 
             return $res;
@@ -531,7 +531,58 @@ class Rule
      */
     public function matchAll($pattern, $group = 1)
     {
-        return $this->match($pattern, $group, true);
+        return $this->match(
+            $pattern,
+            $group,
+            true
+        );
+    }
+
+    /**
+     * @param string[] $value
+     * @param string[] $replacement
+     * @param bool $ignoreCase
+     *
+     * @return self
+     */
+    public function replace(
+        $value,
+        $replacement,
+        $ignoreCase = false)
+    {
+        return $this->closures[] = function ($res) use (
+            $value,
+            $replacement,
+            $ignoreCase)
+        {
+            $func = $ignoreCase ? 'str_ireplace' : 'str_replace';
+
+            return call_user_func(
+                $func,
+                $value,
+                $replacement,
+                $res
+            );
+        };
+
+        return $this;
+    }
+
+    /**
+     * @param string[] $pattern
+     * @param string[] $replacement
+     *
+     * @return self
+     */
+    public function replaceMatched($pattern, $replacement)
+    {
+        return $this->closures[] = function ($res) use ($pattern, $replacement) {
+            return preg_replace(
+                $pattern, $replacement, $res
+            );
+        };
+
+        return $this;
     }
 
     /**
@@ -540,7 +591,7 @@ class Rule
      *
      * @return \simple_html_dom_node[]|simple_html_dom_node|null
      */
-    protected function take($nodes, $index)
+    protected function node($nodes, $index)
     {
         if (is_null($index)) {
             return $nodes;
