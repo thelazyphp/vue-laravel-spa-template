@@ -26,14 +26,6 @@ class Rule
     }
 
     /**
-     * @return \Closure[]
-     */
-    public function closures()
-    {
-        return $this->closures;
-    }
-
-    /**
      * @param string $selector
      * @param int|null $index
      *
@@ -41,7 +33,13 @@ class Rule
      */
     public function find($selector, $index = 0)
     {
-        $this->closures[] = $this->getFindClosure($selector, $index);
+        $this->closures[] = function ($res, Collection $cache) use ($selector, $index) {
+            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+                return $this->findNodes($res, $cache, $selector, $index);
+            }
+
+            return $res;
+        };
 
         return $this;
     }
@@ -79,21 +77,15 @@ class Rule
                 $func = $ignoreCase ? 'strcasecmp' : 'strcmp';
                 $found = [];
 
-                foreach ($this->getFindClosure($selector)($res, $cache) as $node) {
-                    $text = trim($node->plaintext);
+                foreach ($this->findNodes($res, $cache, $selector) as $node) {
+                    $text = $this->getInnerText($node);
 
-                    $res = call_user_func(
-                        $func,
-                        $text,
-                        $value
-                    );
-
-                    if ($res === 0) {
+                    if (call_user_func($func, $text, $value) === 0) {
                         $found[] = $node;
                     }
                 }
 
-                return $this->node($found, $index);
+                return $this->getNode($found, $index);
             }
 
             return $res;
@@ -146,21 +138,15 @@ class Rule
                 $func = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
                 $found = [];
 
-                foreach ($this->getFindClosure($selector)($res, $cache) as $node) {
-                    $text = trim($node->plaintext);
+                foreach ($this->findNodes($res, $cache, $selector) as $node) {
+                    $text = $this->getInnerText($node);
 
-                    $res = call_user_func(
-                        $func,
-                        $text,
-                        $value
-                    );
-
-                    if ($res !== false) {
+                    if (call_user_func($func, $text, $value) !== false) {
                         $found[] = $node;
                     }
                 }
 
-                return $this->node($found, $index);
+                return $this->getNode($found, $index);
             }
 
             return $res;
@@ -213,21 +199,15 @@ class Rule
                 $func = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
                 $found = [];
 
-                foreach ($this->getFindClosure($selector)($res, $cache) as $node) {
-                    $text = trim($node->plaintext);
+                foreach ($this->findNodes($res, $cache, $selector) as $node) {
+                    $text = $this->getInnerText($node);
 
-                    $res = call_user_func(
-                        $func,
-                        $text,
-                        $value
-                    );
-
-                    if ($res === 0) {
+                    if (call_user_func($func, $text, $value) === 0) {
                         $found[] = $node;
                     }
                 }
 
-                return $this->node($found, $index);
+                return $this->getNode($found, $index);
             }
 
             return $res;
@@ -280,22 +260,16 @@ class Rule
                 $func = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
                 $found = [];
 
-                foreach ($this->getFindClosure($selector)($res, $cache) as $node) {
-                    $text = trim($node->plaintext);
+                foreach ($this->findNodes($res, $cache, $selector) as $node) {
+                    $text = $this->getInnerText($node);
                     $pos = mb_strlen($text) - mb_strlen($value);
 
-                    $res = call_user_func(
-                        $func,
-                        $text,
-                        $value
-                    );
-
-                    if ($res === $pos) {
+                    if (call_user_func($func, $text, $value) === $pos) {
                         $found[] = $node;
                     }
                 }
 
-                return $this->node($found, $index);
+                return $this->getNode($found, $index);
             }
 
             return $res;
@@ -325,13 +299,61 @@ class Rule
     }
 
     /**
+     * @param string $selector
+     * @param string $pattern
+     * @param int|null $index
+     *
+     * @return self
+     */
+    public function findWithTextMatches(
+        $selector,
+        $pattern,
+        $index = 0)
+    {
+        $this->closures[] = function ($res, Collection $cache) use (
+            $selector,
+            $pattern,
+            $index)
+        {
+            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+                $found = [];
+
+                foreach ($this->findNodes($res, $cache, $selector) as $node) {
+                    $text = $this->getInnerText($node);
+
+                    if (preg_match($pattern, $text)) {
+                        $found[] = $node;
+                    }
+                }
+
+                return $this->getNode($found, $index);
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @param string $selector
+     * @param string $pattern
+     *
+     * @return self
+     */
+    public function findAllWithTextMatches($selector, $pattern)
+    {
+        return $this->findWithTextMatches($selector, $pattern, null);
+    }
+
+    /**
      * @return self
      */
     public function nextSibling()
     {
         $this->closures[] = function ($res) {
             if ($res instanceof simple_html_dom_node) {
-                return $res->next_sibling();
+                return $res->nextSibling();
             }
 
             return $res;
@@ -347,7 +369,7 @@ class Rule
     {
         $this->closures[] = function ($res) {
             if ($res instanceof simple_html_dom_node) {
-                return $res->prev_sibling();
+                return $res->previousSibling();
             }
 
             return $res;
@@ -357,13 +379,20 @@ class Rule
     }
 
     /**
+     * @param int $level
      * @return self
      */
-    public function parent()
+    public function parent($level = 0)
     {
-        $this->closures[] = function ($res) {
-            if ($res instanceof simple_html_dom_node) {
-                return $res->parent();
+        $this->closures[] = function ($res) use ($level) {
+            $curLevel = 0;
+
+            while ($curLevel <= $level) {
+                if ($res instanceof simple_html_dom_node) {
+                    $res = $res->parentNode();
+                } else {
+                    break;
+                }
             }
 
             return $res;
@@ -378,8 +407,40 @@ class Rule
     public function children()
     {
         $this->closures[] = function ($res) {
-            if ($res instanceof simple_html_dom_node) {
-                return $res->children();
+            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+                return $res->childNodes();
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function firstChild()
+    {
+        $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+                return $res->firstChild();
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function lastChild()
+    {
+        $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+                return $res->lastChild();
             }
 
             return $res;
@@ -395,57 +456,8 @@ class Rule
     public function child($index)
     {
         $this->closures[] = function ($res) use ($index) {
-            if ($res instanceof simple_html_dom_node) {
-                return $res->children($index);
-            }
-
-            return $res;
-        };
-
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function firstChild()
-    {
-        $this->closures[] = function ($res) {
-            if ($res instanceof simple_html_dom_node) {
-                return $res->first_child();
-            }
-
-            return $res;
-        };
-
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function lastChild()
-    {
-        $this->closures[] = function ($res) {
-            if ($res instanceof simple_html_dom_node) {
-                return $res->last_child();
-            }
-
-            return $res;
-        };
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @return self
-     */
-    public function attr($name)
-    {
-        $this->closures[] = function ($res) use ($name) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
-                return $res->{$name};
+                return $res->childNodes($index);
             }
 
             return $res;
@@ -459,7 +471,15 @@ class Rule
      */
     public function innerHtml()
     {
-        return $this->attr('innertext');
+        return $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom_node) {
+                return $this->getInnerHtml($res);
+            }
+
+            return $res;
+        };
+
+        return $this;
     }
 
     /**
@@ -467,7 +487,15 @@ class Rule
      */
     public function outerHtml()
     {
-        return $this->attr('outertext');
+        return $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom_node) {
+                return $this->getInnerHtml($res);
+            }
+
+            return $res;
+        };
+
+        return $this;
     }
 
     /**
@@ -483,7 +511,15 @@ class Rule
      */
     public function innerText()
     {
-        return $this->attr('plaintext');
+        return $this->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom_node) {
+                return $this->getInnerText($res);
+            }
+
+            return $res;
+        };
+
+        return $this;
     }
 
     /**
@@ -495,103 +531,45 @@ class Rule
     }
 
     /**
-     * @param string $pattern
-     * @param int $group
-     * @param bool $all
-     *
-     * @return self
+     * @param \simple_html_dom_node $node
+     * @return string
      */
-    public function match(
-        $pattern,
-        $group = 1,
-        $all = false)
+    protected function getInnerHtml($node)
     {
-        $this->closures[] = function ($res) use ($pattern, $group, $all) {
-            $func = $all ? 'preg_match_all' : 'preg_match';
-            $matches = [];
-
-            $res = call_user_func(
-                $func,
-                $pattern,
-                $res,
-                $matches
-            );
-
-            return ($res && isset($matches[$group])) ? $matches[$group] : null;
-        };
-
-        return $this;
-    }
-
-    /**
-     * @param string $pattern
-     * @param int $group
-     *
-     * @return self
-     */
-    public function matchAll($pattern, $group = 1)
-    {
-        return $this->match(
-            $pattern,
-            $group,
-            true
+        return trim(
+            $node->innertext()
         );
     }
 
     /**
-     * @param string[] $value
-     * @param string[] $replacement
-     * @param bool $ignoreCase
-     *
-     * @return self
+     * @param \simple_html_dom_node $node
+     * @return string
      */
-    public function replace(
-        $value,
-        $replacement,
-        $ignoreCase = false)
+    protected function getOuterHtml($node)
     {
-        return $this->closures[] = function ($res) use (
-            $value,
-            $replacement,
-            $ignoreCase)
-        {
-            $func = $ignoreCase ? 'str_ireplace' : 'str_replace';
-
-            return call_user_func(
-                $func,
-                $value,
-                $replacement,
-                $res
-            );
-        };
-
-        return $this;
+        return trim(
+            $node->outertext()
+        );
     }
 
     /**
-     * @param string[] $pattern
-     * @param string[] $replacement
-     *
-     * @return self
+     * @param \simple_html_dom|\simple_html_dom_node $html
+     * @return string
      */
-    public function replaceMatched($pattern, $replacement)
+    protected function getInnerText($html)
     {
-        return $this->closures[] = function ($res) use ($pattern, $replacement) {
-            return preg_replace(
-                $pattern, $replacement, $res
-            );
-        };
-
-        return $this;
+        return trim(
+            $html->text()
+        );
     }
 
     /**
-     * @param \simple_html_dom[]|\simple_html_dom_node[] $nodes
+     * @param \simple_html_dom_node[] $nodes
      * @param int|null $index
      *
-     * @return \simple_html_dom_node[]|simple_html_dom_node|null
+     * @return \simple_html_dom_node[]|\simple_html_dom_node|null
      */
-    protected function node($nodes, $index)
+    protected function getNode($nodes, $index)
     {
         if (is_null($index)) {
             return $nodes;
@@ -605,30 +583,30 @@ class Rule
     }
 
     /**
+     * @param \simple_html_dom|\simple_html_dom_node $html
+     * @param \Illuminate\Support\Collection $cache
      * @param string $selector
      * @param int|null $index
      *
-     * @return \Closure
+     * @return \simple_html_dom_node[]|\simple_html_dom_node|null
      */
-    protected function getFindClosure($selector, $index = null)
+    protected function findNodes(
+        $html,
+        Collection $cache,
+        $selector,
+        $index = null)
     {
-        return function ($res, Collection $cache) use ($selector, $index) {
-            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
-                if (!$cache->has($selector)) {
-                    $found = $res->find($selector, $index);
+        if (!$cache->has($selector)) {
+            $found = $html->find($selector, $index);
 
-                    if (!is_null($found)) {
-                        $cache->put($selector, $found);
-                    }
-                } else {
-                    $found = $cache->get($selector);
-                    $found = is_array($found) ? $this->take($found, $index) : $found;
-                }
-
-                return $found;
+            if (!is_null($found)) {
+                $cache->put($selector, $found);
             }
+        } else {
+            $found = $cache->get($selector);
+            $found = is_array($found) ? $this->getNode($found, $index) : $found;
+        }
 
-            return $res;
-        };
+        return $found;
     }
 }
