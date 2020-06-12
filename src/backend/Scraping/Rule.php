@@ -34,6 +34,37 @@ class Rule
     }
 
     /**
+     * @param \Closure $callback
+     * @param mixed $default
+     *
+     * @return self
+     */
+    public function each(Closure $callback, $default = null)
+    {
+        $this->closures[] = function ($res, $cache) use ($callback, $default) {
+            $res = (array) $res;
+
+            foreach ($res as $key => $value) {
+                $rule = call_user_func($callback, new static, $value, $key);
+
+                if ($rule instanceof Rule) {
+                    $res[$key] = (new Scraper($rule, $cache))->scrap($value, $default);
+                } else {
+                    if ($rule === false) {
+                        continue;
+                    }
+
+                    $res[$key] = $rule;
+                }
+            }
+
+            return $res;
+        };
+
+        return $this;
+    }
+
+    /**
      * @param string $selector
      * @param int|null $index
      *
@@ -59,23 +90,6 @@ class Rule
     public function findAll($selector)
     {
         return $this->find($selector, null);
-    }
-
-    /**
-     * @param \Closure $callback
-     * @param mixed $default
-     *
-     * @return self
-     */
-    public function each(Closure $callback, $default = null)
-    {
-        $this->closures[] = function ($res, $cache) use ($callback, $default) {
-            //
-
-            return $res;
-        };
-
-        return $this;
     }
 
     /**
@@ -597,18 +611,18 @@ class Rule
 
     /**
      * @param string $delimiter
-     * @param bool $pattern
+     * @param bool $usePattern
      *
      * @return self
      */
-    public function explode($delimiter, $pattern = false)
+    public function explode($delimiter, $usePattern = false)
     {
-        $this->closures[] = function ($res) use ($delimiter, $pattern) {
+        $this->closures[] = function ($res) use ($delimiter, $usePattern) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $res = $this->getInnerText($res);
             }
 
-            $func = $pattern ? 'preg_split' : 'explode';
+            $func = $usePattern ? 'preg_split' : 'explode';
 
             return call_user_func($func, $delimiter, $res);
         };
@@ -811,7 +825,7 @@ class Rule
     }
 
     /**
-     * @param string $value
+     * @param mixed $value
      * @return self
      */
     public function append($value)
@@ -828,7 +842,7 @@ class Rule
     }
 
     /**
-     * @param string $value
+     * @param mixed $value
      * @return self
      */
     public function prepend($value)

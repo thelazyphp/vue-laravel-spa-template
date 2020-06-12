@@ -45,17 +45,20 @@ class Scraper
             $res = call_user_func($closure, $res, $this->cache);
         }
 
-        return $res ?? $default;
-    }
+        if (is_array($res)) {
+            return array_map(function ($item) use ($default) {
+                if ($item instanceof simple_html_dom || $item instanceof simple_html_dom_node) {
+                    $item = trim($item->text());
+                }
 
-    /**
-     * @param \simple_html_dom|\simple_html_dom_node $html
-     * @param mixed $default
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function scrapAll($html, $default = null)
-    {
-        //
+                return $item ?? $default;
+            }, $res);
+        }
+
+        if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+            $res = trim($res->text());
+        }
+
+        return $res ?? $default;
     }
 }
