@@ -2,9 +2,11 @@
 
 namespace App\Scraping\Facades;
 
+use Illuminate\Support\Collection;
+
 /**
- * @method static \Closure[] closures()
- * @method static \App\Scraping\Rule each(\Closure $callback, mixed $default)
+ * @method static mixed scrap(\simple_html_dom|\simple_html_dom_node|string $html, mixed $default)
+ * @method static \App\Scraping\Rule each(callable $callback, mixed $default)
  * @method static \App\Scraping\Rule find(string $selector, int|null $index)
  * @method static \App\Scraping\Rule findAll(string $selector)
  * @method static \App\Scraping\Rule findWithText(string $selector, mixed $value, int|null $index, bool $ignoreCase)
@@ -32,13 +34,15 @@ namespace App\Scraping\Facades;
  * @method static \App\Scraping\Rule attr(string|null $name)
  * @method static \App\Scraping\Rule match(string $pattern, int $group, bool $all)
  * @method static \App\Scraping\Rule matchAll(string $pattern, int $group)
- * @method static \App\Scraping\Rule explode(string $delimiter, bool $usePattern)
- * @method static \App\Scraping\Rule implode(string $delimiter)
+ * @method static \App\Scraping\Rule explode(string $delim)
+ * @method static \App\Scraping\Rule regExpExplode(string $pattern)
+ * @method static \App\Scraping\Rule implode(string $delim)
  * @method static \App\Scraping\Rule slice(int $offset, int|null $length)
  * @method static \App\Scraping\Rule sort()
+ * @method static \App\Scraping\Rule filter(callable $callback)
  * @method static \App\Scraping\Rule take(int $index)
  * @method static \App\Scraping\Rule replace(string[] $value, string[] $replacement, bool $ignoreCase)
- * @method static \App\Scraping\Rule replaceMatches(string[] $pattern, string[] $replacement)
+ * @method static \App\Scraping\Rule regExpReplace(string[] $pattern, string[] $replacement)
  * @method static \App\Scraping\Rule takeDigits()
  * @method static \App\Scraping\Rule takeInteger()
  * @method static \App\Scraping\Rule takeFloat()
@@ -51,6 +55,8 @@ namespace App\Scraping\Facades;
  * @method static \App\Scraping\Rule rightTrim()
  * @method static \App\Scraping\Rule append(mixed $value)
  * @method static \App\Scraping\Rule prepend(mixed $value)
+ * @method static \App\Scraping\Rule toLowerCase()
+ * @method static \App\Scraping\Rule toUpperCase()
  * @method static \App\Scraping\Rule castTo(string $type)
  * @method static \App\Scraping\Rule castToBoolean()
  * @method static \App\Scraping\Rule castToInteger()
@@ -61,6 +67,20 @@ namespace App\Scraping\Facades;
 class Rule
 {
     /**
+     * @var string
+     */
+    protected static $accessor = 'App\Scraping\Rule';
+
+    /**
+     * @param \Illuminate\Support\Collection $cache
+     * @return \App\Scraping\Rule
+     */
+    public static function cache(Collection $cache)
+    {
+        return new static::$accessor($cache);
+    }
+
+    /**
      * @param string $name
      * @param array $arguments
      *
@@ -68,6 +88,6 @@ class Rule
      */
     public static function __callStatic($name, $arguments)
     {
-        return (new \App\Scraping\Rule)->{$name}(...$arguments);
+        return (new static::$accessor)->{$name}(...$arguments);
     }
 }
