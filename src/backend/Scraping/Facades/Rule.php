@@ -34,6 +34,8 @@ namespace App\Scraping\Facades;
  * @method static \App\Scraping\Rule matchAll(string $pattern, int $group)
  * @method static \App\Scraping\Rule explode(string $delimiter, bool $usePattern)
  * @method static \App\Scraping\Rule implode(string $delimiter)
+ * @method static \App\Scraping\Rule slice(int $offset, int|null $length)
+ * @method static \App\Scraping\Rule sort()
  * @method static \App\Scraping\Rule take(int $index)
  * @method static \App\Scraping\Rule replace(string[] $value, string[] $replacement, bool $ignoreCase)
  * @method static \App\Scraping\Rule replaceMatches(string[] $pattern, string[] $replacement)
@@ -66,6 +68,6 @@ class Rule
      */
     public static function __callStatic($name, $arguments)
     {
-        return call_user_func_array([\App\Scraping\Rule::class, $name], $arguments);
+        return (new \App\Scraping\Rule)->{$name}(...$arguments);
     }
 }

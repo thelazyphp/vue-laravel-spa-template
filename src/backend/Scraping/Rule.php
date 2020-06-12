@@ -41,7 +41,9 @@ class Rule
      */
     public function each(Closure $callback, $default = null)
     {
-        $this->closures[] = function ($res, $cache) use ($callback, $default) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res, $cache) use ($callback, $default) {
             $res = (array) $res;
 
             foreach ($res as $key => $value) {
@@ -61,7 +63,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -72,7 +74,9 @@ class Rule
      */
     public function find($selector, $index = 0)
     {
-        $this->closures[] = function ($res, $cache) use ($selector, $index) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res, $cache) use ($selector, $index) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 return $this->findNodes($cache, $res, $selector, $index);
             }
@@ -80,7 +84,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -106,7 +110,9 @@ class Rule
         $index = 0,
         $ignoreCase = false)
     {
-        $this->closures[] = function ($res, $cache) use (
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res, $cache) use (
             $selector,
             $value,
             $index,
@@ -130,7 +136,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -162,7 +168,9 @@ class Rule
         $index = 0,
         $ignoreCase = false)
     {
-        $this->closures[] = function ($res, $cache) use (
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res, $cache) use (
             $selector,
             $value,
             $index,
@@ -186,7 +194,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -218,7 +226,9 @@ class Rule
         $index = 0,
         $ignoreCase = false)
     {
-        $this->closures[] = function ($res, $cache) use (
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res, $cache) use (
             $selector,
             $value,
             $index,
@@ -242,7 +252,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -274,7 +284,9 @@ class Rule
         $index = 0,
         $ignoreCase = false)
     {
-        $this->closures[] = function ($res, $cache) use (
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res, $cache) use (
             $selector,
             $value,
             $index,
@@ -299,7 +311,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -329,7 +341,9 @@ class Rule
         $pattern,
         $index = 0)
     {
-        $this->closures[] = function ($res, $cache) use (
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res, $cache) use (
             $selector,
             $pattern,
             $index)
@@ -351,7 +365,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -370,7 +384,9 @@ class Rule
      */
     public function nextSibling()
     {
-        $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom_node) {
                 return $res->nextSibling();
             }
@@ -378,7 +394,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -386,7 +402,9 @@ class Rule
      */
     public function prevSibling()
     {
-        $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom_node) {
                 return $res->previousSibling();
             }
@@ -394,7 +412,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -403,7 +421,9 @@ class Rule
      */
     public function parent($levels = 1)
     {
-        $this->closures[] = function ($res) use ($levels) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($levels) {
             for ($level = 1; $level <= $levels; $level++) {
                 if ($res instanceof simple_html_dom_node) {
                     $res = $res->parentNode();
@@ -415,7 +435,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -423,7 +443,9 @@ class Rule
      */
     public function children()
     {
-        $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 return $res->childNodes();
             }
@@ -431,7 +453,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -440,7 +462,9 @@ class Rule
      */
     public function child($index)
     {
-        $this->closures[] = function ($res) use ($index) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($index) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 return $res->childNodes($index);
             }
@@ -448,7 +472,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -456,7 +480,9 @@ class Rule
      */
     public function firstChild()
     {
-        $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 return $res->firstChild();
             }
@@ -464,7 +490,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -472,7 +498,9 @@ class Rule
      */
     public function lastChild()
     {
-        $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 return $res->lastChild();
             }
@@ -480,7 +508,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -488,7 +516,9 @@ class Rule
      */
     public function innerHtml()
     {
-        return $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        return $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom_node) {
                 return $this->getInnerHtml($res);
             }
@@ -496,7 +526,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -504,7 +534,9 @@ class Rule
      */
     public function outerHtml()
     {
-        return $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        return $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom_node) {
                 return $this->getOuterHtml($res);
             }
@@ -512,7 +544,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -528,7 +560,9 @@ class Rule
      */
     public function innerText()
     {
-        $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 return $this->getInnerText($res);
             }
@@ -536,7 +570,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -553,7 +587,9 @@ class Rule
      */
     public function attr($name = null)
     {
-        $this->closures[] = function ($res) use ($name) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($name) {
             if ($res instanceof simple_html_dom_node) {
                 return is_null($name) ? $res->getAllAttributes() : $res->getAttribute($name);
             }
@@ -561,7 +597,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -576,7 +612,9 @@ class Rule
         $group = 1,
         $all = false)
     {
-        $this->closures[] = function ($res) use (
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use (
             $pattern,
             $group,
             $all)
@@ -595,7 +633,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -617,7 +655,9 @@ class Rule
      */
     public function explode($delimiter, $usePattern = false)
     {
-        $this->closures[] = function ($res) use ($delimiter, $usePattern) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($delimiter, $usePattern) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $res = $this->getInnerText($res);
             }
@@ -627,7 +667,7 @@ class Rule
             return call_user_func($func, $delimiter, $res);
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -636,7 +676,9 @@ class Rule
      */
     public function implode($delimiter)
     {
-        $this->closures[] = function ($res) use ($delimiter) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($delimiter) {
             $res = array_map(function ($item) {
                 if ($item instanceof simple_html_dom || $item instanceof simple_html_dom_node) {
                     return $this->getInnerText($item);
@@ -648,7 +690,40 @@ class Rule
             return implode($delimiter, $res);
         };
 
-        return $this;
+        return $rule;
+    }
+
+    /**
+     * @param int $offset
+     * @param int|null $length
+     *
+     * @return self
+     */
+    public function slice($offset, $length = null)
+    {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($offset, $length) {
+            return array_slice((array) $res, $offset, $length);
+        };
+
+        return $rule;
+    }
+
+    /**
+     * @return self
+     */
+    public function sort()
+    {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
+            sort((array) $res);
+
+            return $res;
+        };
+
+        return $rule;
     }
 
     /**
@@ -657,7 +732,9 @@ class Rule
      */
     public function take($index)
     {
-        $this->closures[] = function ($res) use ($index) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($index) {
             if (is_array($res)) {
                 if ($index < 0) {
                     $index += count($res);
@@ -669,7 +746,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -684,7 +761,9 @@ class Rule
         $replacement,
         $ignoreCase = false)
     {
-        $this->closures[] = function ($res) use (
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use (
             $value,
             $replacement,
             $ignoreCase)
@@ -698,7 +777,7 @@ class Rule
             return call_user_func($func, $value, $replacement, $res);
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -709,7 +788,9 @@ class Rule
      */
     public function replaceMatches($pattern, $replacement)
     {
-        $this->closures[] = function ($res) use ($pattern, $replacement) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($pattern, $replacement) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $res = $this->getInnerText($res);
             }
@@ -717,7 +798,7 @@ class Rule
             return preg_replace($pattern, $replacement, $res);
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -781,7 +862,9 @@ class Rule
      */
     public function trim()
     {
-        $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $res = $this->getInnerText($res);
             }
@@ -789,7 +872,7 @@ class Rule
             return trim($res);
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -797,7 +880,9 @@ class Rule
      */
     public function leftTrim()
     {
-        $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $res = $this->getInnerText($res);
             }
@@ -805,7 +890,7 @@ class Rule
             return ltrim($res);
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -813,7 +898,9 @@ class Rule
      */
     public function rightTrim()
     {
-        $this->closures[] = function ($res) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $res = $this->getInnerText($res);
             }
@@ -821,7 +908,7 @@ class Rule
             return rtrim($res);
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -830,7 +917,9 @@ class Rule
      */
     public function append($value)
     {
-        $this->closures[] = function ($res) use ($value) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($value) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $res = $this->getInnerText($res);
             }
@@ -838,7 +927,7 @@ class Rule
             return $res .= $value;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -847,7 +936,9 @@ class Rule
      */
     public function prepend($value)
     {
-        $this->closures[] = function ($res) use ($value) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($value) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $res = $this->getInnerText($res);
             }
@@ -855,7 +946,7 @@ class Rule
             return $value.$res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
@@ -864,7 +955,9 @@ class Rule
      */
     public function castTo($type)
     {
-        $this->closures[] = function ($res) use ($type) {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($type) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $res = $this->getInnerText($res);
             }
@@ -889,7 +982,7 @@ class Rule
             return $res;
         };
 
-        return $this;
+        return $rule;
     }
 
     /**
