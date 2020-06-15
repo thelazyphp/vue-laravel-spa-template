@@ -2,10 +2,13 @@
 
 namespace App\Scraping\Scrapers;
 
-use App\Scraping\Scraper;
+use App\Scraping\EloquentScraper;
 use App\Scraping\Facades\Rule;
 
-class OnlinerApartmentsScraper extends Scraper
+/**
+ *
+ */
+class OnlinerApartmentsScraper extends EloquentScraper
 {
     /**
      * {@inheritDoc}
@@ -51,15 +54,15 @@ class OnlinerApartmentsScraper extends Scraper
                 ];
             }),
 
-            'title' => Rule::find('title'),
-            'rooms' => Rule::find('.apartment-bar__value')->takeInteger(),
-            'floor' => Rule::findWithText('.apartment-options-table__sub', 'Этаж')->parent(3)->lastChild()->takeInteger(),
-            'floors' => Rule::findWithText('.apartment-options-table__sub', 'Этаж')->parent(3)->lastChild()->match('/\d+\/(\d+)/'),
-            'year_built' => Rule::findWithTextMatches('.apartment-options__item', '/ дом \d+ года/')->takeInteger(),
-            'size_total' => Rule::findWithText('.apartment-options-table__sub', 'Общая')->parent(3)->lastChild()->takeFloat()->castToFloat(),
-            'size_living' => Rule::findWithText('.apartment-options-table__sub', 'Жилая')->parent(3)->lastChild()->takeFloat()->castToFloat(),
-            'size_kitchen' => Rule::findWithText('.apartment-options-table__sub', 'Кухня')->parent(3)->lastChild()->takeFloat()->castToFloat(),
-            'price_amount' => Rule::find('.apartment-bar__price-value_complementary')->removeSpaces()->takeInteger(),
+            'title'          => Rule::find('title'),
+            'rooms'          => Rule::find('.apartment-bar__value')->takeInteger(),
+            'floor'          => Rule::findWithText('.apartment-options-table__sub', 'Этаж')->parent(3)->lastChild()->takeInteger(),
+            'floors'         => Rule::findWithText('.apartment-options-table__sub', 'Этаж')->parent(3)->lastChild()->match('/\d+\/(\d+)/'),
+            'year_built'     => Rule::findWithTextMatches('.apartment-options__item', '/ дом \d+ года/')->takeInteger(),
+            'size_total'     => Rule::findWithText('.apartment-options-table__sub', 'Общая')->parent(3)->lastChild()->takeFloat()->castToFloat(),
+            'size_living'    => Rule::findWithText('.apartment-options-table__sub', 'Жилая')->parent(3)->lastChild()->takeFloat()->castToFloat(),
+            'size_kitchen'   => Rule::findWithText('.apartment-options-table__sub', 'Кухня')->parent(3)->lastChild()->takeFloat()->castToFloat(),
+            'price_amount'   => Rule::find('.apartment-bar__price-value_complementary')->removeSpaces()->takeInteger(),
             'price_currency' => 'USD',
 
             'price_sq_m_amount' => function ($url, $src, $attr) {

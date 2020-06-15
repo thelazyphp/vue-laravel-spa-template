@@ -37,9 +37,10 @@ class Rule
      */
     public function cache(Collection $cache)
     {
-        $this->cache = $cache;
+        $rule = clone $this;
+        $rule->cache = $cache;
 
-        return $this;
+        return $rule;
     }
 
     /**

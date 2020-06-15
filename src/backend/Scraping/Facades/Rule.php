@@ -2,6 +2,8 @@
 
 namespace App\Scraping\Facades;
 
+use App\Scraping\Relationship;
+
 /**
  * @method static \App\Scraping\Rule cache(\Illuminate\Support\Collection $cache)
  * @method static mixed scrap(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default)
@@ -71,6 +73,17 @@ class Rule
      * @var string
      */
     protected static $accessor = 'App\Scraping\Rule';
+
+    /**
+     * @param string $model
+     * @param array $rules
+     *
+     * @return \App\Scraping\Relationship
+     */
+    public static function relationship($model, $rules)
+    {
+        return new Relationship($model, $rules);
+    }
 
     /**
      * @param string $name
