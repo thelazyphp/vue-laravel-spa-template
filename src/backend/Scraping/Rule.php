@@ -8,8 +8,6 @@ use simple_html_dom;
 use simple_html_dom_node;
 use InvalidArgumentException;
 
-use function str_get_html;
-
 /**
  *
  */
@@ -34,28 +32,35 @@ class Rule
     }
 
     /**
-     * @param \simple_html_dom|\simple_html_dom_node|string $html
+     * @param \Illuminate\Support\Collection $cache
+     * @return self
+     */
+    public function cache(Collection $cache)
+    {
+        $this->cache = $cache;
+
+        return $this;
+    }
+
+    /**
+     * @param \simple_html_dom|\simple_html_dom_node|string $src
      * @param mixed $default
      *
      * @return mixed
      *
      * @throws \InvalidArgumentException
      */
-    public function scrap($html, $default = null)
+    public function scrap($src, $default = null)
     {
-        if (!is_string($html) && !($html instanceof simple_html_dom) && !($html instanceof simple_html_dom_node)) {
+        if (!is_string($src) && !($src instanceof simple_html_dom) && !($src instanceof simple_html_dom_node)) {
             throw new InvalidArgumentException(
-                'HTML must be a string or an instance of [\simple_html_dom] or [\simple_html_dom_node]!'
+                'Source must be a string or an instance of [\simple_html_dom] or [\simple_html_dom_node]!'
             );
-        }
-
-        if (is_string($html)) {
-            $html = str_get_html($html);
         }
 
         $res = array_reduce($this->closures, function ($res, $closure) {
             return $closure($res);
-        }, $html);
+        }, $src);
 
         if (is_array($res)) {
             return array_map(function ($item) use ($default) {
@@ -85,21 +90,19 @@ class Rule
         $rule = clone $this;
 
         $rule->closures[] = function ($res) use ($callback, $default) {
-            $res = (array) $res;
+            array_walk((array) $res, function (&$item, $key) use ($callback, $default) {
+                $rule = $callback($item, $key);
 
-            foreach ($res as $key => $value) {
-                $rule = $callback($value, $key);
+                if ($rule === false) {
+                    return;
+                }
 
                 if ($rule instanceof Rule) {
-                    $res[$key] = $rule->scrap($value, $default);
+                    $item = $rule->scrap($item, $default);
                 } else {
-                    if ($rule === false) {
-                        continue;
-                    }
-
-                    $res[$key] = $rule;
+                    $item = $rule;
                 }
-            }
+            });
 
             return $res;
         };
@@ -1134,6 +1137,43 @@ class Rule
     public function castToObject()
     {
         return $this->castTo('object');
+    }
+
+    /**
+     * @return self
+     */
+    public function castToTimestamp()
+    {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) {
+            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+                $res = $this->getInnerText($res);
+            }
+
+            return strtotime($res);
+        };
+
+        return $rule;
+    }
+
+    /**
+     * @param string $format
+     * @return self
+     */
+    public function castToDateTime($format)
+    {
+        $rule = clone $this;
+
+        $rule->closures[] = function ($res) use ($format) {
+            if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
+                $res = $this->getInnerText($res);
+            }
+
+            return date($format, strtotime($res));
+        };
+
+        return $rule;
     }
 
     /**

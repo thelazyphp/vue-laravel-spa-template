@@ -2,10 +2,9 @@
 
 namespace App\Scraping\Facades;
 
-use Illuminate\Support\Collection;
-
 /**
- * @method static mixed scrap(\simple_html_dom|\simple_html_dom_node|string $html, mixed $default)
+ * @method static \App\Scraping\Rule cache(\Illuminate\Support\Collection $cache)
+ * @method static mixed scrap(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default)
  * @method static \App\Scraping\Rule each(callable $callback, mixed $default)
  * @method static \App\Scraping\Rule find(string $selector, int|null $index)
  * @method static \App\Scraping\Rule findAll(string $selector)
@@ -63,6 +62,8 @@ use Illuminate\Support\Collection;
  * @method static \App\Scraping\Rule castToFloat()
  * @method static \App\Scraping\Rule castToArray()
  * @method static \App\Scraping\Rule castToObject()
+ * @method static \App\Scraping\Rule castToTimestamp()
+ * @method static \App\Scraping\Rule castToDateTime(string $format)
  */
 class Rule
 {
@@ -70,15 +71,6 @@ class Rule
      * @var string
      */
     protected static $accessor = 'App\Scraping\Rule';
-
-    /**
-     * @param \Illuminate\Support\Collection $cache
-     * @return \App\Scraping\Rule
-     */
-    public static function cache(Collection $cache)
-    {
-        return new static::$accessor($cache);
-    }
 
     /**
      * @param string $name
