@@ -5,8 +5,8 @@ namespace App\Scraping\Facades;
 use App\Scraping\Relationship;
 
 /**
- * @method static \App\Scraping\Rule cache(\Illuminate\Support\Collection $cache)
- * @method static mixed scrap(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default)
+ * @method static mixed scrape(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default, \Illuminate\Support\Collection|null $cache)
+ * @method static \Illuminate\Support\Collection scrapeAll(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default, \Illuminate\Support\Collection|null $cache)
  * @method static \App\Scraping\Rule each(callable $callback, mixed $default)
  * @method static \App\Scraping\Rule find(string $selector, int|null $index)
  * @method static \App\Scraping\Rule findAll(string $selector)
@@ -36,14 +36,14 @@ use App\Scraping\Relationship;
  * @method static \App\Scraping\Rule match(string $pattern, int $group, bool $all)
  * @method static \App\Scraping\Rule matchAll(string $pattern, int $group)
  * @method static \App\Scraping\Rule explode(string $delim)
- * @method static \App\Scraping\Rule regExpExplode(string $pattern)
+ * @method static \App\Scraping\Rule explodeByPattern(string $pattern)
  * @method static \App\Scraping\Rule implode(string $delim)
  * @method static \App\Scraping\Rule slice(int $offset, int|null $length)
  * @method static \App\Scraping\Rule sort()
  * @method static \App\Scraping\Rule filter(callable $callback)
  * @method static \App\Scraping\Rule take(int $index)
  * @method static \App\Scraping\Rule replace(string[] $value, string[] $replacement, bool $ignoreCase)
- * @method static \App\Scraping\Rule regExpReplace(string[] $pattern, string[] $replacement)
+ * @method static \App\Scraping\Rule replaceByPattern(string[] $pattern, string[] $replacement)
  * @method static \App\Scraping\Rule takeDigits()
  * @method static \App\Scraping\Rule takeInteger()
  * @method static \App\Scraping\Rule takeFloat()
