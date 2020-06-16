@@ -5,8 +5,9 @@ namespace App\Scraping\Facades;
 use App\Scraping\Relationship;
 
 /**
- * @method static mixed scrape(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default, \Illuminate\Support\Collection|null $cache)
- * @method static \Illuminate\Support\Collection scrapeAll(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default, \Illuminate\Support\Collection|null $cache)
+ * @method static mixed scrape(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default)
+ * @method static \Illuminate\Support\Collection scrapeAll(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default)
+ * @method static \App\Scraping\Rule default(mixed $value)
  * @method static \App\Scraping\Rule each(callable $callback, mixed $default)
  * @method static \App\Scraping\Rule find(string $selector, int|null $index)
  * @method static \App\Scraping\Rule findAll(string $selector)

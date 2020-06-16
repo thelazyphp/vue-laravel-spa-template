@@ -5,7 +5,6 @@ namespace App\Scraping;
 use Closure;
 use simple_html_dom;
 use simple_html_dom_node;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
 /**
@@ -19,18 +18,19 @@ class Rule
     protected $closures = [];
 
     /**
+     * @var mixed
+     */
+    protected $default = null;
+
+    /**
      * @param \simple_html_dom|\simple_html_dom_node|string $src
      * @param mixed $default
-     * @param \Illuminate\Support\Collection|null $cache
      *
      * @return mixed
      *
      * @throws \InvalidArgumentException
      */
-    public function scrape(
-        $src,
-        $default = null,
-        ?Collection $cache = null)
+    public function scrape($src, $default = null)
     {
         if (!is_string($src) && !($src instanceof simple_html_dom) && !($src instanceof simple_html_dom_node)) {
             throw new InvalidArgumentException(
@@ -38,12 +38,10 @@ class Rule
             );
         }
 
-        if (is_null($cache)) {
-            $cache = collect();
-        }
+        $default = $default ?? $this->default;
 
-        $res = array_reduce($this->closures, function ($res, $closure) use ($cache) {
-            return $closure($res, $cache);
+        $res = array_reduce($this->closures, function ($res, $closure) {
+            return $closure($res);
         }, $src);
 
         if (is_array($res)) {
@@ -66,18 +64,26 @@ class Rule
     /**
      * @param \simple_html_dom|\simple_html_dom_node|string $src
      * @param mixed $default
-     * @param \Illuminate\Support\Collection|null $cache
      *
      * @return \Illuminate\Support\Collection
      *
      * @throws \InvalidArgumentException
      */
-    public function scrapeAll(
-        $src,
-        $default = null,
-        ?Collection $cache = null)
+    public function scrapeAll($src, $default = null)
     {
-        return collect($this->scrape($src, $default, $cache));
+        return collect($this->scrape($src, $default));
+    }
+
+    /**
+     * @param mixed $value
+     * @return self
+     */
+    public function default($value)
+    {
+        $rule = clone $this;
+        $rule->default = $value;
+
+        return $rule;
     }
 
     /**
@@ -90,16 +96,16 @@ class Rule
     {
         $rule = clone $this;
 
-        $rule->closures[] = function ($res, $cache) use ($callback, $default) {
-            array_walk((array) $res, function (&$item, $key) use ($cache, $callback, $default) {
-                $rule = $callback($item, $key, $cache);
+        $rule->closures[] = function ($res) use ($callback, $default) {
+            foreach ((array) $res as $key => $value) {
+                $rule = $callback($value, $key);
 
                 if ($rule === false) {
-                    return;
+                    continue;
                 }
 
-                $item = $rule instanceof Rule ? $rule->scrape($item, $default, $cache) : $item;
-            });
+                $res[$key] = $rule instanceof Rule ? $rule->scrape($value, $default) : $rule;
+            }
 
             return $res;
         };
@@ -117,9 +123,9 @@ class Rule
     {
         $rule = clone $this;
 
-        $rule->closures[] = function ($res, $cache) use ($selector, $index) {
+        $rule->closures[] = function ($res) use ($selector, $index) {
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
-                return $this->query($res, $cache, $selector, $index);
+                return $res->find($selector, $index);
             }
 
             return $res;
@@ -153,7 +159,7 @@ class Rule
     {
         $rule = clone $this;
 
-        $rule->closures[] = function ($res, $cache) use (
+        $rule->closures[] = function ($res) use (
             $selector,
             $value,
             $index,
@@ -163,7 +169,7 @@ class Rule
                 $func = $ignoreCase ? 'strcasecmp' : 'strcmp';
                 $found = [];
 
-                foreach ($this->query($res, $cache, $selector) as $node) {
+                foreach ($res->find($selector) as $node) {
                     $text = $this->getInnerText($node);
 
                     if ($func($text, $value) === 0) {
@@ -211,7 +217,7 @@ class Rule
     {
         $rule = clone $this;
 
-        $rule->closures[] = function ($res, $cache) use (
+        $rule->closures[] = function ($res) use (
             $selector,
             $value,
             $index,
@@ -221,7 +227,7 @@ class Rule
                 $func = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
                 $found = [];
 
-                foreach ($this->query($res, $cache, $selector) as $node) {
+                foreach ($res->find($selector) as $node) {
                     $text = $this->getInnerText($node);
 
                     if ($func($text, $value) !== false) {
@@ -269,7 +275,7 @@ class Rule
     {
         $rule = clone $this;
 
-        $rule->closures[] = function ($res, $cache) use (
+        $rule->closures[] = function ($res) use (
             $selector,
             $value,
             $index,
@@ -279,7 +285,7 @@ class Rule
                 $func = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
                 $found = [];
 
-                foreach ($this->query($res, $cache, $selector) as $node) {
+                foreach ($res->find($selector) as $node) {
                     $text = $this->getInnerText($node);
 
                     if ($func($text, $value) === 0) {
@@ -327,7 +333,7 @@ class Rule
     {
         $rule = clone $this;
 
-        $rule->closures[] = function ($res, $cache) use (
+        $rule->closures[] = function ($res) use (
             $selector,
             $value,
             $index,
@@ -337,7 +343,7 @@ class Rule
                 $func = $ignoreCase ? 'mb_stripos' : 'mb_strpos';
                 $found = [];
 
-                foreach ($this->query($res, $cache, $selector) as $node) {
+                foreach ($res->find($selector) as $node) {
                     $text = $this->getInnerText($node);
                     $pos = mb_strlen($text) - mb_strlen($value);
 
@@ -384,7 +390,7 @@ class Rule
     {
         $rule = clone $this;
 
-        $rule->closures[] = function ($res, $cache) use (
+        $rule->closures[] = function ($res) use (
             $selector,
             $pattern,
             $index)
@@ -392,7 +398,7 @@ class Rule
             if ($res instanceof simple_html_dom || $res instanceof simple_html_dom_node) {
                 $found = [];
 
-                foreach ($this->query($res, $cache, $selector) as $node) {
+                foreach ($res->find($selector) as $node) {
                     $text = $this->getInnerText($node);
 
                     if (preg_match($pattern, $text)) {
@@ -1217,33 +1223,5 @@ class Rule
         }
 
         return isset($nodes[$index]) ? $nodes[$index] : null;
-    }
-
-    /**
-     * @param \simple_html_dom|\simple_html_dom_node $html
-     * @param \Illuminate\Support\Collection $cache
-     * @param string $selector
-     * @param int|null $index
-     *
-     * @return \simple_html_dom_node[]|\simple_html_dom_node|null
-     */
-    protected function query(
-        $html,
-        Collection $cache,
-        $selector,
-        $index = null)
-    {
-        if (!$cache->has($selector)) {
-            $found = $html->find($selector, $index);
-
-            if (!is_null($found)) {
-                $cache->put($selector, $found);
-            }
-        } else {
-            $found = $cache->get($selector);
-            $found = is_array($found) ? $this->getNode($found, $index) : $found;
-        }
-
-        return $found;
     }
 }
