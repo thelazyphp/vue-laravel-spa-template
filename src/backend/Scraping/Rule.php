@@ -5,7 +5,6 @@ namespace App\Scraping;
 use Closure;
 use simple_html_dom;
 use simple_html_dom_node;
-use InvalidArgumentException;
 
 /**
  *
@@ -23,21 +22,13 @@ class Rule
     protected $default = null;
 
     /**
-     * @param \simple_html_dom|\simple_html_dom_node|string $src
+     * @param mixed $src
      * @param mixed $default
      *
      * @return mixed
-     *
-     * @throws \InvalidArgumentException
      */
     public function scrape($src, $default = null)
     {
-        if (!is_string($src) && !($src instanceof simple_html_dom) && !($src instanceof simple_html_dom_node)) {
-            throw new InvalidArgumentException(
-                'Source must be a string or an instance of [\simple_html_dom] or [\simple_html_dom_node]!'
-            );
-        }
-
         $default = $default ?? $this->default;
 
         $res = array_reduce($this->closures, function ($res, $closure) {
@@ -59,19 +50,6 @@ class Rule
         }
 
         return $res ?? $default;
-    }
-
-    /**
-     * @param \simple_html_dom|\simple_html_dom_node|string $src
-     * @param mixed $default
-     *
-     * @return \Illuminate\Support\Collection
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function scrapeAll($src, $default = null)
-    {
-        return collect($this->scrape($src, $default));
     }
 
     /**
@@ -895,7 +873,7 @@ class Rule
      */
     public function takeInteger()
     {
-        return $this->match('/(-?\d+)/', 1);
+        return $this->match('/(-?\d+)/');
     }
 
     /**
@@ -903,7 +881,7 @@ class Rule
      */
     public function takeFloat()
     {
-        return $this->match('/(-?\d+[.,]\d+)/', 1);
+        return $this->match('/(-?\d+[.,]\d+)/');
     }
 
     /**
@@ -911,7 +889,7 @@ class Rule
      */
     public function takeNumeric()
     {
-        return $this->match('/(-?\d+(?:[.,]\d+)?)/', 1);
+        return $this->match('/(-?\d+(?:[.,]\d+)?)/');
     }
 
     /**

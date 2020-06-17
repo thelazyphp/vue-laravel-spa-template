@@ -2,6 +2,8 @@
 
 namespace App\Scraping;
 
+use Closure;
+
 /**
  *
  */
@@ -15,15 +17,56 @@ class Relationship
     /**
      * @var array
      */
-    protected $rules;
+    protected $rules = [];
+
+    /**
+     * @var string[]
+     */
+    protected $uniqueKeys = [];
 
     /**
      * @param string $model
-     * @param array $rules
+     * @param \Closure $rules
+     * @param string[] $uniqueKeys
      */
-    public function __construct($model, $rules)
+    public function __construct(
+        $model,
+        Closure $rules,
+        $uniqueKeys = [])
     {
         $this->model = $model;
-        $this->rules = $rules;
+
+        $rules = $rules->bindTo(
+            $this,
+            $this
+        );
+
+        $rules();
+
+        $this->uniqueKeys = $uniqueKeys;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getUniqueKeys()
+    {
+        return $this->uniqueKeys;
     }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Scraping\Facades;
 
+use Closure;
 use App\Scraping\Relationship;
 
 /**
- * @method static mixed scrape(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default)
- * @method static \Illuminate\Support\Collection scrapeAll(\simple_html_dom|\simple_html_dom_node|string $src, mixed $default)
+ * @method static mixed scrape(mixed $src, mixed $default)
  * @method static \App\Scraping\Rule default(mixed $value)
  * @method static \App\Scraping\Rule each(callable $callback, mixed $default)
  * @method static \App\Scraping\Rule find(string $selector, int|null $index)
@@ -77,13 +77,17 @@ class Rule
 
     /**
      * @param string $model
-     * @param array $rules
+     * @param \Closure $rules
+     * @param string[] $uniqueKeys
      *
      * @return \App\Scraping\Relationship
      */
-    public static function relationship($model, $rules)
+    public static function relationship(
+        $model,
+        Closure $rules,
+        $uniqueKeys = [])
     {
-        return new Relationship($model, $rules);
+        return new Relationship($model, $rules, $uniqueKeys);
     }
 
     /**

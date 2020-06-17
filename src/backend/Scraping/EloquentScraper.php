@@ -4,10 +4,6 @@ namespace App\Scraping;
 
 use GuzzleHttp\Client;
 use Throwable;
-use UnexpectedValueException;
-use Illuminate\Support\Collection;
-use GuzzleHttp\Psr7\Uri;
-use simple_html_dom;
 
 use function str_get_html;
 
@@ -24,12 +20,12 @@ abstract class EloquentScraper
     /**
      * @var string
      */
-    protected $urlKey = 'url';
+    protected $model;
 
     /**
      * @var string
      */
-    protected $model;
+    protected $urlKey = 'url';
 
     /**
      * @var \GuzzleHttp\Client
@@ -42,87 +38,45 @@ abstract class EloquentScraper
     protected $attempts = 5;
 
     /**
-     * @var bool
-     */
-    protected $started = false;
-
-    /**
      * @var array
      */
     protected $rules = [];
 
     /**
-     * @var callable[]
+     * @var bool
      */
-    protected $beforeCallbacks = [];
-
-    /**
-     * @var callable[]
-     */
-    protected $afterCallbacks = [];
+    protected $started = false;
 
     /**
      *
      */
     public function __construct()
     {
-        $this->client = new Client([
-            'cookies' => true,
-            'verify' => false,
+        $this->registerRules();
 
+        $this->client = new Client([
             'headers' => [
                 'user-agent' => $this->userAgent,
             ],
         ]);
-
-        $this->registerRules();
     }
 
     /**
      * @return float
      *
      * @throws \Throwable
-     * @throws \UnexpectedValueException
      */
     public function scrape()
     {
-        error_reporting(0);
+        error_reporting(E_ERROR);
         set_time_limit(0);
-        $this->started = true;
+
         $start = microtime(true);
-        $links = $this->scrapeLinks();
+        $this->started = true;
 
-        if (!is_array($links) && !($links instanceof Collection)) {
-            throw new UnexpectedValueException(
-                'Method [scrapeLinks] must return an array or an instance of [\Illuminate\Support\Collection]!'
-            );
-        } else if (is_array($links)) {
-            $links = collect($links);
-        }
+        $links = $this->crawleLinks();
 
-        foreach (array_keys($this->rules) as $key) {
-            $attributes[$key] = null;
-        }
-
-        foreach ($links as $url) {
-            $model = $this->model::where($this->urlKey, $url)->first() ?: new $this->model;
-            $url = new Uri($url);
-            $html = $this->getHtml($url);
-            $attributes[$this->urlKey] = $url->__toString();
-            $this->callBeforeCallbacks($url, $html, $attributes);
-
-            foreach ($this->rules as $attribute => $rule) {
-                if ($rule instanceof Rule) {
-                    $attributes[$attribute] = $rule->scrape($html);
-                } else {
-                    $attributes[$attribute] = $rule;
-                }
-            }
-
-            $this->callAfterCallbacks($url, $html, $attributes);
-            $model->fill($attributes);
-            $model->save();
-        }
+        //
 
         $this->started = false;
 
@@ -141,47 +95,13 @@ abstract class EloquentScraper
      * @abstract
      * @return \Illuminate\Support\Collection|string[]
      */
-    abstract protected function scrapeLinks();
+    abstract protected function crawleLinks();
 
     /**
      * @abstract
      * @return void
      */
     abstract protected function registerRules();
-
-    /**
-     * @param \GuzzleHttp\Psr7\Uri $url
-     * @param \simple_html_dom $html
-     * @param array $attr
-     *
-     * @return void
-     */
-    protected function callBeforeCallbacks(
-        Uri $url,
-        simple_html_dom $html,
-        $attr)
-    {
-        foreach ($this->beforeCallbacks as $callback) {
-            $callback($url, $html, $attr);
-        }
-    }
-
-    /**
-     * @param \GuzzleHttp\Psr7\Uri $url
-     * @param \simple_html_dom $html
-     * @param array $attr
-     *
-     * @return void
-     */
-    protected function callAfterCallbacks(
-        Uri $url,
-        simple_html_dom $html,
-        $attr)
-    {
-        foreach ($this->afterCallbacks as $callback) {
-            $callback($url, $html, $attr);
-        }
-    }
 
     /**
      * @param \Psr\Http\Message\UriInterface|string $url
@@ -213,27 +133,6 @@ abstract class EloquentScraper
      * @param \Psr\Http\Message\UriInterface|string $url
      * @param array $options
      *
-     * @return object
-     *
-     * @throws \Throwable
-     */
-    protected function getJson($url, $options = [])
-    {
-        $opts = [
-            'headers' => [
-                'accept' => 'application/json',
-            ],
-        ];
-
-        return json_decode(
-            $this->getPageContent($url, array_merge($opts, $options))
-        );
-    }
-
-    /**
-     * @param \Psr\Http\Message\UriInterface|string $url
-     * @param array $options
-     *
      * @return \simple_html_dom
      *
      * @throws \Throwable
@@ -247,6 +146,27 @@ abstract class EloquentScraper
         ];
 
         return str_get_html(
+            $this->getPageContent($url, array_merge($opts, $options))
+        );
+    }
+
+    /**
+     * @param \Psr\Http\Message\UriInterface|string $url
+     * @param array $options
+     *
+     * @return object
+     *
+     * @throws \Throwable
+     */
+    protected function getJson($url, $options = [])
+    {
+        $opts = [
+            'headers' => [
+                'accept' => 'application/json',
+            ],
+        ];
+
+        return json_decode(
             $this->getPageContent($url, array_merge($opts, $options))
         );
     }
