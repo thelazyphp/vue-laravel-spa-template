@@ -3,7 +3,11 @@
 namespace App\Scraping;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Collection;
+use GuzzleHttp\Psr7\Uri;
+use simple_html_dom;
 use Throwable;
+use Closure;
 
 use function str_get_html;
 
@@ -16,6 +20,21 @@ abstract class EloquentScraper
      * @var string
      */
     protected $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36';
+
+    /**
+     * @var string
+     */
+    protected $baseUrl;
+
+    /**
+     * @var array
+     */
+    protected $proxy = [];
+
+    /**
+     * @var array
+     */
+    protected $headers = [];
 
     /**
      * @var string
@@ -54,11 +73,28 @@ abstract class EloquentScraper
     {
         $this->registerRules();
 
-        $this->client = new Client([
-            'headers' => [
-                'user-agent' => $this->userAgent,
-            ],
-        ]);
+        $config = [
+            'cookies' => true,
+            'verify' => false,
+        ];
+
+        if (!empty($this->baseUrl)) {
+            $config['base_uri'] = $this->baseUrl;
+        }
+
+        if (!empty($this->proxy)) {
+            $config['proxy'] = $this->proxy;
+        }
+
+        if (!empty($this->headers)) {
+            $config['headers'] = $this->headers;
+        }
+
+        if (!empty($this->userAgent)) {
+            $config['headers']['user-agent'] = $this->userAgent;
+        }
+
+        $this->client = new Client($config);
     }
 
     /**
@@ -76,7 +112,13 @@ abstract class EloquentScraper
 
         $links = $this->crawleLinks();
 
-        //
+        if (is_array($links) || !($links instanceof Collection)) {
+            $links = collect($links);
+        }
+
+        foreach ($links->all() as $url) {
+            //
+        }
 
         $this->started = false;
 
@@ -102,6 +144,36 @@ abstract class EloquentScraper
      * @return void
      */
     abstract protected function registerRules();
+
+    /**
+     * @param \GuzzleHttp\Psr7\Uri $url
+     * @param \simple_html_dom $html
+     * @param array $attrs
+     *
+     * @return void
+     */
+    protected function before(
+        Uri $url,
+        simple_html_dom $html,
+        &$attrs)
+    {
+        //
+    }
+
+    /**
+     * @param \GuzzleHttp\Psr7\Uri $url
+     * @param \simple_html_dom $html
+     * @param array $attrs
+     *
+     * @return void
+     */
+    protected function after(
+        Uri $url,
+        simple_html_dom $html,
+        &$attrs)
+    {
+        //
+    }
 
     /**
      * @param \Psr\Http\Message\UriInterface|string $url
@@ -169,5 +241,48 @@ abstract class EloquentScraper
         return json_decode(
             $this->getPageContent($url, array_merge($opts, $options))
         );
+    }
+
+    /**
+     * @param \GuzzleHttp\Psr7\Uri $url
+     * @param \simple_html_dom $html
+     * @param array $rules
+     *
+     * @return array
+     */
+    protected function scrapeAttrs(
+        Uri $url,
+        simple_html_dom $html,
+        $rules)
+    {
+        $attrs = array_fill_keys(
+            array_keys($rules), null
+        );
+
+        $this->before(
+            $url,
+            $html,
+            $attrs
+        );
+
+        foreach ($rules as $attr => $rule) {
+            if ($rule instanceof Rule) {
+                $attrs[$attr] = $rule->scrape($html);
+            } elseif ($rule instanceof Closure) {
+                $attrs[$attr] = $rule($url, $html, $attrs);
+            } elseif ($rule instanceof Relationship) {
+                //
+            } else {
+                $attrs[$attr] = $rule;
+            }
+        }
+
+        $this->after(
+            $url,
+            $html,
+            $attrs
+        );
+
+        return $attrs;
     }
 }
