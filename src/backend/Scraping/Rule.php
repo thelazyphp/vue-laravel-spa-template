@@ -22,7 +22,7 @@ class Rule
     protected $default = null;
 
     /**
-     * @param mixed $src
+     * @param \simple_html_dom|\simple_html_dom_node|mixed $src
      * @param mixed $default
      *
      * @return mixed

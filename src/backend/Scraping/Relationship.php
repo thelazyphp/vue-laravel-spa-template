@@ -20,6 +20,11 @@ class Relationship
     protected $rules = [];
 
     /**
+     * @var string
+     */
+    protected $localKey = 'id';
+
+    /**
      * @var string[]
      */
     protected $uniqueKeys = [];
@@ -27,11 +32,13 @@ class Relationship
     /**
      * @param string $model
      * @param \Closure $rules
+     * @param string $localKey
      * @param string[] $uniqueKeys
      */
     public function __construct(
         $model,
         Closure $rules,
+        $localKey = 'id',
         $uniqueKeys = [])
     {
         $this->model = $model;
@@ -43,6 +50,7 @@ class Relationship
 
         $rules();
 
+        $this->localKey = $localKey;
         $this->uniqueKeys = $uniqueKeys;
     }
 
@@ -60,6 +68,14 @@ class Relationship
     public function getRules()
     {
         return $this->rules;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocalKey()
+    {
+        return $this->localKey;
     }
 
     /**

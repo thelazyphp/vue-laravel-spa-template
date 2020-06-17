@@ -5,8 +5,8 @@ namespace App\Scraping;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 use GuzzleHttp\Psr7\Uri;
-use simple_html_dom;
 use Throwable;
+use simple_html_dom;
 use Closure;
 
 use function str_get_html;
@@ -29,11 +29,6 @@ abstract class EloquentScraper
     /**
      * @var array
      */
-    protected $proxy = [];
-
-    /**
-     * @var array
-     */
     protected $headers = [];
 
     /**
@@ -45,6 +40,11 @@ abstract class EloquentScraper
      * @var string
      */
     protected $urlKey = 'url';
+
+    /**
+     * @var string[]
+     */
+    protected $uniqueKeys = [];
 
     /**
      * @var \GuzzleHttp\Client
@@ -82,10 +82,6 @@ abstract class EloquentScraper
             $config['base_uri'] = $this->baseUrl;
         }
 
-        if (!empty($this->proxy)) {
-            $config['proxy'] = $this->proxy;
-        }
-
         if (!empty($this->headers)) {
             $config['headers'] = $this->headers;
         }
@@ -117,7 +113,16 @@ abstract class EloquentScraper
         }
 
         foreach ($links->all() as $url) {
-            //
+            $url = new Uri($url);
+            $html = $this->getHtml($url);
+
+            $this->scrapeModel(
+                $this->model,
+                $url,
+                $html,
+                $this->rules,
+                $this->uniqueKeys
+            );
         }
 
         $this->started = false;
@@ -144,36 +149,6 @@ abstract class EloquentScraper
      * @return void
      */
     abstract protected function registerRules();
-
-    /**
-     * @param \GuzzleHttp\Psr7\Uri $url
-     * @param \simple_html_dom $html
-     * @param array $attrs
-     *
-     * @return void
-     */
-    protected function before(
-        Uri $url,
-        simple_html_dom $html,
-        &$attrs)
-    {
-        //
-    }
-
-    /**
-     * @param \GuzzleHttp\Psr7\Uri $url
-     * @param \simple_html_dom $html
-     * @param array $attrs
-     *
-     * @return void
-     */
-    protected function after(
-        Uri $url,
-        simple_html_dom $html,
-        &$attrs)
-    {
-        //
-    }
 
     /**
      * @param \Psr\Http\Message\UriInterface|string $url
@@ -259,30 +234,91 @@ abstract class EloquentScraper
             array_keys($rules), null
         );
 
-        $this->before(
-            $url,
-            $html,
-            $attrs
-        );
-
         foreach ($rules as $attr => $rule) {
             if ($rule instanceof Rule) {
                 $attrs[$attr] = $rule->scrape($html);
             } elseif ($rule instanceof Closure) {
                 $attrs[$attr] = $rule($url, $html, $attrs);
-            } elseif ($rule instanceof Relationship) {
-                //
             } else {
                 $attrs[$attr] = $rule;
             }
         }
 
-        $this->after(
+        return $attrs;
+    }
+
+    /**
+     * @param string $model
+     * @param \GuzzleHttp\Psr7\Uri $url
+     * @param \simple_html_dom $html
+     * @param array $rules
+     * @param string[] $uniqueKeys
+     *
+     * @return void
+     */
+    protected function scrapeModel(
+        $model,
+        Uri $url,
+        simple_html_dom $html,
+        $rules,
+        $uniqueKeys = [])
+    {
+        $attrs = $this->scrapeAttrs(
             $url,
             $html,
-            $attrs
+            $rules
         );
 
-        return $attrs;
+        $where = [];
+
+        foreach ($uniqueKeys as $key) {
+            if (isset($attrs[$key])) {
+                $where[$key] = is_array($attrs[$key])
+                    ? json_encode($attrs[$key])
+                    : $attrs[$key];
+            }
+        }
+
+        $model = $model::firstOrNew(
+            !empty($where)
+                ? $where
+                : [$this->urlKey => (string) $url]
+        );
+
+        foreach ($rules as $attr => $rule) {
+            if ($rule instanceof Relationship) {
+                $relatedAttrs = $this->scrapeAttrs(
+                    $url,
+                    $html,
+                    $rule->getRules()
+                );
+
+                $where = [];
+
+                foreach ($rule->getUniqueKeys() as $key) {
+                    if (isset($relatedAttrs[$key])) {
+                        $where[$key] = is_array($relatedAttrs[$key])
+                            ? json_encode($relatedAttrs[$key])
+                            : $relatedAttrs[$key];
+                    }
+                }
+
+                $relatedModel = $rule->getModel();
+
+                $relatedModel = $relatedModel::firstOrNew(
+                    !empty($where)
+                        ? $where
+                        : [$rule->getLocalKey() => $model->{$attr}]
+                );
+
+                $relatedModel->fill($relatedAttrs);
+                $relatedModel->save();
+
+                $attrs[$attr] = $relatedModel->{$rule->getLocalKey()};
+            }
+        }
+
+        $model->fill($attrs);
+        $model->save();
     }
 }

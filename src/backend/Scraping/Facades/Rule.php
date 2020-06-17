@@ -6,7 +6,7 @@ use Closure;
 use App\Scraping\Relationship;
 
 /**
- * @method static mixed scrape(mixed $src, mixed $default)
+ * @method static mixed scrape(\simple_html_dom|\simple_html_dom_node|mixed $src, mixed $default)
  * @method static \App\Scraping\Rule default(mixed $value)
  * @method static \App\Scraping\Rule each(callable $callback, mixed $default)
  * @method static \App\Scraping\Rule find(string $selector, int|null $index)
@@ -78,6 +78,7 @@ class Rule
     /**
      * @param string $model
      * @param \Closure $rules
+     * @param string $localKey
      * @param string[] $uniqueKeys
      *
      * @return \App\Scraping\Relationship
@@ -85,9 +86,12 @@ class Rule
     public static function relationship(
         $model,
         Closure $rules,
+        $localKey = 'id',
         $uniqueKeys = [])
     {
-        return new Relationship($model, $rules, $uniqueKeys);
+        return new Relationship(
+            $model, $rules, $localKey, $uniqueKeys
+        );
     }
 
     /**
