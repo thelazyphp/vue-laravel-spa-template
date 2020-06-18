@@ -2,7 +2,6 @@
 
 namespace App\Scraping\Facades;
 
-use Closure;
 use App\Scraping\Relationship;
 
 /**
@@ -77,7 +76,7 @@ class Rule
 
     /**
      * @param string $model
-     * @param \Closure $rules
+     * @param \Closure|array $rules
      * @param string $localKey
      * @param string[] $uniqueKeys
      *
@@ -85,7 +84,7 @@ class Rule
      */
     public static function relationship(
         $model,
-        Closure $rules,
+        $rules = [],
         $localKey = 'id',
         $uniqueKeys = [])
     {

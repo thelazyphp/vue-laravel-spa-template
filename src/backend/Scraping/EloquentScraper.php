@@ -5,9 +5,9 @@ namespace App\Scraping;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 use GuzzleHttp\Psr7\Uri;
-use Throwable;
 use simple_html_dom;
-use Closure;
+use Throwable;
+use Illuminate\Database\Eloquent\Model;
 
 use function str_get_html;
 
@@ -16,20 +16,12 @@ use function str_get_html;
  */
 abstract class EloquentScraper
 {
+    const META_KEY = '_CRAWLER_META';
+
     /**
      * @var string
      */
     protected $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36';
-
-    /**
-     * @var string
-     */
-    protected $baseUrl;
-
-    /**
-     * @var array
-     */
-    protected $headers = [];
 
     /**
      * @var string
@@ -40,6 +32,16 @@ abstract class EloquentScraper
      * @var string
      */
     protected $urlKey = 'url';
+
+    /**
+     * @var string
+     */
+    protected $metaKey = self::META_KEY;
+
+    /**
+     * @var array
+     */
+    protected $fill = [];
 
     /**
      * @var string[]
@@ -67,38 +69,35 @@ abstract class EloquentScraper
     protected $started = false;
 
     /**
-     *
+     * @param \GuzzleHttp\Client|null $client
      */
-    public function __construct()
+    public function __construct(?Client $client = null)
     {
         $this->registerRules();
 
         $config = [
             'cookies' => true,
-            'verify' => false,
+
+            'headers' => [
+                'user-agent' => $this->userAgent,
+            ],
         ];
 
-        if (!empty($this->baseUrl)) {
-            $config['base_uri'] = $this->baseUrl;
-        }
+        $this->client = $client ?? new Client($config);
+    }
 
-        if (!empty($this->headers)) {
-            $config['headers'] = $this->headers;
-        }
-
-        if (!empty($this->userAgent)) {
-            $config['headers']['user-agent'] = $this->userAgent;
-        }
-
-        $this->client = new Client($config);
+    /**
+     * @return bool
+     */
+    public function isStarted()
+    {
+        return $this->started;
     }
 
     /**
      * @return float
-     *
-     * @throws \Throwable
      */
-    public function scrape()
+    public function startScraping()
     {
         error_reporting(E_ERROR);
         set_time_limit(0);
@@ -131,16 +130,8 @@ abstract class EloquentScraper
     }
 
     /**
-     * @return bool
-     */
-    public function isStarted()
-    {
-        return $this->started;
-    }
-
-    /**
      * @abstract
-     * @return \Illuminate\Support\Collection|string[]
+     * @return \Illuminate\Support\Collection|mixed
      */
     abstract protected function crawleLinks();
 
@@ -149,6 +140,32 @@ abstract class EloquentScraper
      * @return void
      */
     abstract protected function registerRules();
+
+    /**
+     * @param \GuzzleHttp\Psr7\Uri $url
+     * @param \simple_html_dom $html
+     *
+     * @return void
+     */
+    protected function before(Uri $url, simple_html_dom $html)
+    {
+        //
+    }
+
+    /**
+     * @param \GuzzleHttp\Psr7\Uri $url
+     * @param \simple_html_dom $html
+     * @param array $attrs
+     *
+     * @return void
+     */
+    protected function after(
+        Uri $url,
+        simple_html_dom $html,
+        &$attrs)
+    {
+        //
+    }
 
     /**
      * @param \Psr\Http\Message\UriInterface|string $url
@@ -193,7 +210,9 @@ abstract class EloquentScraper
         ];
 
         return str_get_html(
-            $this->getPageContent($url, array_merge($opts, $options))
+            $this->getPageContent(
+                $url, array_merge($opts, $options)
+            )
         );
     }
 
@@ -214,7 +233,9 @@ abstract class EloquentScraper
         ];
 
         return json_decode(
-            $this->getPageContent($url, array_merge($opts, $options))
+            $this->getPageContent(
+                $url, array_merge($opts, $options)
+            )
         );
     }
 
@@ -237,8 +258,10 @@ abstract class EloquentScraper
         foreach ($rules as $attr => $rule) {
             if ($rule instanceof Rule) {
                 $attrs[$attr] = $rule->scrape($html);
-            } elseif ($rule instanceof Closure) {
+            } elseif (is_callable($rule)) {
                 $attrs[$attr] = $rule($url, $html, $attrs);
+            } elseif ($rule instanceof Relationship) {
+                //
             } else {
                 $attrs[$attr] = $rule;
             }
@@ -263,10 +286,18 @@ abstract class EloquentScraper
         $rules,
         $uniqueKeys = [])
     {
+        $this->before($url, $html);
+
         $attrs = $this->scrapeAttrs(
             $url,
             $html,
             $rules
+        );
+
+        $this->after(
+            $url,
+            $html,
+            $attrs
         );
 
         $where = [];
@@ -284,6 +315,12 @@ abstract class EloquentScraper
                 ? $where
                 : [$this->urlKey => (string) $url]
         );
+
+        $model->{$this->metaKey} = [
+            'base_url' => (string) $url->withPath('')
+                ->withQuery('')
+                ->withFragment(''),
+        ];
 
         foreach ($rules as $attr => $rule) {
             if ($rule instanceof Relationship) {
