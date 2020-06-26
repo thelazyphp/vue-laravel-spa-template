@@ -48,7 +48,7 @@ class Document extends Element
      */
     public function outerHtml()
     {
-        return $this->innerHtml();
+        return '';
     }
 
     /**
