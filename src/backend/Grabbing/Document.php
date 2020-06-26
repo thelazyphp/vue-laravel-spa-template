@@ -2,152 +2,101 @@
 
 namespace App\Grabbing;
 
-use DOMXPath;
-use DOMNode;
 use DOMDocument;
+use DOMXPath;
 
 /**
  *
  */
-class DomElement
+class Document extends Element
 {
     /**
-     * @var \DOMNode
+     * @var \DOMDocument
      */
     protected $node;
 
     /**
-     * @var \DOMDocument
+     * @param \DOMDocument|string|null $html
      */
-    protected $document;
-
-    /**
-     * @param \DOMNode $node
-     * @param \DOMDocument $document
-     */
-    public function __construct(DOMNode $node, DOMDocument $document)
+    public function __construct($html = null)
     {
-        $this->node = $node;
-        $this->document = $document;
-    }
+        if ($html instanceof DOMDocument) {
+            $this->node = $html;
+        } else {
+            $this->node = new DOMDocument('1.0', 'utf-8');
+            $this->node->formatOutput = true;
+            $this->node->preserveWhiteSpace = false;
 
-    /**
-     * @return \DOMNode
-     */
-    public function getNode()
-    {
-        return $this->node;
-    }
-
-    /**
-     * @return \DOMDocument
-     */
-    public function getDocument()
-    {
-        return $this->document;
-    }
-
-    /**
-     * @param string $selector
-     * @param int|null $index
-     *
-     * @return \App\Grabbing\DomElement[]|\App\Grabbing\DomElement|null
-     */
-    public function find($selector, $index = 0)
-    {
-        $xPath = new DOMXPath($this->document);
-        $found = [];
-
-        foreach ($xPath->query($this->generateXPath($selector), $this->node) as $node) {
-            $found[] = new static($node, $this->document);
-        }
-
-        if (is_null($index)) {
-            return $found;
-        }
-
-        if ($index < 0) {
-            $index += count($found);
-        }
-
-        return isset($found[$index]) ? $found[$index] : null;
-    }
-
-    /**
-     * @return \App\Grabbing\DomElement
-     */
-    public function parent()
-    {
-        return new static(
-            $this->node->parentNode, $this->document
-        );
-    }
-
-    /**
-     * @return \App\Grabbing\DomElement[]
-     */
-    public function children()
-    {
-        $nodes = [];
-
-        foreach ($this->node->childNodes as $node) {
-            if ($node instanceof DOMNode) {
-                $nodes[] = new static(
-                    $node, $this->document
-                );
+            if (is_string($html)) {
+                $this->load($html);
             }
         }
 
-        return $nodes;
+        $this->xpath = new DOMXPath($this->node);
     }
 
     /**
-     * @param int $index
-     * @return \App\Grabbing\DomElement|null
-     */
-    public function child($index)
-    {
-        $children = $this->children();
-
-        if ($index < 0) {
-            $index += count($children);
-        }
-
-        return isset($children[$index]) ? $children[$index] : null;
-    }
-
-    /**
-     * @param string $selector
      * @return string
      */
-    protected function generateXPath($selector)
+    public function innerHtml()
     {
-        $replacements = [
-            '/\s*>\s*/'                                  => '/',
-            '/\s+/'                                      => '//',
-            '/([\w-]+)#([\w-]+)/'                        => '$1[@id="$2"]',
-            '/#([\w-]+)/'                                => '*[@id="$1"]',
-            '/([\w-]+)\.([\w-]+)/'                       => '$1[contains(concat(" ", normalize-space(@class), " "), " $2 ")]',
-            '/\.([\w-]+)/'                               => '*[contains(concat(" ", normalize-space(@class), " "), " $1 ")]',
-            '/([\w-]+)\[([\w-]+)\]/'                     => '$1[@$2]',
-            '/\[([\w-]+)\]/'                             => '*[@$1]',
-            '/([\w-]+)\[([\w-]+)=[\'"]?(.*?)[\'"]?\]/'   => '$1[@$2="$3"]',
-            '/\[([\w-]+)=[\'"]?(.*?)[\'"]?\]/'           => '*[@$1="$2"]',
-            '/([\w-]+)\[([\w-]+)~=[\'"]?(.*?)[\'"]?\]/'  => '$1[contains(concat(" ", normalize-space(@$2), " "), " $3 ")]',
-            '/\[([\w-]+)~=[\'"]?(.*?)[\'"]?\]/'          => '*[contains(concat(" ", normalize-space(@$1), " "), " $2 ")]',
-            '/([\w-]+)\[([\w-]+)\^=[\'"]?(.*?)[\'"]?\]/' => '$1[starts-with(@$2, "$3")]',
-            '/\[([\w-]+)\^=[\'"]?(.*?)[\'"]?\]/'         => '*[starts-with(@$1, "$2")]',
-            '/([\w-]+)\[([\w-]+)\$=[\'"]?(.*?)[\'"]?\]/' => '$1[substring(@$2, string-length(@$2) - string-length("$3") + 1)="$3"]',
-            '/\[([\w-]+)\$=[\'"]?(.*?)[\'"]?\]/'         => '*[substring(@$1, string-length(@$1) - string-length("$2") + 1)="$2"]',
-            '/([\w-]+)\[([\w-]+)\*=[\'"]?(.*?)[\'"]?\]/' => '$1[contains(@$2, "$3")]',
-            '/\[([\w-]+)\*=[\'"]?(.*?)[\'"]?\]/'         => '*[contains(@$1, "$2")]',
-            '/\]\*\[/'                                   => '][',
-            '/:nth-of-type\((\d+)\)/'                    => '[$1]',
-            '/:contains\([\'"]?(.*?)[\'"]?\)/'           => '[contains(text(), "$1")]',
-        ];
+        return $this->node->saveHTML();
+    }
 
-        return '//'.preg_replace(
-            array_keys($replacements), array_values($replacements), trim($selector)
-        );
+    /**
+     * @return string
+     */
+    public function outerHtml()
+    {
+        return $this->innerHtml();
+    }
+
+    /**
+     * @param string $html
+     * @return void
+     */
+    public function load($html)
+    {
+        libxml_use_internal_errors(true);
+        $this->node->loadHTML($html);
+        libxml_clear_errors();
+        $this->node->normalizeDocument();
+    }
+
+    /**
+     * @param string $file
+     * @return void
+     */
+    public function loadFile($file)
+    {
+        libxml_use_internal_errors(true);
+        $this->node->loadHTMLFile($file);
+        libxml_clear_errors();
+        $this->node->normalizeDocument();
+    }
+
+    /**
+     * @param string $url
+     * @param array $opts
+     *
+     * @return void
+     */
+    public function loadUrl($url, $opts = [])
+    {
+        $opts[CURLOPT_RETURNTRANSFER] = true;
+        $opts[CURLOPT_URL] = $url;
+
+        if (!isset($opts[CURLOPT_USERAGENT])) {
+            $opts[CURLOPT_USERAGENT] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36';
+        }
+
+        $ch = curl_init();
+        curl_setopt_array($ch, $opts);
+        $html = curl_exec($ch);
+        curl_close($ch);
+
+        if ($html !== false) {
+            $this->load($html);
+        }
     }
 }
