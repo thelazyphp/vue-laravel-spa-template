@@ -1,18 +1,17 @@
-<script>
-export default {
-  mounted () {
-    document.getElementById('app').style.backgroundImage = 'url(images/background.jpg)'
-    document.getElementById('app').style.backgroundSize = 'cover'
-    document.getElementById('app').style.backgroundRepeat = 'no-repeat'
-    document.getElementById('app').style.backgroundPosition = 'center center'
-  }
-}
-</script>
-
 <template>
-  <div class="layout">
-    <main id="content" role="main">
-      <router-view />
-    </main>
-  </div>
+  <main class="d-flex align-items-center justify-content-center" role="main">
+    <router-view />
+  </main>
 </template>
+
+<style scoped>
+main {
+  padding: 0 15px;
+  width: 100%;
+  height: 100vh;
+  background-image: url("/facebook/images/background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+</style>

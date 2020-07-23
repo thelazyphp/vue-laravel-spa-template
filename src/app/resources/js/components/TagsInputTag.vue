@@ -10,21 +10,17 @@ export default {
 </script>
 
 <template>
-  <span class="badge badge-pill badge-primary">
+  <span class="badge tag badge-pill badge-primary">
     <slot>{{ text }}</slot>
-    <a href="" role="button" title="Удалить" @click.prevent="$emit('remove')">
-      <i class="fas fa-times"></i>
+    <a href="" class="text-white" role="button" title="Удалить" @click.prevent="$emit('remove')">
+      <i class="fas fa-times fa-sm"></i>
     </a>
   </span>
 </template>
 
 <style scoped>
-.badge {
+.tag {
   font-size: 100%;
   font-weight: 400;
-}
-
-.badge [role="button"] {
-  color: inherit;
 }
 </style>

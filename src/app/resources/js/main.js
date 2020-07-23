@@ -12,7 +12,7 @@ Vue.use(Http, {
 })
 
 if (store.state.auth.token) {
-  Http.setToken(store.state.auth.token)
+  Vue.Http.setToken(store.state.auth.token)
 }
 
 new Vue({

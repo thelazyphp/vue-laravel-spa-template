@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
-import routes from './routes'
 import store from '../store'
+import routes from './routes'
+import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
@@ -20,17 +20,17 @@ router.beforeEach((to, from, next) => {
 })
 
 router.beforeEach((to, from, next) => {
-  if (store.getters['auth/check'] && !store.state.users.current) {
-    store.dispatch('users/fetchCurrent')
-      .then(() => next())
+  if (to.meta.title) {
+    document.title = `${to.meta.title} | Facebook`
+    next()
   } else {
     next()
   }
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.meta.title) {
-    document.title = `${to.meta.title} | Facebook`
+router.beforeEach(async (to, from, next) => {
+  if (store.getters['auth/check'] && !store.state.users.current) {
+    await store.dispatch('users/fetchCurrent')
     next()
   } else {
     next()

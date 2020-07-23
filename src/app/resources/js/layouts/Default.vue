@@ -15,14 +15,14 @@ export default {
   },
 
   mounted () {
-    document.getElementById('app').style.backgroundImage = null
+    window.onresize = (event) => {
+      if (document.documentElement.clientWidth < 768) {
+        this.toggleSidebar(false)
+      }
+    }
   },
 
   methods: {
-    closeSidebar () {
-      this.toggleSidebar(false)
-    },
-
     toggleSidebar (force) {
       this.sidebarToggled = !this.sidebarToggled
       document.getElementById('sidebar').classList.toggle('toggled', force)
@@ -32,12 +32,12 @@ export default {
 </script>
 
 <template>
-  <div class="layout">
+  <div>
     <header>
-			<TheNavbar :sidebar-toggled="sidebarToggled" @toggle-sidebar="toggleSidebar" />
+			<TheNavbar :sidebar-toggled="sidebarToggled" class="fixed-top" @toggle-sidebar="toggleSidebar" />
 		</header>
 		<aside id="sidebar">
-      <TheSidebar @close-sidebar="closeSidebar" />
+      <TheSidebar @close-sidebar="toggleSidebar(false)" />
     </aside>
     <main id="content" role="main">
       <router-view />
@@ -56,7 +56,7 @@ export default {
   overflow-y: auto;
   margin-left: -250px;
   color: #fff;
-  background-color: #240759;
+  background-color: #003a52;
 }
 
 #sidebar.toggled {

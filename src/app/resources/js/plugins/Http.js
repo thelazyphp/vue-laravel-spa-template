@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import axios from 'axios'
 
 export default {
@@ -11,13 +10,13 @@ export default {
         'Content-Type': 'application/json'
       }
     })
-  },
 
-  removeToken () {
-    delete Vue.Http.defaults.headers.common['Authorization']
-  },
+    Vue.Http.removeToken = Vue.prototype.$http.removeToken = function () {
+      delete Vue.Http.defaults.headers.common['Authorization']
+    }
 
-  setToken (token) {
-    Vue.Http.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    Vue.Http.setToken = Vue.prototype.$http.setToken = function (token) {
+      Vue.Http.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    }
   }
 }

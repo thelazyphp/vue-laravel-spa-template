@@ -1,16 +1,16 @@
 <script>
-import Empty from './layouts/Empty'
-import Default from './layouts/Default'
+import EmptyLayout from './layouts/Empty'
+import DefaultLayout from './layouts/Default'
 
 export default {
   components: {
-    Empty,
-    Default
+    EmptyLayout,
+    DefaultLayout
   },
 
   computed: {
     layout () {
-      return this.$route.meta.layout || 'default'
+      return `${this.$route.meta.layout || 'default'}-layout`
     }
   }
 }
@@ -21,10 +21,3 @@ export default {
     <component :is="layout"></component>
   </div>
 </template>
-
-<style scoped>
-  #app {
-    width: 100%;
-    height: 100vh;
-  }
-</style>
