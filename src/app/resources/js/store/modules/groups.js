@@ -8,7 +8,7 @@ export default {
 
 	state: {
     search: null,
-    sort: null,
+    sort: '-updated_at',
 		page: 1,
     items: [],
     total: 0,

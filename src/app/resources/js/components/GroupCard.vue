@@ -5,6 +5,30 @@ export default {
       type: Object,
       required: true
     }
+  },
+
+  data () {
+    return {
+      edit: false,
+      getPosts: false,
+      postsLimit: null
+    }
+  },
+
+  created () {
+    this.getPosts = this.group.get_posts
+    this.postsLimit = this.group.posts_limit
+  },
+
+  methods: {
+    update () {
+      this.$emit('update', {
+        get_posts: this.getPosts,
+        posts_limit: this.postsLimit
+      })
+
+      this.edit = false
+    }
   }
 }
 </script>
@@ -35,10 +59,31 @@ export default {
         <a href="" role="button" title="Удалить" @click.prevent="$emit('remove')">
           <i class="far fa-trash-alt"></i>
         </a>
-        <a href="" class="ml-2" role="button" title="Редактировать" @click.prevent="$emit('edit')">
+        <a v-if="!edit" href="" class="ml-2" role="button" title="Редактировать" @click.prevent="edit = true">
           <i class="far fa-edit"></i>
         </a>
       </div>
+      <form v-if="edit" class="mt-3" @submit.prevent="update">
+        <div class="form-group">
+          <div class="custom-control custom-switch">
+            <input :id="`get-posts-${group.id}`" v-model="getPosts" type="checkbox" class="custom-control-input">
+            <label :for="`get-posts-${group.id}`" class="custom-control-label">Получать посты</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label :for="`posts-limit-${group.id}`">Лимит постов</label>
+          <select :id="`posts-limit-${group.id}`" v-model="postsLimit" class="custom-select custom-select-sm">
+            <option value="100">100</option>
+            <option value="200">200</option>
+            <option value="300">300</option>
+            <option value="400">400</option>
+            <option value="500">500</option>
+          </select>
+        </div>
+        <div class="text-right">
+          <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>

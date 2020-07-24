@@ -10,13 +10,14 @@ export default {
 
   data () {
     return {
-      loading: false
+      loading: false,
+      loadingNext: false
     }
   },
 
   computed: {
     title () {
-      return this.$route.meta.title || 'Посты'
+      return this.$route.meta.title
     },
 
     tags () {
@@ -72,6 +73,12 @@ export default {
       this.loading = true
       await this.$store.dispatch('posts/fetch')
       this.loading = false
+    },
+
+    async fetchNextPosts () {
+      this.loadingNext = true
+      await this.$store.dispatch('posts/fetchNext')
+      this.loadingNext = false
     },
 
     async togglePostFavorite (id) {
