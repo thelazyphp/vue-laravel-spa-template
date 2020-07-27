@@ -8,7 +8,7 @@ export default {
       baseURL: 'http://localhost/facebook-feed/api/v1'
     })
 
-    if (store.state.auth.token) {
+    if (!!store.state.auth.token) {
       Vue.Http.setToken(store.state.auth.token)
     }
   },
@@ -20,8 +20,8 @@ export default {
   async signIn (credentials) {
     try {
       const res = await Vue.Http.post('/auth/login', credentials)
-      Vue.Http.setToken(res.data.token)
-      localStorage.setItem('token', res.data.token)
+      Vue.Http.setToken(res.data.access_token)
+      localStorage.setItem('token', res.data.access_token)
 
       return res
     } catch (error) {
@@ -155,7 +155,13 @@ export default {
    * @returns {Object}
    */
   async searchGroup (url) {
-    return await Vue.Http.get(`/search-group?url=${url}`)
+    try {
+      return await Vue.Http.get(`/search-group?url=${url}`)
+    } catch (error) {
+      //
+
+      console.log(error)
+    }
   },
 
   /**

@@ -1,4 +1,5 @@
 <script>
+import AppService from '../app.service'
 import GroupCard from '../components/GroupCard'
 
 export default {
@@ -75,7 +76,7 @@ export default {
       this.searching = true
 
       try {
-        const res = await this.$http.get(`/search-group?url=${this.url}`)
+        const res = await AppService.searchGroup(url)
         this.group = res.data
       } catch (error) {
         this.notFound = true

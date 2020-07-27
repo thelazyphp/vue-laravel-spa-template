@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import AppService from '../../app.service'
 
 const getIndexById = (items, id) => items.findIndex(item => item.id == id)
 const getItemyId = (items, id) => items.find(item => item.id == id)
@@ -11,7 +11,7 @@ export default {
     sort: '-published_at',
 		page: 1,
     items: [],
-    lastPage: 1
+    lastPage: null
 	},
 
 	getters: {
@@ -78,59 +78,28 @@ export default {
 
 	actions: {
 		async fetch ({ getters, commit }) {
-			try {
-				const res = await Vue.Http.get('/posts', {
-					params: getters.queryParams
-				})
-
-        commit('setItems', res.data.data)
-        commit('setLastPage', res.data.meta.last_page)
-			} catch (error) {
-        //
-
-        console.log(error)
-			}
+			const res = await AppService.getPosts(getters.queryParams)
+      commit('setItems', res.data.data)
+      commit('setLastPage', res.data.meta.last_page)
 		},
 
     async fetchNext ({ getters, commit }) {
       commit('incrementPage')
-
-			try {
-				const res = await Vue.Http.get('/posts', {
-					params: getters.queryParams
-				})
-
-        commit('addItems', res.data.data)
-        commit('setLastPage', res.data.meta.last_page)
-			} catch (error) {
-        //
-
-        console.log(error)
-			}
+      const res = await AppService.getPosts(getters.queryParams)
+      commit('addItems', res.data.data)
+      commit('setLastPage', res.data.meta.last_page)
     },
 
     async favorite ({ commit }, id) {
-      try {
-        await Vue.Http.post(`/favorites/${id}`)
-        commit('favoriteItem', id)
-        commit('favorites/incrementTotal', null, { root: true })
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      await AppService.favoritePost(id)
+      commit('favoriteItem', id)
+      commit('favorites/incrementTotal', null, { root: true })
     },
 
     async unfavorite ({ commit }, id) {
-      try {
-        await Vue.Http.delete(`/favorites/${id}`)
-        commit('unfavoriteItem', id)
-        commit('favorites/decrementTotal', null, { root: true })
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      await AppService.unfavoritePost(id)
+      commit('unfavoriteItem', id)
+      commit('favorites/decrementTotal', null, { root: true })
     },
 
     async toggleFavorite ({ state, dispatch }, id) {

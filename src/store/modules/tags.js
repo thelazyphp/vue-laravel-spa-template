@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import AppService from '../../app.service'
 
 export default {
   namespaced: true,
@@ -33,38 +33,19 @@ export default {
 
   actions: {
     async fetch ({ commit }) {
-      try {
-        const res = await Vue.Http.get('/tags')
-        commit('setItems', res.data)
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      const res = await AppService.getTags()
+      commit('setItems', res.data)
     },
 
     async remove({ state, commit }, index) {
       const id = state.items[index].id
-
-      try {
-        await Vue.Http.delete(`/tags/${id}`)
-        commit('removeItem', index)
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      await AppService.removeTag(id)
+      commit('removeItem', index)
     },
 
     async create ({ commit }, text) {
-      try {
-        const res = await Vue.Http.post('/tags', { text })
-        commit('addItem', res.data)
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      const res = await AppService.createTag(text)
+      commit('addItem', res.data)
     }
   }
 }

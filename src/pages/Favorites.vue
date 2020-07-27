@@ -13,6 +13,14 @@ export default {
     }
   },
 
+  watch: {
+    search (value) {
+      if (!value) {
+        this.fetchPosts(1)
+      }
+    }
+  },
+
   computed: {
     title () {
       return this.$route.meta.title

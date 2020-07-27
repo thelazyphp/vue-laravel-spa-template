@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import AppService from '../../app.service'
 
 const getIndexById = (items, id) => items.findIndex(item => item.id == id)
 
@@ -10,8 +10,8 @@ export default {
     sort: '-updated_at',
 		page: 1,
     items: [],
-    total: 0,
-    lastPage: 1
+    total: null,
+    lastPage: null
 	},
 
 	getters: {
@@ -89,77 +89,40 @@ export default {
 	},
 
 	actions: {
-		async fetch ({ getters, commit }) {
-			try {
-				const res = await Vue.Http.get('/groups', {
-					params: getters.queryParams
-				})
-
-        commit('setItems', res.data.data)
-        commit('setTotal', res.data.meta.total)
-        commit('setLastPage', res.data.meta.last_page)
-			} catch (error) {
-        //
-
-        console.log(error)
-			}
-		},
-
-		async fetchNext ({ getters, commit }) {
-			commit('incrementPage')
-
-			try {
-				const res = await Vue.Http.get('/groups', {
-					params: getters.queryParams
-				})
-
-        commit('addItems', res.data.data)
-        commit('setTotal', res.data.meta.total)
-        commit('setLastPage', res.data.meta.last_page)
-			} catch (error) {
-        //
-
-        console.log(error)
-			}
-    },
-
-    async create ({ commit }, data) {
-      try {
-        const res = await Vue.Http.post('/groups', data)
-        commit('addItem', res.data)
-        commit('incrementTotal')
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+    async create ({ commit }, group) {
+      const res = await AppService.createGroup(group)
+      commit('addItem', res.data)
+      commit('incrementTotal')
     },
 
     async remove ({ commit }, id) {
-      try {
-        await Vue.Http.delete(`/groups/${id}`)
-        commit('removeItem', id)
-        commit('decrementTotal')
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      await AppService.removeGroup(id)
+      commit('removeItem', id)
+      commit('decrementTotal')
     },
 
-    async update ({ commit }, { id, data }) {
-      try {
-        const res = await Vue.Http.put(`/groups/${id}`, data)
+    async update ({ commit }, { id, group }) {
+      const res = await AppService.updateGroup(id, group)
 
-        commit('updateItem', {
-          id,
-          item: res.data
-        })
-      } catch (error) {
-        //
+      commit('updateItem', {
+        id,
+        item: res.data
+      })
+    },
 
-        console.log(error)
-      }
+    async fetch ({ getters, commit }) {
+			const res = await AppService.getGroups(getters.queryParams)
+      commit('setItems', res.data.data)
+      commit('setTotal', res.data.meta.total)
+      commit('setLastPage', res.data.meta.last_page)
+		},
+
+		async fetchNext ({ getters, commit }) {
+      commit('incrementPage')
+      const res = await AppService.getGroups(getters.queryParams)
+      commit('addItems', res.data.data)
+      commit('setTotal', res.data.meta.total)
+      commit('setLastPage', res.data.meta.last_page)
     }
   }
 }

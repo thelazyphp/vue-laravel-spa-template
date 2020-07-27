@@ -26,7 +26,7 @@ export default {
 
 <template>
   <div v-if="loading" class="text-center">
-    <div class="spinner-border text-primary" role="status">
+    <div class="spinner-border text-white" role="status">
       <span class="sr-only">Загрузка...</span>
     </div>
   </div>

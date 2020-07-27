@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import AppService from '../../app.service'
 
 export default {
   namespaced: true,
@@ -14,41 +14,21 @@ export default {
   },
 
   mutations: {
-    removeToken (state) {
-      state.token = null
-      Vue.Http.removeToken()
-      localStorage.removeItem('token')
-    },
-
     setToken (state, token) {
       state.token = token
-      Vue.Http.setToken(token)
-      localStorage.setItem('token', token)
     }
   },
 
   actions: {
-    async signOut ({ commit }) {
-      try {
-        await Vue.Http.post('/auth/logout')
-        commit('removeToken')
-        commit('users/setCurrent', null, { root: true })
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+    async signIn ({ commit }, credentials) {
+      const res = await AppService.signIn(credentials)
+      commit('setToken', res.data.access_token)
     },
 
-    async signIn ({ commit }, data) {
-      try {
-        const res = await Vue.Http.post('/auth/login', data)
-        commit('setToken', res.data.access_token)
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+    async signOut ({ commit }) {
+      await AppService.signOut()
+      commit('setToken', null)
+      commit('users/setCurrent', null, { root: true })
     }
   }
 }

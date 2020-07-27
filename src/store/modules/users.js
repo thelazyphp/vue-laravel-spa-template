@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import AppService from '../../app.service'
 
 export default {
   namespaced: true,
@@ -15,36 +15,18 @@ export default {
 
   actions: {
     async fetchCurrent ({ commit }) {
-      try {
-        const res = await Vue.Http.get('/users/current')
-        commit('setCurrent', res.data)
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      const res = await AppService.getCurrentUser()
+      commit('setCurrent', res.data)
     },
 
     async removeCurrent ({ commit }) {
-      try {
-        await Vue.Http.delete('/users/current')
-        commit('setCurrent', null)
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      await AppService.removeCurrentUser()
+      commit('setCurrent', null)
     },
 
-    async updateCurrent ({ commit }, data) {
-      try {
-        const res = await Vue.Http.put('/users/current', data)
-        commit('setCurrent', res.data)
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+    async updateCurrent ({ commit }, user) {
+      const res = await AppService.updateCurrentUser(user)
+      commit('setCurrent', res.data)
     }
   }
 }

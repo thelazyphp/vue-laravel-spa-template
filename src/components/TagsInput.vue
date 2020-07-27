@@ -26,10 +26,10 @@ export default {
     },
 
     addTag (event) {
-      if (['Enter', 'Space'].includes(event.code)) {
+      if ([' ', 'Enter'].includes(event.key)) {
         let tag = event.target.value.toLowerCase()
 
-        if (event.code == 'Space') {
+        if (event.key == ' ') {
           tag = tag.replace(/ $/, '')
         }
 

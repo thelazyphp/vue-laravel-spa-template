@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import AppService from '../../app.service'
 
 const getIndexById = (items, id) => items.findIndex(item => item.id == id)
 const getItemyId = (items, id) => items.find(item => item.id == id)
@@ -12,7 +12,7 @@ export default {
 		page: 1,
     items: [],
     total: null,
-    lastPage: 1
+    lastPage: null
 	},
 
 	getters: {
@@ -87,61 +87,30 @@ export default {
 
 	actions: {
 		async fetch ({ getters, commit }) {
-			try {
-				const res = await Vue.Http.get('/favorites', {
-					params: getters.queryParams
-				})
-
-        commit('setItems', res.data.data)
-        commit('setTotal', res.data.meta.total)
-        commit('setLastPage', res.data.meta.last_page)
-			} catch (error) {
-        //
-
-        console.log(error)
-			}
+			const res = await AppService.getFavorites(getters.queryParams)
+      commit('setItems', res.data.data)
+      commit('setTotal', res.data.meta.total)
+      commit('setLastPage', res.data.meta.last_page)
 		},
 
     async fetchNext ({ getters, commit }) {
       commit('incrementPage')
-
-			try {
-				const res = await Vue.Http.get('/favorites', {
-					params: getters.queryParams
-				})
-
-        commit('addItems', res.data.data)
-        commit('setTotal', res.data.meta.total)
-        commit('setLastPage', res.data.meta.last_page)
-			} catch (error) {
-        //
-
-        console.log(error)
-			}
+      const res = await AppService.getFavorites(getters.queryParams)
+      commit('addItems', res.data.data)
+      commit('setTotal', res.data.meta.total)
+      commit('setLastPage', res.data.meta.last_page)
     },
 
     async favorite ({ commit }, id) {
-      try {
-        await Vue.Http.post(`/favorites/${id}`)
-        commit('favoriteItem', id)
-        commit('incrementTotal')
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      await AppService.favoritePost(id)
+      commit('favoriteItem', id)
+      commit('incrementTotal')
     },
 
     async unfavorite ({ commit }, id) {
-      try {
-        await Vue.Http.delete(`/favorites/${id}`)
-        commit('unfavoriteItem', id)
-        commit('decrementTotal')
-      } catch (error) {
-        //
-
-        console.log(error)
-      }
+      await AppService.unfavoritePost(id)
+      commit('unfavoriteItem', id)
+      commit('decrementTotal')
     },
 
     async toggleFavorite ({ state, dispatch }, id) {

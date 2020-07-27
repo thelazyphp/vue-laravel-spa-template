@@ -1,4 +1,6 @@
 <script>
+import AppService from '../app.service'
+
 export default {
   data () {
     return {
@@ -14,7 +16,7 @@ export default {
     async signUp () {
       this.loading = true
 
-      await this.$http.post('/auth/register', {
+      await AppService.signUp({
         name: this.name,
         email: this.email,
         password: this.password,
@@ -35,7 +37,7 @@ export default {
 
 <template>
   <div v-if="loading" class="text-center">
-    <div class="spinner-border text-primary" role="status">
+    <div class="spinner-border text-white" role="status">
       <span class="sr-only">Загрузка...</span>
     </div>
   </div>

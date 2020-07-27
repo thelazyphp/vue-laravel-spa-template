@@ -3,17 +3,10 @@ import Vue from 'vue'
 import App from './App'
 import store from './store'
 import router from './router'
-import Http from './plugins/Http'
+import AppService from './app.service'
 
 Vue.config.productionTip = false
-
-Vue.use(Http, {
-  baseURL: 'http://localhost/facebook-feed/api/v1'
-})
-
-if (store.state.auth.token) {
-  Vue.Http.setToken(store.state.auth.token)
-}
+AppService.init()
 
 new Vue({
   store,
