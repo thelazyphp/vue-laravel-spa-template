@@ -18,6 +18,7 @@ class CreateClientRequestsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('client_id');
             $table->text('filters')->default('[]');
+            $table->text('comments')->nullable();
             $table->string('status')->default('active');
             $table->string('passive_status_reson')->nullable();
             $table->timestamps();

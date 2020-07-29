@@ -81,6 +81,42 @@ class User extends Authenticatable
     }
 
     /**
+     * @return bool
+     */
+    public function hasCompany()
+    {
+        return !is_null($this->company_id);
+    }
+
+    /**
+     * @param  \App\Company  $company
+     * @return bool
+     */
+    public function isBelongsToCompany(Company $company)
+    {
+        return $this->company_id == $company->id;
+    }
+
+    /**
+     * @param  \App\User  $user
+     * @return bool
+     */
+    public function sameCompany(User $user)
+    {
+        return $this->company_id == $user->company_id;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function employees()
+    {
+        return is_null($this->company)
+            ? []
+            : $this->company()->users();
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function image()

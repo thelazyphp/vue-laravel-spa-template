@@ -28,6 +28,7 @@ class ClientRequest extends Model
         'user_id',
         'client_id',
         'filters',
+        'comments',
         'status',
         'passive_status_reson',
     ];

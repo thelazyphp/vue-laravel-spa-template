@@ -74,14 +74,14 @@ class AuthController extends Controller
         $this->validate($request, [
             'company_name' => 'string|max:191|unique:companies,name',
             'f_name' => 'required|string|max:191',
-            'm_name' => 'string|max:191',
+            'm_name' => 'nullable|string|max:191',
             'l_name' => 'required|string|max:191',
             'email' => 'required|string|max:191|email|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $attributes = [
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ];
 
         if ($request->has('company_name')) {
@@ -94,12 +94,11 @@ class AuthController extends Controller
             }
         }
 
-        User::create($request->only([
-            'f_name',
-            'm_name',
-            'l_name',
-            'email',
-        ]) + $attributes);
+        User::create(
+            array_merge(
+                $attributes, $request->only('f_name', 'm_name', 'l_name', 'email')
+            )
+        );
 
         $data = [
             'message' => 'You are successfully registered.',
