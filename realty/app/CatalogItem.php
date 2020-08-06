@@ -10,8 +10,8 @@ class CatalogItem extends Model
     const TRANSACTION_RENT = 'rent';
 
     const CATEGORY_APARTMENTS = 'apartments';
-    const CATEGORY_HOUSES = 'houses';
     const CATEGORY_LANDS = 'lands';
+    const CATEGORY_HOUSES = 'houses';
     const CATEGORY_COMMERCIAL_REAL_ESTATE = 'commercial_real_estate';
 
     /**
@@ -36,6 +36,7 @@ class CatalogItem extends Model
         'transaction',
         'category',
         'type',
+        'source',
         'url',
         'images',
         'title',

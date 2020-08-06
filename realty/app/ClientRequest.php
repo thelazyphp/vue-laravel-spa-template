@@ -41,4 +41,12 @@ class ClientRequest extends Model
     protected $casts = [
         'filters' => 'array',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function client()
+    {
+        return $this->belongsTo('App\Client');
+    }
 }

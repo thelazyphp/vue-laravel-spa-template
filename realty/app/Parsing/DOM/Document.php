@@ -2,9 +2,9 @@
 
 namespace App\Parsing\DOM;
 
-use DOMDocument;
-use DOMElement;
 use DOMXPath;
+use DOMElement;
+use DOMDocument;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 
 class Document extends DOMDocument

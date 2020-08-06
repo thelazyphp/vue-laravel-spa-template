@@ -1,8 +1,18 @@
+<template>
+  <div id="app">
+    <component :is="layout">
+      <router-view />
+    </component>
+  </div>
+</template>
+
 <script>
+import EmptyLayout from './layouts/Empty'
 import DefaultLayout from './layouts/Default'
 
 export default {
   components: {
+    EmptyLayout,
     DefaultLayout
   },
 
@@ -13,9 +23,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div id="app">
-    <component :is="layout"></component>
-  </div>
-</template>

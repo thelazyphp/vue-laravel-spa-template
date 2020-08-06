@@ -29,7 +29,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        return $user->hasCompany() && $user->sameCompany($model);
+        return $user->id == $model->id || ($user->hasCompany() && $user->isSameCompany($model));
     }
 
     /**
@@ -52,7 +52,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        return $user->id == $model->id || ($user->hasCompany() && $user->isManager() && $user->sameCompany($model));
+        return $user->id == $model->id || ($user->hasCompany() && $user->isManager() && $user->isSameCompany($model));
     }
 
     /**
@@ -64,7 +64,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model)
     {
-        return $user->id == $model->id || ($user->hasCompany() && $user->isManager() && $user->sameCompany($model));
+        return $user->id == $model->id || ($user->hasCompany() && $user->isManager() && $user->isSameCompany($model));
     }
 
     /**

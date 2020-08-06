@@ -11,6 +11,11 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,10 +23,14 @@ class UserController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny');
+        $this->authorize('viewAny', User::class);
 
         return UserResource::collection(
-            auth()->user()->employees()->paginate()
+            auth()->user()
+                ->company
+                ->users()
+                ->where('id', '!=', auth()->id())
+                ->paginate()
         );
     }
 
@@ -36,6 +45,7 @@ class UserController extends Controller
         $this->authorize('create', User::class);
 
         $this->validate($request, [
+            'image_id' => 'nullable|integer|min:1|exists:images,id',
             'role' => 'required|string|max:191|in:manager,employee',
             'f_name' => 'required|string|max:191',
             'm_name' => 'nullable|string|max:191',
@@ -52,7 +62,14 @@ class UserController extends Controller
         return new UserResource(
             User::create(
                 array_merge(
-                    $attributes, $request->only('role', 'f_name', 'm_name', 'l_name', 'email')
+                    $attributes, $request->only(
+                        'image_id',
+                        'role',
+                        'f_name',
+                        'm_name',
+                        'l_name',
+                        'email'
+                    )
                 )
             )
         );
@@ -93,6 +110,7 @@ class UserController extends Controller
         $this->authorize('update', $user);
 
         $rules = [
+            'image_id' => 'nullable|integer|min:1|exists:images,id',
             'f_name' => 'string|max:191',
             'm_name' => 'nullable|string|max:191',
             'l_name' => 'string|max:191',
@@ -105,23 +123,20 @@ class UserController extends Controller
             ],
         ];
 
-        $managerRules = [
-            'role' => 'string|max:191|in:manager,employee',
-            'password' => 'string|min:8',
-        ];
+        if ($user->id == auth()->id()) {
+            $rules['cur_password'] = 'required_with:new_password|password';
+            $rules['new_password'] = 'string|min:8|confirmed';
+        } elseif (auth()->user()->isManager()) {
+            $rules['role'] = 'string|max:191|in:manager,employee';
+        }
 
-        $employeeRules = [
-            'password' => 'required_with:new_password|password',
-            'new_password' => 'string|min:8|confirmed',
-        ];
+        $this->validate($request, $rules);
 
-        $this->validate(
-            $request, array_merge(
-                $rules, $user->isManager() ? $managerRules : $employeeRules
-            )
-        );
+        if ($request->has('image_id')) {
+            $user->image_id = $request->image_id;
+        }
 
-        if ($user->isManager() && $request->has('role')) {
+        if ($user->id != auth()->id() && auth()->user()->isManager() && $request->has('role')) {
             $user->role = $request->role;
         }
 
@@ -141,9 +156,7 @@ class UserController extends Controller
             $user->email = $request->email;
         }
 
-        if ($user->isManager() && $request->has('password')) {
-            $user->password = Hash::make($request->password);
-        } elseif ($request->has('new_password')) {
+        if ($user->id == auth()->id() && $request->has('new_password')) {
             $user->password = Hash::make($request->new_password);
         }
 

@@ -2,8 +2,8 @@
 
 namespace App\Parsing\DOM;
 
-use DOMElement;
 use DOMXPath;
+use DOMElement;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 
 class Element extends DOMElement

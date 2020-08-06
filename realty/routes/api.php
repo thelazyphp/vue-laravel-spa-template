@@ -13,7 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('/v1')->namespace('v1')->group(function () {
+Route::prefix('/v1')->namespace('API\v1')->group(function () {
+    Route::resource('users', 'UserController');
+    Route::resource('images', 'ImageController')->only('store');
+    Route::resource('catalog', 'CatalogController')->only('index', 'show');
+
     Route::prefix('/auth')->group(function () {
         Route::post('/register', 'AuthController@register');
         Route::post('/login', 'AuthController@login');

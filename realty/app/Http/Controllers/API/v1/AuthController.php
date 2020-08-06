@@ -72,7 +72,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $this->validate($request, [
-            'company_name' => 'string|max:191|unique:companies,name',
+            'company_name' => 'nullable|string|max:191|unique:companies,name',
             'f_name' => 'required|string|max:191',
             'm_name' => 'nullable|string|max:191',
             'l_name' => 'required|string|max:191',
@@ -84,10 +84,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ];
 
-        if ($request->has('company_name')) {
-            $company = Company::create(
-                $request->only('company_name')
-            );
+        if ($request->filled('company_name')) {
+            $company = Company::create([
+                'name' => $request->company_name,
+            ]);
 
             if ($company) {
                 $attributes['company_id'] = $company->id;

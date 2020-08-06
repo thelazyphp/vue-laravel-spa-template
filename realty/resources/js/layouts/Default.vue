@@ -1,14 +1,26 @@
 <template>
-  <div>
-    <aside id="sidebar"></aside>
-    <main id="content" role="main">
-      <router-view />
+  <div class="layout">
+    <div class="sidebar">
+      <TheSidebar />
+    </div>
+    <main class="content">
+      <slot />
     </main>
   </div>
 </template>
 
+<script>
+import TheSidebar from '../components/TheSidebar'
+
+export default {
+  components: {
+    TheSidebar
+  }
+}
+</script>
+
 <style scoped>
-#sidebar {
+.sidebar {
   position: fixed;
   top: 0;
   left: 0;
@@ -18,25 +30,24 @@
   height: 100vh;
   overflow-y: auto;
   color: #fff;
-  background-color: #3c4655;
-  background-image: linear-gradient(0deg,#7e8ea1,#3c4655);
+  background-color: #343a40;
 }
 
-#sidebar.toggled {
+.sidebar.toggled {
   margin-left: 0;
 }
 
 @media (min-width: 768px) {
-  #sidebar {
+  .sidebar {
     margin-left: 0;
   }
 
-  #content {
+  .content {
     margin-left: 250px;
   }
 }
 
-#sidebar {
+.sidebar {
   transition: margin .25s ease-in-out;
 }
 </style>

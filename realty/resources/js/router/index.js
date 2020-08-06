@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import store from '../store'
 import routes from './routes'
 import VueRouter from 'vue-router'
 
@@ -11,8 +12,25 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  if (to.meta.auth && !store.getters['auth/check']) {
+    next('/sign-in')
+  } else {
+    next()
+  }
+})
+
+router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = `${to.meta.title} | Realty`
+    next()
+  } else {
+    next()
+  }
+})
+
+router.beforeEach(async (to, from, next) => {
+  if (store.getters['auth/check'] && !store.state.users.current) {
+    await store.dispatch('users/fetchCurrent')
     next()
   } else {
     next()

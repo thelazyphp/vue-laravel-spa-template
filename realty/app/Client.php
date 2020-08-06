@@ -37,4 +37,12 @@ class Client extends Model
     protected $casts = [
         'phones' => 'array',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function clientRequests()
+    {
+        return $this->hasMany('App\ClientRequest');
+    }
 }

@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\SellerResource;
-use App\CatalogItem;
 
 class CatalogItemResource extends JsonResource
 {
@@ -26,65 +25,22 @@ class CatalogItemResource extends JsonResource
             'images' => $this->images,
             'title' => $this->title,
             'address' => $this->address,
+            'rooms' => $this->rooms,
+            'floor' => $this->floor,
+            'floors' => $this->floors,
+            'year_built' => $this->year_built,
 
-            $this->mergeWhen($this->category == CatalogItem::CATEGORY_APARTMENTS, [
-                'rooms' => $this->rooms,
-                'floor' => $this->floor,
-                'floors' => $this->floors,
-                'year_built' => $this->year_built,
+            'size' => [
+                'land' => $this->size_land,
+                'total' => $this->size_total,
+                'living' => $this->size_living,
+                'kitchen' => $this->size_kitchen,
+            ],
 
-                'size' => [
-                    'total' => $this->size_total,
-                    'living' => $this->size_living,
-                    'kitchen' => $this->size_kitchen,
-                ],
-
-                'walls' => $this->walls,
-                'balcony' => $this->balcony,
-                'bathroom' => $this->bathroom,
-            ]),
-
-            $this->mergeWhen($this->category == CatalogItem::CATEGORY_HOUSES, [
-                'rooms' => $this->rooms,
-                'floors' => $this->floors,
-                'year_built' => $this->year_built,
-
-                'size' => [
-                    'land' => $this->size_land,
-                    'total' => $this->size_total,
-                    'living' => $this->size_living,
-                    'kitchen' => $this->size_kitchen,
-                ],
-
-                'roof' => $this->roof,
-                'walls' => $this->walls,
-                'bathroom' => $this->bathroom,
-            ]),
-
-            $this->mergeWhen($this->category == CatalogItem::CATEGORY_LANDS, [
-                'size' => [
-                    'land' => $this->size_land,
-                ],
-            ]),
-
-            $this->mergeWhen($this->category == CatalogItem::CATEGORY_COMMERCIAL_REAL_ESTATE, [
-                'rooms' => $this->rooms,
-                'floor' => $this->floor,
-                'floors' => $this->floors,
-                'year_built' => $this->year_built,
-
-                'size' => [
-                    'land' => $this->size_land,
-                    'total' => $this->size_total,
-                    'living' => $this->size_living,
-                    'kitchen' => $this->size_kitchen,
-                ],
-
-                'roof' => $this->roof,
-                'walls' => $this->walls,
-                'balcony' => $this->balcony,
-                'bathroom' => $this->bathroom,
-            ]),
+            'roof' => $this->roof,
+            'walls' => $this->walls,
+            'balcony' => $this->balcony,
+            'bathroom' => $this->bathroom,
 
             'price' => [
                 'amount' => $this->price_amount,

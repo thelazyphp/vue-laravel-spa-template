@@ -19,8 +19,9 @@ class CreateCatalogItemsTable extends Migration
             $table->string('transaction')->default('sell');
             $table->string('category');
             $table->string('type')->nullable();
+            $table->string('source')->index();
             $table->string('url')->unique();
-            $table->text('images')->default('[]');
+            $table->text('images')->nullable();
             $table->string('title')->nullable();
             $table->string('address')->nullable();
             $table->unsignedTinyInteger('rooms')->nullable();
@@ -36,9 +37,9 @@ class CreateCatalogItemsTable extends Migration
             $table->string('balcony')->nullable();
             $table->string('bathroom')->nullable();
             $table->unsignedInteger('price_amount')->nullable();
-            $table->unsignedInteger('price_currency')->default('USD');
+            $table->string('price_currency')->default('USD');
             $table->unsignedInteger('price_sq_m_amount')->nullable();
-            $table->unsignedInteger('price_sq_m_currency')->default('USD');
+            $table->string('price_sq_m_currency')->default('USD');
             $table->timestamps();
             $table->timestamp('published_at')->nullable();
         });

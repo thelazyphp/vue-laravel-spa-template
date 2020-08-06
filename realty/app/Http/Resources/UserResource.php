@@ -3,6 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\CompanyResource;
+use App\Http\Resources\ImageResource;
+use App\Image;
 
 class UserResource extends JsonResource
 {
@@ -16,18 +19,13 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'company_id' => $this->company_id,
-            'image' => $this->whenLoaded('image'),
+            'company' => new CompanyResource($this->company),
+            'image' => new ImageResource(Image::find($this->image_id)),
             'role' => $this->role,
             'f_name' => $this->f_name,
             'm_name' => $this->m_name,
             'l_name' => $this->l_name,
             'email' => $this->email,
-
-            'employees' => $this->when($this->isManager(), function () {
-                return $this->employees();
-            }),
-
             'preferred_catalog_items_category' => $this->preferred_catalog_items_category,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

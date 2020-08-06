@@ -12,11 +12,6 @@ class User extends Authenticatable
     const ROLE_MANAGER = 'manager';
     const ROLE_EMPLOYEE = 'employee';
 
-    const CATALOG_ITEMS_CATEGORY_APARTMENTS = 'apartments';
-    const CATALOG_ITEMS_CATEGORY_HOUSES = 'houses';
-    const CATALOG_ITEMS_CATEGORY_LANDS = 'lands';
-    const CATALOG_ITEMS_CATEGORY_COMMERCIAL_REAL_ESTATE = 'commercial_real_estate';
-
     use HasApiTokens, Notifiable;
 
     /**
@@ -26,7 +21,7 @@ class User extends Authenticatable
      */
     protected $attributes = [
         'role' => self::ROLE_MANAGER,
-        'preferred_catalog_items_category' => self::CATALOG_ITEMS_CATEGORY_APARTMENTS,
+        'preferred_catalog_items_category' => CatalogItem::CATEGORY_APARTMENTS,
     ];
 
     /**
@@ -94,26 +89,16 @@ class User extends Authenticatable
      */
     public function isBelongsToCompany(Company $company)
     {
-        return $this->company_id == $company->id;
+        return $this->company_id === $company->id;
     }
 
     /**
      * @param  \App\User  $user
      * @return bool
      */
-    public function sameCompany(User $user)
+    public function isSameCompany(User $user)
     {
-        return $this->company_id == $user->company_id;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function employees()
-    {
-        return is_null($this->company)
-            ? []
-            : $this->company()->users();
+        return $this->company_id === $user->company_id;
     }
 
     /**

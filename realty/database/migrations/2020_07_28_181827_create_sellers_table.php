@@ -18,7 +18,7 @@ class CreateSellersTable extends Migration
             $table->string('type')->default('owner');
             $table->string('name')->nullable();
             $table->string('email')->nullable();
-            $table->string('phone')->nullable()->index();
+            $table->string('phone')->index()->nullable();
             $table->timestamps();
         });
     }
