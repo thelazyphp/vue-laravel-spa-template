@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('/v1')->namespace('API\v1')->group(function () {
-    Route::resource('users', 'UserController');
-    Route::resource('images', 'ImageController')->only('store');
-    Route::resource('catalog', 'CatalogController')->only('index', 'show');
+    Route::get('/test', function () {
+        (new \App\Parsing\Parsers\Irr\IrrApartmentsParser())->start();
+    });
 
     Route::prefix('/auth')->group(function () {
         Route::post('/register', 'AuthController@register');
@@ -24,4 +24,9 @@ Route::prefix('/v1')->namespace('API\v1')->group(function () {
         Route::post('/refresh-token', 'AuthController@refreshToken');
         Route::match(['get', 'post'], '/logout', 'AuthController@logout');
     });
+
+    Route::resource('users', 'UserController');
+    Route::resource('images', 'ImageController')->only('store');
+    Route::resource('catalog', 'CatalogController')->only('index', 'show');
+    Route::resource('companies', 'CompanyController')->only('show', 'update');
 });

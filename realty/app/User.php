@@ -6,13 +6,14 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Filterable;
 
 class User extends Authenticatable
 {
     const ROLE_MANAGER = 'manager';
     const ROLE_EMPLOYEE = 'employee';
 
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, Filterable;
 
     /**
      * The model's default values for attributes.
@@ -80,7 +81,7 @@ class User extends Authenticatable
      */
     public function hasCompany()
     {
-        return !is_null($this->company_id);
+        return (bool) $this->company_id;
     }
 
     /**

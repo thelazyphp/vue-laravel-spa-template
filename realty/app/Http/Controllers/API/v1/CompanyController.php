@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers\API\v1;
 
+use App\Company;
 use App\Http\Controllers\Controller;
-use App\Image;
 use Illuminate\Http\Request;
-use App\Http\Resources\ImageResource;
+use App\Http\Resources\CompanyResource;
+use Illuminate\Validation\Rule;
 
-class ImageController extends Controller
+class CompanyController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -32,51 +28,57 @@ class ImageController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'file' => 'required|file|image|max:51200',
-        ]);
-
-        if ($request->file->isValid()) {
-            $url = env('APP_URL').'/storage/'.$request->file->store('images', 'public');
-
-            return new ImageResource(
-                Image::create([
-                    'url' => $url,
-                ])
-            );
-        }
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Image  $image
+     * @param  \App\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function show(Image $image)
+    public function show(Company $company)
     {
-        //
+        $this->authorize('view', $company);
+
+        return new CompanyResource($company);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Image  $image
+     * @param  \App\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Image $image)
+    public function update(Request $request, Company $company)
     {
-        //
+        $this->authorize('update', $company);
+
+        $this->validate($request, [
+            'name' => [
+                'string',
+                'max:191',
+                Rule::unique('companies')->ignore($company),
+            ],
+        ]);
+
+        if ($request->has('name')) {
+            $company->name = $request->name;
+        }
+
+        $company->save();
+
+        return new CompanyResource($company);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Image  $image
+     * @param  \App\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Image $image)
+    public function destroy(Company $company)
     {
         //
     }

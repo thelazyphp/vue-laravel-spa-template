@@ -13,12 +13,32 @@ export default {
   },
 
   computed: {
+    defaultAvatar () {
+      return '/realty/images/default_avatar.jpg'
+    },
+
+    page () {
+      return this.$store.state.users.page
+    },
+
     users () {
       return this.$store.state.users.items
     },
 
-    defaultAvatar () {
-      return '/realty/images/default_avatar.jpg'
+    lastPage () {
+      return this.$store.state.users.lastPage
+    },
+
+    currentUser () {
+      return this.$store.state.users.current
+    },
+
+    currentUserIsManager () {
+      return this.currentUser.role == 'manager'
+    },
+
+    currentUserIsEmployee () {
+      return this.currentUser.role == 'employee'
     }
   },
 
@@ -64,65 +84,55 @@ export default {
 
 <template>
   <div class="container">
-    <h1 class="my-5">Сотрудники</h1>
+    <h1 class="my-4">Сотрудники</h1>
     <template v-if="loading">
-      <div class="mb-3 text-center">
+      <div class="mb-4 text-center">
         <div class="spinner-border text-primary" role="status">
           <span class="sr-only">Загрузка...</span>
         </div>
       </div>
     </template>
     <template v-else>
-      <div class="card mb-3">
-        <div class="card-body p-0 table-responsive">
-          <div class="card-header d-flex bg-white" style="padding: 0.75rem">
-            <form class="row flex-fill no-gutters" @submit.prevent>
-              <div class="col-auto">
-                <button type="submit" class="btn mr-2 btn-sm btn-primary">Найти</button>
-              </div>
-              <div class="col">
-                <input type="search" class="form-control form-control-sm" placeholder="Поиск">
-              </div>
-            </form>
-            <router-link to="/employees/create" class="btn ml-2 btn-sm btn-primary">Добавить</router-link>
-          </div>
+      <div class="card mb-4">
+        <div v-if="currentUserIsManager" class="card-header bg-white d-flex justify-content-end" style="padding: 0.75rem">
+          <router-link to="/employees/create" class="btn btn-primary"><i class="fas fa-plus"></i> Добавить</router-link>
+        </div>
+        <div v-if="users.length" class="card-body p-0 table-responsive">
           <table class="table">
             <thead class="bg-light">
               <tr>
-                <th scope="row" class="text-nowrap border-top-0 border-bottom-0">ID</th>
-                <th scope="row" class="text-nowrap border-top-0 border-bottom-0"></th>
-                <th scope="row" class="text-nowrap border-top-0 border-bottom-0">Роль</th>
-                <th scope="row" class="text-nowrap border-top-0 border-bottom-0">Фамилия</th>
-                <th scope="row" class="text-nowrap border-top-0 border-bottom-0">Имя</th>
-                <th scope="row" class="text-nowrap border-top-0 border-bottom-0">Отчество</th>
-                <th scope="row" class="text-nowrap border-top-0 border-bottom-0">E-Mail</th>
-                <th scope="row" class="text-nowrap border-top-0 border-bottom-0"></th>
+                <th scope="col">ID</th>
+                <th scope="col">Аватар</th>
+                <th scope="col">Роль</th>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Отчество</th>
+                <th v-if="currentUserIsManager" scope="col">Действия</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="user in users" :key="user.id">
-                <td class="text-nowrap align-middle">{{ user.id }}</td>
+                <td>{{ user.id }}</td>
                 <td>
                   <UserAvatar :size="50" :image="user.image ? user.image.url : defaultAvatar" />
                 </td>
-                <td class="text-nowrap align-middle">
+                <td>
                   <h5>
                     <span class="badge badge-pill badge-primary">{{ user.role == 'manager' ? 'менеджер' : 'сотрудник' }}</span>
                   </h5>
                 </td>
-                <td class="text-nowrap align-middle">{{ user.l_name }}</td>
-                <td class="text-nowrap align-middle">{{ user.f_name }}</td>
-                <td class="text-nowrap align-middle">{{ user.m_name }}</td>
-                <td class="text-nowrap align-middle">
-                  <a :href="`mailto:${user.email}`">{{ user.email }}</a>
-                </td>
-                <td class="text-nowrap align-middle">
-                  <a href="" title="Удалить" @click.prevent="removeUser(user.id)">
-                    <i class="far fa-trash-alt"></i>
-                  </a>
-                  <router-link :to="`/employees/${user.id}/update`" class="ml-2" title="Редактировать">
-                    <i class="far fa-edit"></i>
-                  </router-link>
+                <td>{{ user.l_name }}</td>
+                <td>{{ user.f_name }}</td>
+                <td>{{ user.m_name }}</td>
+                <td v-if="currentUserIsManager">
+                  <template v-if="user.id != currentUser.id">
+                    <a href="" class="btn btn-link" title="Удалить" @click.prevent="removeUser(user.id)">
+                      <i class="far fa-trash-alt"></i>
+                    </a>
+                    <router-link :to="`/employees/${user.id}/update`" class="btn btn-link" title="Редактировать">
+                      <i class="far fa-edit"></i>
+                    </router-link>
+                  </template>
                 </td>
               </tr>
             </tbody>
@@ -132,3 +142,16 @@ export default {
     </template>
   </div>
 </template>
+
+<style scoped>
+.table th {
+  border-top: none;
+  border-bottom: none;
+}
+
+.table th, td {
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+}
+</style>

@@ -7,8 +7,16 @@ export default {
   },
 
   computed: {
+    page () {
+      return this.$store.state.catalog.page
+    },
+
     items () {
       return this.$store.state.catalog.items
+    },
+
+    lastPage () {
+      return this.$store.state.catalog.lastPage
     }
   },
 
@@ -67,8 +75,8 @@ export default {
           <table class="table">
             <thead class="bg-light">
               <tr>
-                <th scope="row" class="text-nowrap border-top-0 border-bottom-0"></th>
                 <th scope="row" class="text-nowrap border-top-0 border-bottom-0">Дата</th>
+                <th scope="row" class="text-nowrap border-top-0 border-bottom-0"></th>
                 <th scope="row" class="text-nowrap border-top-0 border-bottom-0">Комнат</th>
                 <th scope="row" class="text-nowrap border-top-0 border-bottom-0">Этаж</th>
                 <th scope="row" class="text-nowrap border-top-0 border-bottom-0">Этажность</th>
@@ -81,18 +89,18 @@ export default {
             </thead>
             <tbody>
               <tr v-for="item in items" :key="item.id">
+                <td class="text-nowrap align-middle">{{ new Date(item.published_at || item.updated_at).toLocaleDateString() }}</td>
                 <td class="text-nowrap align-middle">
                   <span v-if="item.images.length" :style="{
                     display: 'inline-block',
-                    width: '50px',
-                    height: '50px',
+                    width: '80px',
+                    height: '80px',
                     borderRadius: '50%',
                     backgroundImage: `url(${item.images[0].thumb || item.images[0].src})`,
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center center' }"></span>
                 </td>
-                <td class="text-nowrap align-middle">{{ new Date(item.published_at || item.updated_at).toLocaleDateString() }}</td>
                 <td class="text-nowrap align-middle">{{ item.rooms }}</td>
                 <td class="text-nowrap align-middle">{{ item.floor }}</td>
                 <td class="text-nowrap align-middle">{{ item.floors }}</td>
@@ -104,6 +112,18 @@ export default {
               </tr>
             </tbody>
           </table>
+        </div>
+        <div class="card-footer bg-white d-flex justify-content-center">
+          <nav>
+            <ul class="pagination mb-0">
+              <li class="page-item" :class="{ disabled: page == 1 }">
+                <a href="" class="page-link" @click.prevent="$store.commit('catalog/decrementPage'), fetchItems()">Назад</a>
+              </li>
+              <li class="page-item" :class="{ disabled: page == lastPage }">
+                <a href="" class="page-link" @click.prevent="$store.commit('catalog/incrementPage'), fetchItems()">Далее</a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </template>

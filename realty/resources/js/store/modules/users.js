@@ -6,22 +6,35 @@ export default {
   namespaced: true,
 
   state: {
+    current: null,
     page: 1,
     items: [],
-    current: null
+    lastPage: null
   },
 
   mutations: {
+    setCurrent (state, user) {
+      state.current = user
+    },
+
     setPage (state, page) {
       state.page = page
+    },
+
+    incrementPage (state) {
+      state.page++
+    },
+
+    decrementPage (state) {
+      state.page--
     },
 
     setItems (state, items) {
       state.items = items
     },
 
-    setCurrent (state, user) {
-      state.current = user
+    setLastPage (state, page) {
+      state.lastPage = page
     },
 
     removeItem (state, id) {
@@ -31,29 +44,64 @@ export default {
   },
 
   actions: {
-    async fetch ({ commit }) {
-      const res = await AppService.getUsers()
-      commit('setItems', res.data.data)
+    async fetch ({ state, commit }) {
+      let params = {
+        page: state.page
+      }
+
+      try {
+        const res = await AppService.getUsers(params)
+        commit('setItems', res.data.data)
+        commit('setLastPage', res.data.meta.last_page)
+      } catch (error) {
+        //
+      }
+    },
+
+    async fetchNext ({ commit, dispatch }) {
+      commit('incrementPage')
+      await dispatch('fetch')
+    },
+
+    async fetchPrev ({ commit, dispatch }) {
+      commit('decrementPage')
+      await dispatch('fetch')
     },
 
     async remove ({ commit }, id) {
-      await AppService.removeUser(id)
-      commit('removeItem', id)
+      try {
+        await AppService.removeUser(id)
+        commit('removeItem', id)
+      } catch (error) {
+        //
+      }
     },
 
     async fetchCurrent ({ commit }) {
-      const res = await AppService.getCurrentUser()
-      commit('setCurrent', res.data)
+      try {
+        const res = await AppService.getCurrentUser()
+        commit('setCurrent', res.data)
+      } catch (error) {
+        //
+      }
     },
 
     async removeCurrent ({ commit }) {
-      await AppService.removeCurrentUser()
-      commit('setCurrent', null)
+      try {
+        await AppService.removeCurrentUser()
+        commit('setCurrent', null)
+      } catch (error) {
+        //
+      }
     },
 
     async updateCurrent ({ commit }, user) {
-      const res = await AppService.updateCurrentUser(user)
-      commit('setCurrent', res.data)
+      try {
+        const res = await AppService.updateCurrentUser(user)
+        commit('setCurrent', res.data)
+      } catch (error) {
+        //
+      }
     }
   }
 }

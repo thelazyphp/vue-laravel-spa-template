@@ -34,7 +34,7 @@ export default {
           path: '/employees',
           text: 'Сотрудники',
           exact: false,
-          icon: 'fas fa-arrow-down',
+          icon: 'far fa-user-circle',
           badge: null,
           badgeType: 'light'
         }

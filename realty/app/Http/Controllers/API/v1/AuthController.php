@@ -73,11 +73,11 @@ class AuthController extends Controller
     {
         $this->validate($request, [
             'company_name' => 'nullable|string|max:191|unique:companies,name',
-            'f_name' => 'required|string|max:191',
-            'm_name' => 'nullable|string|max:191',
-            'l_name' => 'required|string|max:191',
-            'email' => 'required|string|max:191|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'f_name'       => 'required|string|max:191',
+            'm_name'       => 'nullable|string|max:191',
+            'l_name'       => 'required|string|max:191',
+            'email'        => 'required|string|email|max:191|unique:users',
+            'password'     => 'required|string|min:8|confirmed',
         ]);
 
         $attributes = [

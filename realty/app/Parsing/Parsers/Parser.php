@@ -8,6 +8,9 @@ use App\Parsing\Rule;
 use GuzzleHttp\Client;
 use App\Parsing\DOM\Document;
 
+/**
+ * @abstract
+ */
 abstract class Parser
 {
     /**
@@ -109,11 +112,13 @@ abstract class Parser
     }
 
     /**
+     * @abstract
      * @return void
      */
     abstract protected function registerRules();
 
     /**
+     * @abstract
      * @param  int|null  $limit
      * @return array
      */

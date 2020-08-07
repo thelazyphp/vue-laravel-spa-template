@@ -11,16 +11,16 @@ export default {
     return {
       loading: false,
 
+      image: {
+        uploading: false,
+        url: null
+      },
+
       form: {
         f_name: null,
         m_name: null,
         l_name: null,
         email: null
-      },
-
-      image: {
-        uploading: false,
-        url: null
       },
 
       companyName: null,
@@ -69,35 +69,29 @@ export default {
   },
 
   methods: {
-    async uploadImage(event) {
-      if (event.target.files.length) {
-        this.image.uploading = true
+    async uploadImage (event) {
+      this.image.uploading = true
 
-        try {
-          const res = await AppService.uploadImage(event.target.files[0])
+      try {
+        const res = await AppService.uploadImage(event.target.files[0])
 
-          await this.$store.dispatch('users/updateCurrent', {
-            image_id: res.data.id
-          })
+        await this.$store.dispatch('users/updateCurrent', {
+          image_id: res.data.id
+        })
 
-          this.image.url = res.data.url
-        } catch (error) {
-          //
+        this.image.url = res.data.url
+      } catch (error) {
+        //
 
-          console.log(error)
-          this.image.url = null
-        } finally {
-          this.image.uploading = false
-        }
+        console.log(error)
+        this.image.url = null
+      } finally {
+        this.image.uploading = false
       }
     },
 
     async updateProfile () {
       let user = this.form
-
-      if (this.companyName && this.isManager) {
-        user['company_name'] = this.companyName
-      }
 
       if (this.newPassword) {
         user['cur_password'] = this.curPassword
@@ -109,6 +103,9 @@ export default {
 
       try {
         await this.$store.dispatch('users/updateCurrent', user)
+        this.curPassword = null
+        this.newPassword = null
+        this.newPasswordConfirmation = null
       } catch (error) {
         //
 

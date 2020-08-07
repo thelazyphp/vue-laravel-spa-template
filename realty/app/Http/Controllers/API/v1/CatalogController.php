@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\v1;
 
 use App\CatalogItem;
+use App\Filters\CatalogItemsFilter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\CatalogItemResource;
@@ -17,12 +18,15 @@ class CatalogController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $filter = new CatalogItemsFilter($request);
+
         return CatalogItemResource::collection(
-            CatalogItem::paginate()
+            CatalogItem::filter($filter)->paginate()
         );
     }
 

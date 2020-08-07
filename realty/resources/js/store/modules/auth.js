@@ -21,14 +21,22 @@ export default {
 
   actions: {
     async signIn ({ commit }, credentials) {
-      const res = await AppService.signIn(credentials)
-      commit('setToken', res.data.access_token)
+      try {
+        const res = await AppService.signIn(credentials)
+        commit('setToken', res.data.access_token)
+      } catch (error) {
+        //
+      }
     },
 
     async signOut ({ commit }) {
-      await AppService.signOut()
-      commit('setToken', null)
-      commit('users/setCurrent', null, { root: true })
+      try {
+        await AppService.signOut()
+        commit('setToken', null)
+        commit('users/setCurrent', null, { root: true })
+      } catch (error) {
+        //
+      }
     }
   }
 }

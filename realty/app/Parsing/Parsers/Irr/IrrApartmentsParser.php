@@ -95,7 +95,7 @@ class IrrApartmentsParser extends Parser
             $lastPage = Rule::findLast('.js-paginatorPage')->takeInteger()->evaluate($document);
             $links = [];
 
-            for ($page = 1; $page <= 1; $page++) {
+            for ($page = 1; $page <= 20; $page++) {
                 $html = (string) $this->client->get("{$endpoint}search/list=list/page{$page}/")->getBody();
                 $document->loadHTML($html);
 

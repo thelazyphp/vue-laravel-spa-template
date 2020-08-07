@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Filterable;
 
 class CatalogItem extends Model
 {
@@ -13,6 +14,8 @@ class CatalogItem extends Model
     const CATEGORY_LANDS = 'lands';
     const CATEGORY_HOUSES = 'houses';
     const CATEGORY_COMMERCIAL_REAL_ESTATE = 'commercial_real_estate';
+
+    use Filterable;
 
     /**
      * The model's default values for attributes.

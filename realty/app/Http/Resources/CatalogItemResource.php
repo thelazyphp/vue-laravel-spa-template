@@ -17,7 +17,7 @@ class CatalogItemResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'seller' => new SellerResource($this->whenLoaded('seller')),
+            'seller' => new SellerResource($this->seller),
             'transaction' => $this->transaction,
             'category' => $this->category,
             'type' => $this->type,

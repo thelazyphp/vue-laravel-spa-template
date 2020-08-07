@@ -9,108 +9,101 @@ export default {
 
   data () {
     return {
-      uploadingAvatar: false,
-      avatar: null,
-      imageId: null,
-      role: 'employee',
-      lastName: null,
-      firstName: null,
-      middleName: null,
-      email: null,
-      password: null
+      loading: false,
+
+      image: {
+        uploading: false,
+        url: null
+      },
+
+      form: {
+        image_id: null,
+        role: 'employee',
+        f_name: null,
+        m_name: null,
+        l_name: null,
+        email: null,
+        password: null
+      }
     }
   },
 
   computed: {
-    defaultAvatar () {
+    defaultImage () {
       return '/realty/images/default_avatar.jpg'
     }
   },
 
-  created () {
-    this.avatar = this.defaultAvatar
-  },
-
   methods: {
-    async uploadAvatar (event) {
-      if (event.target.files.length) {
-        this.uploadingAvatar = true
+    async createUser () {
+      this.loading = true
 
-        try {
-          const res = await AppService.uploadImage(event.target.files[0])
-          this.avatar = res.data.url
-          this.imageId = res.data.id
-        } catch (error) {
-          this.avatar = null
-          this.imageId = null
-        } finally {
-          this.uploadingAvatar = false
-        }
+      try {
+        await AppService.createUser(this.form)
+        this.$router.push('/employees')
+      } catch (error) {
+        //
+
+        console.log(error)
+      } finally {
+        this.loading = false
       }
     },
 
-    async createUser () {
-      await AppService.createUser({
-        image_id: this.imageId,
-        role: this.role,
-        f_name: this.firstName,
-        m_name: this.middleName,
-        l_name: this.lastName,
-        email: this.email,
-        password: this.password
-      })
+    async uploadImage (event) {
+      this.image.uploading = true
 
-      this.$router.push('/employees')
+      try {
+        const res = await AppService.uploadImage(event.target.files[0])
+        this.image.url = res.data.url
+        this.form.image_id = res.data.id
+      } catch (error) {
+        //
+
+        console.log(error)
+        this.image.url = null
+        his.form.image_id = null
+      } finally {
+        this.image.uploading = false
+      }
     }
   }
 }
 </script>
 
 <template>
-  <div class="py-5 container">
-    <h1 class="mb-5">Добавить сотрудника</h1>
-    <div class="mb-5 text-center">
-      <UserAvatarUpload :size="200" :image="avatar" :uploading="uploadingAvatar" @upload="uploadAvatar"/>
+  <div class="container">
+    <h1 class="my-4">Добавить сотрудника</h1>
+    <div class="mb-4 text-center">
+      <UserAvatarUpload :size="200" :image="image.url || defaultImage" :uploading="image.uploading" @upload="uploadImage" />
     </div>
-    <form @submit.prevent="createUser">
-      <div class="row form-group">
-        <label for="role" class="col-xl-2">Роль</label>
-        <div class="col-xl-10">
-          <select id="role" v-model="role" class="custom-select" autofocus>
-            <option value="manager">Менеджер</option>
-            <option value="employee">Сотрудник</option>
-          </select>
-        </div>
+    <form class="mb-4" @submit.prevent="createUser">
+      <div class="form-group">
+        <label for="lastName">Фамилия <span class="text-danger">*</span></label>
+        <input id="lastName" v-model="form.l_name" type="text" class="form-control" required autofocus>
       </div>
-      <div class="row form-group">
-        <label for="lastName" class="col-xl-2">Фамилия <span class="text-danger">*</span></label>
-        <div class="col-xl-10">
-          <input id="lastName" v-model="lastName" type="text" class="form-control" required>
-        </div>
+      <div class="form-group">
+        <label for="firstName">Имя <span class="text-danger">*</span></label>
+        <input id="firstName" v-model="form.f_name" type="text" class="form-control" required>
       </div>
-      <div class="row form-group">
-        <label for="firstName" class="col-xl-2">Имя <span class="text-danger">*</span></label>
-        <div class="col-xl-10">
-          <input id="firstName" v-model="firstName" type="text" class="form-control" required>
-        </div>
+      <div class="form-group">
+        <label for="middleName">Отчество</label>
+        <input id="middleName" v-model="form.m_name" type="text" class="form-control">
       </div>
-      <div class="row form-group">
-        <label for="middleName" class="col-xl-2">Отчество</label>
-        <div class="col-xl-10">
-          <input id="middleName" v-model="middleName" type="text" class="form-control">
-        </div>
+      <div class="form-group">
+        <label for="role">Роль</label>
+        <select id="role" v-model="form.role" class="custom-select">
+          <option value="employee">Сотрудник</option>
+          <option value="manager">Менеджер</option>
+        </select>
       </div>
-      <div class="row form-group">
-        <label for="email" class="col-xl-2">E-Mail <span class="text-danger">*</span></label>
-        <div class="col-xl-10">
-          <input id="email" v-model="email" type="email" class="form-control" required>
-        </div>
+      <div class="form-group">
+        <label for="email">E-Mail <span class="text-danger">*</span></label>
+        <input id="email" v-model="form.email" type="email" class="form-control" required>
       </div>
-      <div class="row form-group">
-        <label for="password" class="col-xl-2">Пароль <span class="text-danger">*</span></label>
-        <div class="col-xl-10">
-          <input id="password" v-model="password" type="text" class="form-control" required>
-        </div>
+      <div class="form-group">
+        <label for="password">Пароль <span class="text-danger">*</span></label>
+        <input id="password" v-model="form.password" type="text" class="form-control" required>
       </div>
       <div class="text-right">
         <button type="submit" class="btn btn-primary">Добавить</button>

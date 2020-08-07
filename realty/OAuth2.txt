@@ -1,7 +1,7 @@
 Personal access client:
     Client ID: 1
-    Client secret: FdXQHmIwejjyelGUHOswjBjgv80khkFGsuTKb5Dh
+    Client secret: uTxtAaF97R6IWqoaeDIHpNoJ7VNxgczGYUlBuptm
 
 Password grant client:
     Client ID: 2
-    Client secret: dDNmi8DikWbmeq0VytjXyTcfGTnqD6RzcbG3OlkX
+    Client secret: yJjdChW4po37imWANupgMbWeLC2ovSJBGL2gMLtx

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\v1;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
+use App\Filters\UsersFilter;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -19,18 +20,19 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', User::class);
+        $filter = new UsersFilter($request);
 
         return UserResource::collection(
             auth()->user()
                 ->company
                 ->users()
-                ->where('id', '!=', auth()->id())
-                ->paginate()
+                ->filter($filter)->paginate()
         );
     }
 
@@ -45,18 +47,18 @@ class UserController extends Controller
         $this->authorize('create', User::class);
 
         $this->validate($request, [
-            'image_id' => 'nullable|integer|min:1|exists:images,id',
-            'role' => 'required|string|max:191|in:manager,employee',
-            'f_name' => 'required|string|max:191',
-            'm_name' => 'nullable|string|max:191',
-            'l_name' => 'required|string|max:191',
-            'email' => 'required|string|max:191|email|unique:users',
+            'image_id' => 'nullable|integer|exists:images,id',
+            'role'     => 'required|string|in:manager,employee',
+            'f_name'   => 'required|string|max:191',
+            'm_name'   => 'nullable|string|max:191',
+            'l_name'   => 'required|string|max:191',
+            'email'    => 'required|string|email|max:191|unique:users',
             'password' => 'required|string|min:8',
         ]);
 
         $attributes = [
             'company_id' => auth()->user()->company_id,
-            'password' => Hash::make($request->password),
+            'password'   => Hash::make($request->password),
         ];
 
         return new UserResource(
@@ -84,10 +86,11 @@ class UserController extends Controller
     public function show($id)
     {
         if ($id === 'self') {
-            $id = auth()->id();
+            $user = auth()->user();
+        } else {
+            $user = User::findOrFail($id);
         }
 
-        $user = User::findOrFail($id);
         $this->authorize('view', $user);
 
         return new UserResource($user);
@@ -103,22 +106,23 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         if ($id === 'self') {
-            $id = auth()->id();
+            $user = auth()->user();
+        } else {
+            $user = User::findOrFail($id);
         }
 
-        $user = User::findOrFail($id);
         $this->authorize('update', $user);
 
         $rules = [
-            'image_id' => 'nullable|integer|min:1|exists:images,id',
-            'f_name' => 'string|max:191',
-            'm_name' => 'nullable|string|max:191',
-            'l_name' => 'string|max:191',
+            'image_id' => 'nullable|integer|exists:images,id',
+            'f_name'   => 'string|max:191',
+            'm_name'   => 'nullable|string|max:191',
+            'l_name'   => 'string|max:191',
 
             'email' => [
                 'string',
-                'max:191',
                 'email',
+                'max:191',
                 Rule::unique('users')->ignore($user),
             ],
         ];
@@ -126,18 +130,15 @@ class UserController extends Controller
         if ($user->id == auth()->id()) {
             $rules['cur_password'] = 'required_with:new_password|password';
             $rules['new_password'] = 'string|min:8|confirmed';
-        } elseif (auth()->user()->isManager()) {
-            $rules['role'] = 'string|max:191|in:manager,employee';
+        } else {
+            $rules['role']     = 'string|in:manager,employee';
+            $rules['password'] = 'string|min:8';
         }
 
         $this->validate($request, $rules);
 
         if ($request->has('image_id')) {
             $user->image_id = $request->image_id;
-        }
-
-        if ($user->id != auth()->id() && auth()->user()->isManager() && $request->has('role')) {
-            $user->role = $request->role;
         }
 
         if ($request->has('f_name')) {
@@ -156,8 +157,18 @@ class UserController extends Controller
             $user->email = $request->email;
         }
 
-        if ($user->id == auth()->id() && $request->has('new_password')) {
-            $user->password = Hash::make($request->new_password);
+        if ($user->id == auth()->id()) {
+            if ($request->has('new_password')) {
+                $user->password = Hash::make($request->new_password);
+            }
+        } else {
+            if ($request->has('role')) {
+                $user->role = $request->role;
+            }
+
+            if ($request->has('password')) {
+                $user->password = Hash::make($request->password);
+            }
         }
 
         $user->save();
@@ -174,10 +185,11 @@ class UserController extends Controller
     public function destroy($id)
     {
         if ($id === 'self') {
-            $id = auth()->id();
+            $user = auth()->user();
+        } else {
+            $user = User::findOrFail($id);
         }
 
-        $user = User::findOrFail($id);
         $this->authorize('delete', $user);
         $user->delete();
     }
